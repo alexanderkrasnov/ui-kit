@@ -1,16 +1,31 @@
-import type { ButtonHTMLAttributes } from 'react'
+import type { ButtonHTMLAttributes, ReactNode } from 'react'
 
 export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   /** Visual style variant */
   variant?: 'primary' | 'secondary' | 'ghost'
+  /** Icon before label (any React node, typically an SVG icon) */
+  startIcon?: ReactNode
+  /** Icon after label */
+  endIcon?: ReactNode
 }
+
+const iconSlot =
+  'inline-flex shrink-0 items-center justify-center [&_svg]:size-[1.125em] [&_svg]:shrink-0'
 
 export function Button({
   variant = 'primary',
   className = '',
   type = 'button',
+  children,
+  startIcon,
+  endIcon,
   ...props
 }: ButtonProps) {
+  const hasText =
+    children != null &&
+    !(typeof children === 'string' && children.trim() === '')
+  const hideIconFromA11y = Boolean(hasText)
+
   const base =
     'inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium transition-colors ' +
     'rounded-ui-button shadow-ui-sm ' +
@@ -38,6 +53,24 @@ export function Button({
       type={type}
       className={`${base} ${variants[variant]} ${className}`.trim()}
       {...props}
-    />
+    >
+      {startIcon != null ? (
+        <span
+          className={iconSlot}
+          aria-hidden={hideIconFromA11y ? true : undefined}
+        >
+          {startIcon}
+        </span>
+      ) : null}
+      {children}
+      {endIcon != null ? (
+        <span
+          className={iconSlot}
+          aria-hidden={hideIconFromA11y ? true : undefined}
+        >
+          {endIcon}
+        </span>
+      ) : null}
+    </button>
   )
 }
