@@ -1,78 +1,212 @@
-/**
- * Дизайн-токены UI kit (цвета, шрифты, радиусы, тени).
- *
- * Как заменить на «правильные» значения:
- * 1. Отредактируйте блок @theme ниже: это единственный источник для утилит Tailwind
- *    вида bg-ui-primary, font-ui-sans, rounded-ui-button и т.д.
- * 2. Цвета задавайте в удобном формате: #hex, rgb(), oklch() — как в обычном CSS.
- * 3. Шрифты: укажите стек в --font-ui-sans / --font-ui-mono (названия совпадают с Google Fonts
- *    или локальными @font-face в приложении-потребителе).
- * 4. После изменений пересоберите Storybook / приложение — классы подхватятся автоматически.
- * 5. В приложениях (Next.js и т.д.) убедитесь, что Tailwind сканирует этот пакет (см. @source в tailwind.css).
- *
- * Семантика имён: ui-* — публичные токены набора; привязывайте компоненты к ним, а не к сырым palette-*.
- */
+@layer theme {
+  /* Shared primitives */
+  :root {
+    --white: oklch(100% 0 0);
+
+    /* брендовый цвет */
+    --brand-500: oklch(0.6875 0.2086 40.59);
+
+    /* нейтральная шкала */
+    --neutral-50: oklch(98.5% 0 0);
+    --neutral-100: oklch(97% 0 0);
+    --neutral-200: oklch(92.2% 0 0);
+    --neutral-300: oklch(87% 0 0);
+    --neutral-400: oklch(70.8% 0 0);
+    --neutral-500: oklch(55.6% 0 0);
+    --neutral-600: oklch(43.9% 0 0);
+    --neutral-700: oklch(37.1% 0 0);
+    --neutral-800: oklch(26.9% 0 0);
+    --neutral-900: oklch(20.5% 0 0);
+    --neutral-950: oklch(14.5% 0 0);
+
+    /* утилитарный красный */
+    --red-50: oklch(0.95 0.22 25);
+    --red-100: oklch(0.85 0.22 25);
+    --red-200: oklch(0.72 0.22 25);
+    --red-300: oklch(0.65 0.22 25);
+    --red-400: oklch(0.58 0.22 25);
+    --red-500: oklch(0.55 0.2 25);
+    --red-600: oklch(0.5 0.22 25);
+    --red-700: oklch(0.45 0.22 25);
+    --red-800: oklch(0.4 0.22 25);
+    --red-900: oklch(0.35 0.22 25);
+    --red-950: oklch(0.3 0.22 25);
+  }
+
+  /* Light theme */
+  :root,
+  .light,
+  .default,
+  [data-theme='light'],
+  [data-theme='default'] {
+    color-scheme: light;
+
+    /* Базовый фон приложения */
+    --background: var(--white);
+    /* Основной цвет текста и иконок */
+    --foreground: var(--neutral-900);
+
+    /* Нейтральный фон для secondary-элементов */
+    --default: var(--neutral-100);
+    /* Текст на нейтральном фоне */
+    --default-foreground: var(--foreground);
+
+    /* Основной акцентный цвет интерфейса */
+    --accent: var(--brand-500);
+    /* Текст на акцентном фоне */
+    --accent-foreground: var(--neutral-50);
+
+    /* Фон полей ввода */
+    --field-background: var(--white);
+    /* Текст внутри полей ввода */
+    --field-foreground: var(--foreground);
+    /* Плейсхолдер и подсказки в поле */
+    --field-placeholder: var(--neutral-600);
+    /* Граница поля ввода */
+    --field-border: var(--border);
+    /* Граница поля при фокусе — на шаг темнее, чем --border */
+    --field-border-focus: var(--neutral-400);
+    /* Граница поля с ошибкой при фокусе — на шаг темнее, чем --danger */
+    --field-border-invalid-focus: var(--red-600);
+
+    /* Ошибки и destructive-состояния */
+    --danger: var(--red-400);
+    /* Стандартные границы компонентов */
+    --border: var(--neutral-300);
+    /* Цвет focus-ring и outline */
+    --focus: var(--neutral-500);
+  }
+
+  /* Dark theme */
+  .dark,
+  [data-theme='dark'] {
+    color-scheme: dark;
+
+    /* Базовый фон приложения */
+    --background: var(--neutral-950);
+    /* Основной цвет текста и иконок */
+    --foreground: var(--neutral-50);
+
+    /* Нейтральный фон для secondary-элементов */
+    --default: var(--neutral-800);
+    /* Текст на нейтральном фоне */
+    --default-foreground: var(--foreground);
+
+    /* Основной акцентный цвет интерфейса */
+    --accent: var(--brand-500);
+    /* Текст на акцентном фоне */
+    --accent-foreground: var(--foreground);
+
+    /* Фон полей ввода */
+    --field-background: var(--neutral-900);
+    /* Текст внутри полей ввода */
+    --field-foreground: var(--foreground);
+    /* Плейсхолдер и подсказки в поле */
+    --field-placeholder: var(--neutral-400);
+    /* Граница поля ввода */
+    --field-border: var(--border);
+    --field-border-focus: var(--neutral-800);
+    --field-border-invalid-focus: var(--red-400);
+
+    /* Ошибки и destructive-состояния */
+    --danger: var(--red-600);
+    /* Стандартные границы компонентов */
+    --border: var(--neutral-700);
+    /* Цвет focus-ring и outline */
+    --focus: var(--neutral-500);
+  }
+}
 
 @theme {
-  /* --- Шрифты (замените стеки и при необходимости подключите шрифты в приложении) --- */
-  --font-ui-sans:
+  --font-sans:
     ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
     sans-serif;
-  --font-ui-mono: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Monaco, monospace;
+  --font-mono: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Monaco, monospace;
 
-  /* --- Радиусы --- */
-  --radius-ui-button: 0.5rem;
-  --radius-ui-card: 0.75rem;
-  --radius-ui-input: 0.375rem;
+  /* Tailwind color bridge */
+  /* Фон приложения и секций */
+  --color-background: var(--background);
+  /* Основной текст */
+  --color-foreground: var(--foreground);
 
-  /* --- Тени (плейсхолдеры) --- */
-  --shadow-ui-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-ui-md: 0 4px 6px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.06);
+  /* Нейтральные поверхности */
+  --color-default: var(--default);
+  /* Текст на нейтральных поверхностях */
+  --color-default-foreground: var(--default-foreground);
 
-  /* --- Палитра (сырые шаги — можно выкинуть, если не нужны) --- */
-  --color-ui-palette-violet-500: oklch(0.55 0.22 290);
-  --color-ui-palette-violet-600: oklch(0.48 0.24 290);
-  --color-ui-palette-neutral-100: oklch(0.96 0.005 280);
-  --color-ui-palette-neutral-800: oklch(0.28 0.02 280);
+  /* Основной акцент */
+  --color-accent: var(--accent);
+  /* Текст на акценте */
+  --color-accent-foreground: var(--accent-foreground);
 
-  --color-ui-palette-green-500: oklch(0.55 0.22 120);
-  --color-ui-palette-green-600: oklch(0.48 0.24 120);
+  /* Фон input / textarea */
+  --color-field-background: var(--field-background);
+  /* Текст в input / textarea */
+  --color-field-foreground: var(--field-foreground);
+  /* Placeholder в input / textarea */
+  --color-field-placeholder: var(--field-placeholder);
+  /* Граница input / textarea */
+  --color-field-border: var(--field-border);
+  /* Граница input / textarea при фокусе */
+  --color-field-border-focus: var(--field-border-focus);
+  /* Граница input с ошибкой при фокусе */
+  --color-field-border-invalid-focus: var(--field-border-invalid-focus);
 
-  /* --- Семантика (подставьте цвета бренда здесь) --- */
-  --color-ui-background: oklch(0.99 0.002 280);
-  --color-ui-foreground: oklch(0.2 0.03 280);
-  --color-ui-muted: oklch(0.96 0.01 280);
-  --color-ui-muted-foreground: oklch(0.45 0.03 280);
-  --color-ui-border: oklch(0.9 0.01 280);
+  /* Цвет ошибок */
+  --color-danger: var(--danger);
+  /* Общая граница компонентов */
+  --color-border: var(--border);
+  /* Focus ring / outline */
+  --color-focus: var(--focus);
 
-  --color-ui-primary: var(--color-ui-palette-green-500);
-  --color-ui-primary-hover: var(--color-ui-palette-green-600);
-  --color-ui-on-primary: oklch(0.99 0 0);
-
-  --color-ui-secondary: var(--color-ui-muted);
-  --color-ui-secondary-hover: oklch(0.92 0.015 280);
-  --color-ui-on-secondary: oklch(0.25 0.03 280);
-
-  --color-ui-ghost-fg: var(--color-ui-palette-violet-600);
-  --color-ui-ghost-hover: oklch(0.55 0.22 290 / 0.12);
-
-  /* Тёмная тема: отдельные токены для пар dark:* в компонентах */
-  --color-ui-background-dark: oklch(0.16 0.02 280);
-  --color-ui-foreground-dark: oklch(0.96 0.01 280);
-  --color-ui-muted-dark: oklch(0.26 0.02 280);
-  --color-ui-muted-foreground-dark: oklch(0.78 0.02 280);
-  --color-ui-border-dark: oklch(0.34 0.02 280);
-  --color-ui-secondary-hover-dark: oklch(0.34 0.03 280);
-  --color-ui-ghost-fg-dark: oklch(0.78 0.08 290);
-  --color-ui-ghost-hover-dark: oklch(0.65 0.15 290 / 0.18);
-
-  /* Ошибки (поля форм, валидация) */
-  --color-ui-destructive: oklch(0.55 0.2 25);
-  --color-ui-destructive-ring: oklch(0.5 0.22 25);
+  /* Computed utilities */
+  /* Hover для нейтральных элементов */
+  --color-default-hover: color-mix(
+    in oklab,
+    var(--color-default) 96%,
+    var(--color-default-foreground) 4%
+  );
+  /* Hover для акцентных элементов */
+  --color-accent-hover: color-mix(
+    in oklab,
+    var(--color-accent) 90%,
+    var(--color-accent-foreground) 10%
+  );
 }
 
 @layer base {
+  html {
+    min-height: 100%;
+  }
+
   body {
-    @apply bg-ui-background text-ui-foreground antialiased font-ui-sans;
+    min-height: 100vh;
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    @apply antialiased font-sans;
+    transition:
+      background-color 160ms ease,
+      color 160ms ease;
+  }
+
+  #storybook-root,
+  #storybook-docs {
+    color: inherit;
+  }
+
+  .docs-story,
+  .sbdocs-preview,
+  [data-story-block='true'] {
+    background-color: var(--color-background) !important;
+    color: var(--color-foreground);
+    transition:
+      background-color 160ms ease,
+      color 160ms ease,
+      border-color 160ms ease;
+  }
+
+  .docs-story {
+    border-radius: 0.75rem;
+    box-shadow: inset 0 0 0 1px var(--color-border);
   }
 }

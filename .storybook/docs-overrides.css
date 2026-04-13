@@ -1,0 +1,6 @@
+/* Color system docs use layout: fullscreen — drop the default docs preview frame */
+.sbdocs .docs-story:has(.plexo-color-system) {
+  padding: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}

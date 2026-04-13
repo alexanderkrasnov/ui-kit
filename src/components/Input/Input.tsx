@@ -1,7 +1,7 @@
 import { forwardRef, type InputHTMLAttributes } from 'react'
 
 export type InputProps = InputHTMLAttributes<HTMLInputElement> & {
-  /** Invalid / error visual state (border + focus ring) */
+  /** Invalid / error visual state (border усиливается при фокусе) */
   error?: boolean
 }
 
@@ -10,25 +10,15 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   ref,
 ) {
   const base =
-    'block w-full min-w-0 rounded-ui-input border px-3 py-2 text-sm transition-shadow ' +
-    'font-ui-sans text-ui-foreground shadow-ui-sm ' +
-    'placeholder:text-ui-muted-foreground ' +
-    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ' +
-    'disabled:cursor-not-allowed disabled:opacity-50 ' +
-    'dark:bg-ui-background-dark dark:text-ui-foreground-dark dark:placeholder:text-ui-muted-foreground-dark ' +
-    'dark:focus-visible:ring-offset-ui-background-dark'
+    'block w-full min-w-0 rounded-md border px-3 py-2 text-sm transition-[border-color,box-shadow] ' +
+    'font-sans bg-field-background text-field-foreground shadow-sm ' +
+    'placeholder:text-field-placeholder ' +
+    'focus-visible:outline-none ' +
+    'disabled:cursor-not-allowed disabled:opacity-50'
 
-  const normal =
-    'border-ui-border bg-ui-background ' +
-    'focus-visible:border-ui-primary focus-visible:ring-ui-primary ' +
-    'focus-visible:ring-offset-ui-background ' +
-    'dark:border-ui-border-dark'
+  const normal = 'border-field-border focus-visible:border-field-border-focus'
 
-  const invalid =
-    'border-ui-destructive bg-ui-background ' +
-    'focus-visible:border-ui-destructive focus-visible:ring-ui-destructive-ring ' +
-    'focus-visible:ring-offset-ui-background ' +
-    'dark:border-ui-destructive dark:focus-visible:ring-ui-destructive-ring'
+  const invalid = 'border-danger focus-visible:border-field-border-invalid-focus'
 
   return (
     <input

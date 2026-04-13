@@ -28,24 +28,20 @@ export function Button({
 
   const base =
     'inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium transition-colors ' +
-    'rounded-ui-button shadow-ui-sm ' +
+    'rounded-lg shadow-sm ' +
     'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ' +
     'disabled:pointer-events-none disabled:opacity-50'
 
   const variants: Record<NonNullable<ButtonProps['variant']>, string> = {
     primary:
-      'bg-ui-primary text-ui-on-primary hover:bg-ui-primary-hover ' +
-      'focus-visible:outline-ui-primary',
+      'bg-accent text-accent-foreground hover:bg-accent-hover ' +
+      'focus-visible:outline-focus',
     secondary:
-      'bg-ui-secondary text-ui-on-secondary hover:bg-ui-secondary-hover ' +
-      'focus-visible:outline-ui-muted-foreground ' +
-      'dark:bg-ui-muted-dark dark:text-ui-muted-foreground-dark dark:hover:bg-ui-secondary-hover-dark ' +
-      'dark:focus-visible:outline-ui-muted-foreground-dark',
+      'bg-default text-default-foreground hover:bg-default-hover ' +
+      'focus-visible:outline-focus',
     ghost:
-      'bg-transparent text-ui-ghost-fg shadow-none hover:bg-ui-ghost-hover ' +
-      'focus-visible:outline-ui-ghost-fg ' +
-      'dark:text-ui-ghost-fg-dark dark:hover:bg-ui-ghost-hover-dark ' +
-      'dark:focus-visible:outline-ui-ghost-fg-dark',
+      'bg-transparent text-foreground shadow-none hover:bg-default-hover ' +
+      'focus-visible:outline-focus',
   }
 
   return (
