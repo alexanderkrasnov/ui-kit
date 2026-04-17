@@ -2,7 +2,9 @@ import type { ButtonHTMLAttributes, ReactNode } from 'react'
 
 export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   /** Visual style variant */
-  variant?: 'primary' | 'secondary' | 'ghost'
+  variant?: 'primary' | 'secondary' | 'ghost' | 'toggle' | 'danger'
+  /** Visual size scale */
+  size?: 'small' | 'medium' | 'large'
   /** Icon before label (any React node, typically an SVG icon) */
   startIcon?: ReactNode
   /** Icon after label */
@@ -14,6 +16,7 @@ const iconSlot =
 
 export function Button({
   variant = 'primary',
+  size = 'medium',
   className = '',
   type = 'button',
   children,
@@ -27,27 +30,40 @@ export function Button({
   const hideIconFromA11y = Boolean(hasText)
 
   const base =
-    'inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium transition-colors ' +
-    'rounded-lg shadow-sm ' +
+    'inline-flex items-center justify-center gap-2 font-medium transition-colors ease-in-out duration-150 ' +
+    'rounded-lg ' +
     'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ' +
     'disabled:pointer-events-none disabled:opacity-50'
 
+  const sizes: Record<NonNullable<ButtonProps['size']>, string> = {
+    small: 'h-8 px-3 text-sm',
+    medium: 'h-9 px-4 text-sm',
+    large: 'h-10 px-5 text-base',
+  }
+
   const variants: Record<NonNullable<ButtonProps['variant']>, string> = {
     primary:
-      'bg-accent text-accent-foreground hover:bg-accent-hover ' +
-      'focus-visible:outline-focus',
+      'bg-accent text-accent-foreground shadow-sm hover:bg-accent-hover ' +
+      'focus-visible:outline-accent',
     secondary:
-      'bg-default text-default-foreground hover:bg-default-hover ' +
-      'focus-visible:outline-focus',
+      'bg-surface-primary text-foreground shadow-sm hover:text-foreground/80 ' +
+      'focus-visible:outline-accent',
     ghost:
-      'bg-transparent text-foreground shadow-none hover:bg-default-hover ' +
-      'focus-visible:outline-focus',
+      'bg-transparent text-foreground shadow-none hover:bg-surface-secondary-hover ' +
+      'focus-visible:outline-accent',
+    toggle:
+      'bg-transparent text-foreground shadow-none hover:bg-surface-secondary-hover ' +
+      'aria-pressed:bg-accent/15 aria-pressed:hover:bg-accent/20 aria-pressed:text-accent aria-pressed:shadow-none ' +
+      'focus-visible:outline-accent',
+    danger:
+      'bg-danger text-accent-foreground shadow-sm hover:bg-danger-hover ' +
+      'focus-visible:outline-danger',
   }
 
   return (
     <button
       type={type}
-      className={`${base} ${variants[variant]} ${className}`.trim()}
+      className={`${base} ${sizes[size]} ${variants[variant]} ${className}`.trim()}
       {...props}
     >
       {startIcon != null ? (

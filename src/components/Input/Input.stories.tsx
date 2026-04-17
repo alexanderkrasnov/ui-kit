@@ -17,6 +17,7 @@ const meta = {
     ),
   ],
   argTypes: {
+    variant: { control: 'select', options: ['default', 'secondary'] },
     error: { control: 'boolean' },
     type: { control: 'select', options: ['text', 'email', 'password', 'search', 'url'] },
   },
@@ -25,23 +26,26 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
+export const Variants: Story = {
+  render: () => (
+    <div className="flex w-[min(100%,24rem)] flex-col gap-3">
+      <Input placeholder="Default input" variant="default" />
+      <Input placeholder="Secondary input" variant="secondary" />
+    </div>
+  ),
+}
+
 export const Default: Story = {
   args: {
     placeholder: 'Placeholder',
+    variant: 'default',
   },
 }
 
-export const WithValue: Story = {
+export const Secondary: Story = {
   args: {
-    defaultValue: 'Hello',
-  },
-}
-
-export const Email: Story = {
-  args: {
-    type: 'email',
-    placeholder: 'you@example.com',
-    autoComplete: 'email',
+    placeholder: 'Secondary input',
+    variant: 'secondary',
   },
 }
 

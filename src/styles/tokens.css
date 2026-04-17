@@ -31,6 +31,10 @@
     --red-800: oklch(0.4 0.22 25);
     --red-900: oklch(0.35 0.22 25);
     --red-950: oklch(0.3 0.22 25);
+
+    /* ещё одни утилитарные status-примитивы */
+    --green-500: oklch(73.29% 0.1940805 150.8304);
+    --yellow-500: oklch(78.19% 0.1589755 72.3504);
   }
 
   /* Light theme */
@@ -41,40 +45,39 @@
   [data-theme='default'] {
     color-scheme: light;
 
-    /* Базовый фон приложения */
-    --background: var(--white);
-    /* Основной цвет текста и иконок */
+    /* Base */
+    --background: var(--neutral-100);
     --foreground: var(--neutral-900);
+    --foreground-secondary: var(--neutral-700);
+    --foreground-tertiary: var(--neutral-500);
 
-    /* Нейтральный фон для secondary-элементов */
-    --default: var(--neutral-100);
-    /* Текст на нейтральном фоне */
-    --default-foreground: var(--foreground);
+    /* Surface */
+    --surface-primary: var(--white);
+    --surface-secondary: var(--neutral-200);
+    --surface-tertiary: var(--neutral-300);
 
-    /* Основной акцентный цвет интерфейса */
+    /* Accent */
     --accent: var(--brand-500);
-    /* Текст на акцентном фоне */
-    --accent-foreground: var(--neutral-50);
+    --accent-foreground: var(--white);
 
-    /* Фон полей ввода */
+    /* Status */
+    --success: var(--green-500);
+    --success-foreground: var(--neutral-900);
+    --warning: var(--yellow-500);
+    --warning-foreground: var(--neutral-900);
+    --danger: var(--red-300);
+    --danger-foreground: var(--white);
+
+    /* Border */
+    --border: color-mix(in oklab, var(--foreground) 15%, transparent);
+
+    /* Field */
     --field-background: var(--white);
-    /* Текст внутри полей ввода */
     --field-foreground: var(--foreground);
-    /* Плейсхолдер и подсказки в поле */
-    --field-placeholder: var(--neutral-600);
-    /* Граница поля ввода */
+    --field-placeholder: var(--neutral-500);
     --field-border: var(--border);
-    /* Граница поля при фокусе — на шаг темнее, чем --border */
-    --field-border-focus: var(--neutral-400);
-    /* Граница поля с ошибкой при фокусе — на шаг темнее, чем --danger */
+    --field-border-focus: var(--accent);
     --field-border-invalid-focus: var(--red-600);
-
-    /* Ошибки и destructive-состояния */
-    --danger: var(--red-400);
-    /* Стандартные границы компонентов */
-    --border: var(--neutral-300);
-    /* Цвет focus-ring и outline */
-    --focus: var(--neutral-500);
   }
 
   /* Dark theme */
@@ -82,98 +85,126 @@
   [data-theme='dark'] {
     color-scheme: dark;
 
-    /* Базовый фон приложения */
+    /* Base */
     --background: var(--neutral-950);
-    /* Основной цвет текста и иконок */
     --foreground: var(--neutral-50);
+    --foreground-secondary: color-mix(in oklab, var(--foreground) 78%, var(--background) 22%);
+    --foreground-tertiary: color-mix(in oklab, var(--foreground) 62%, var(--background) 38%);
 
-    /* Нейтральный фон для secondary-элементов */
-    --default: var(--neutral-800);
-    /* Текст на нейтральном фоне */
-    --default-foreground: var(--foreground);
+    /* Surface */
+    --surface-primary: var(--neutral-800);
+    --surface-secondary: var(--neutral-800);
+    --surface-tertiary: var(--neutral-700);
 
-    /* Основной акцентный цвет интерфейса */
+    /* Accent */
     --accent: var(--brand-500);
-    /* Текст на акцентном фоне */
-    --accent-foreground: var(--foreground);
+    --accent-foreground: var(--white);
 
-    /* Фон полей ввода */
+    /* Status */
+    --success: var(--green-500);
+    --success-foreground: var(--neutral-900);
+    --warning: var(--yellow-500);
+    --warning-foreground: var(--neutral-900);
+    --danger: var(--red-300);
+    --danger-foreground: var(--foreground);
+
+    /* Border */
+    --border: color-mix(in oklab, var(--foreground) 15%, transparent);
+
+    /* Field */
     --field-background: var(--neutral-900);
-    /* Текст внутри полей ввода */
     --field-foreground: var(--foreground);
-    /* Плейсхолдер и подсказки в поле */
-    --field-placeholder: var(--neutral-400);
-    /* Граница поля ввода */
+    --field-placeholder: var(--neutral-500);
     --field-border: var(--border);
-    --field-border-focus: var(--neutral-800);
+    --field-border-focus: var(--accent);
     --field-border-invalid-focus: var(--red-400);
-
-    /* Ошибки и destructive-состояния */
-    --danger: var(--red-600);
-    /* Стандартные границы компонентов */
-    --border: var(--neutral-700);
-    /* Цвет focus-ring и outline */
-    --focus: var(--neutral-500);
   }
 }
 
+/* Theme
+   Коротко: это мост между дизайн-токенами и Tailwind-утилитами.
+   Смотри сюда, когда нужно понять, какие semantic цвета/шрифты доступны как классы
+   (например bg-accent, text-foreground, font-sans, font-mono). */
 @theme {
+  /* Typography utilities */
   --font-sans:
-    ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
-    sans-serif;
-  --font-mono: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Monaco, monospace;
+    'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue',
+    Arial, sans-serif;
+  --font-mono:
+    'IBM Plex Mono', ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Monaco, monospace;
 
   /* Tailwind color bridge */
-  /* Фон приложения и секций */
+
+  /* Base utilities */
+
   --color-background: var(--background);
-  /* Основной текст */
   --color-foreground: var(--foreground);
+  --color-foreground-secondary: var(--foreground-secondary);
+  --color-foreground-tertiary: var(--foreground-tertiary);
 
-  /* Нейтральные поверхности */
-  --color-default: var(--default);
-  /* Текст на нейтральных поверхностях */
-  --color-default-foreground: var(--default-foreground);
+  /* Surface utilities */
+  --color-surface-primary: var(--surface-primary);
+  --color-surface-secondary: var(--surface-secondary);
+  --color-surface-tertiary: var(--surface-tertiary);
 
-  /* Основной акцент */
+  /* Accent utilities */
   --color-accent: var(--accent);
-  /* Текст на акценте */
   --color-accent-foreground: var(--accent-foreground);
 
-  /* Фон input / textarea */
+  /* Status utilities */
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-danger: var(--danger);
+  --color-danger-foreground: var(--danger-foreground);
+
+  /* Border utilities */
+  --color-border: var(--border);
+
+  /* Field utilities */
   --color-field-background: var(--field-background);
-  /* Текст в input / textarea */
   --color-field-foreground: var(--field-foreground);
-  /* Placeholder в input / textarea */
   --color-field-placeholder: var(--field-placeholder);
-  /* Граница input / textarea */
   --color-field-border: var(--field-border);
-  /* Граница input / textarea при фокусе */
   --color-field-border-focus: var(--field-border-focus);
-  /* Граница input с ошибкой при фокусе */
   --color-field-border-invalid-focus: var(--field-border-invalid-focus);
 
-  /* Цвет ошибок */
-  --color-danger: var(--danger);
-  /* Общая граница компонентов */
-  --color-border: var(--border);
-  /* Focus ring / outline */
-  --color-focus: var(--focus);
-
   /* Computed utilities */
-  /* Hover для нейтральных элементов */
-  --color-default-hover: color-mix(
-    in oklab,
-    var(--color-default) 96%,
-    var(--color-default-foreground) 4%
-  );
+
   /* Hover для акцентных элементов */
   --color-accent-hover: color-mix(
     in oklab,
     var(--color-accent) 90%,
     var(--color-accent-foreground) 10%
   );
+
+  /* Hover для primary surface */
+  --color-surface-primary-hover: color-mix(
+    in oklab,
+    var(--color-surface-primary) 96%,
+    var(--color-foreground) 4%
+  );
+
+  /* Hover для secondary surface */
+  --color-surface-secondary-hover: color-mix(
+    in oklab,
+    var(--color-surface-secondary) 99%,
+    var(--color-foreground) 1%
+  );
+
+  /* Hover для danger (как accent-hover: смесь базового danger и foreground на нём) */
+  --color-danger-hover: color-mix(
+    in oklab,
+    var(--color-danger) 95%,
+    var(--color-danger-foreground) 5%
+  );
 }
 
+/* Layer Base
+   Коротко: это глобальные базовые стили приложения и Storybook.
+   Смотри сюда, когда нужно понять "дефолт" без классов в компоненте:
+   фон/цвет body, сглаживание, базовый шрифт, переходы и базовая оболочка docs. */
 @layer base {
   html {
     min-height: 100%;
@@ -208,5 +239,23 @@
   .docs-story {
     border-radius: 0.75rem;
     box-shadow: inset 0 0 0 1px var(--color-border);
+  }
+}
+
+/* Layer Components
+   Коротко: это семантические typography-классы для заголовков.
+   Смотри сюда, когда нужно быстро назначить размер и жирность одним классом
+   (например heading-1, heading-2, heading-3). */
+@layer components {
+  .heading-1 {
+    @apply text-4xl font-bold;
+  }
+
+  .heading-2 {
+    @apply text-3xl font-bold;
+  }
+
+  .heading-3 {
+    @apply text-2xl font-bold;
   }
 }

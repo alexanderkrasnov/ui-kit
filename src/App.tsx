@@ -6,7 +6,7 @@ export default function App() {
       <h1 className="font-sans text-2xl font-semibold tracking-tight">@remide/ui-kit</h1>
       <p className="max-w-md text-center text-sm opacity-70">
         Vite playground. Develop components in Storybook (
-        <code className="rounded-md bg-default px-1.5 py-0.5 font-mono text-sm text-default-foreground">
+        <code className="rounded-md bg-surface-primary px-1.5 py-0.5 font-mono text-sm text-foreground">
           npm run storybook
         </code>
         ).

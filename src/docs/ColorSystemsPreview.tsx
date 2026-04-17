@@ -11,7 +11,7 @@ function ColorItem({ cssVariable, name, variable }: ColorItemProps) {
       : ''
 
   return (
-    <div className="flex items-center gap-4 rounded-3xl border border-border bg-background p-4 shadow-sm">
+    <div className="flex items-center gap-4 rounded-3xl bg-surface-primary p-4 shadow-sm">
       <div
         className="size-12 shrink-0 rounded-xl border border-border"
         style={{ backgroundColor: `var(${variable})` }}
@@ -54,14 +54,22 @@ export function ColorSystemsPreview() {
   ]
 
   const backgroundAndSurfaceColors: ColorItemProps[] = [
-    { name: 'Default', variable: '--color-default' },
-    { name: 'Default Foreground', variable: '--color-default-foreground' },
+    { name: 'Surface Primary', variable: '--color-surface-primary' },
+    { name: 'Surface Primary Hover', variable: '--color-surface-primary-hover' },
+    { name: 'Surface Secondary', variable: '--color-surface-secondary' },
+    { name: 'Surface Secondary Hover', variable: '--color-surface-secondary-hover' },
+    { name: 'Surface Tertiary', variable: '--color-surface-tertiary' },
     { name: 'Border', variable: '--color-border' },
-    { name: 'Focus', variable: '--color-focus' },
+  ]
+
+  const foregroundScaleColors: ColorItemProps[] = [
+    { name: 'Foreground Secondary', variable: '--color-foreground-secondary' },
+    { name: 'Foreground Tertiary', variable: '--color-foreground-tertiary' },
   ]
 
   const primaryColors: ColorItemProps[] = [
     { name: 'Accent', variable: '--color-accent' },
+    { name: 'Accent Hover', variable: '--color-accent-hover' },
     { name: 'Accent Foreground', variable: '--color-accent-foreground' },
   ]
 
@@ -72,11 +80,6 @@ export function ColorSystemsPreview() {
     { name: 'Field Foreground', variable: '--color-field-foreground' },
     { name: 'Field Placeholder', variable: '--color-field-placeholder' },
     { name: 'Field Border', variable: '--color-field-border' },
-  ]
-
-  const otherColors: ColorItemProps[] = [
-    { name: 'Default Hover', variable: '--color-default-hover' },
-    { name: 'Accent Hover', variable: '--color-accent-hover' },
   ]
 
   return (
@@ -91,11 +94,11 @@ export function ColorSystemsPreview() {
       </div>
 
       <ColorSection colors={baseColors} title="Base Colors" />
+      <ColorSection colors={foregroundScaleColors} title="Text / Foreground" />
       <ColorSection colors={backgroundAndSurfaceColors} title="Background & Surface" />
       <ColorSection colors={primaryColors} title="Primary Colors" />
       <ColorSection colors={statusColors} title="Status Colors" />
       <ColorSection colors={formFieldColors} title="Form Field Colors" />
-      <ColorSection colors={otherColors} title="Other Colors" />
     </div>
   )
 }

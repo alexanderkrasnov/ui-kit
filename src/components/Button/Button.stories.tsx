@@ -1,6 +1,7 @@
+import { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
-import { Button } from './Button'
+import { Button, type ButtonProps } from './Button'
 
 function PlusIcon() {
   return (
@@ -18,6 +19,87 @@ function ChevronIcon() {
   )
 }
 
+function LoadingSpinner() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      className="size-4 animate-spin"
+      aria-hidden="true"
+    >
+      <path d="M21 12a9 9 0 1 1-2.64-6.36" strokeLinecap="round" />
+    </svg>
+  )
+}
+
+function HeartIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+      <path
+        d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
+function PaperclipIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+      <path
+        d="M21.44 11.05L12.6 19.9a5 5 0 0 1-7.07-7.07l9.19-9.19a3.5 3.5 0 0 1 4.95 4.95l-9.55 9.54a2 2 0 0 1-2.83-2.82l8.84-8.84"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
+function LoadingButtonDemo(args: ButtonProps) {
+  const [isLoading, setIsLoading] = useState(false)
+
+  const handleClick = () => {
+    setIsLoading(true)
+    window.setTimeout(() => {
+      setIsLoading(false)
+    }, 1800)
+  }
+
+  return (
+    <Button
+      {...args}
+      onClick={handleClick}
+      disabled={isLoading}
+      aria-busy={isLoading ? 'true' : undefined}
+      startIcon={isLoading ? <LoadingSpinner /> : <PaperclipIcon />}
+      endIcon={undefined}
+    >
+      {isLoading ? 'Uploading...' : 'Upload file'}
+    </Button>
+  )
+}
+
+function ToggleButtonDemo(args: ButtonProps) {
+  const [pressed, setPressed] = useState(false)
+
+  return (
+    <Button
+      {...args}
+      variant="toggle"
+      size="small"
+      aria-pressed={pressed}
+      startIcon={<HeartIcon />}
+      endIcon={undefined}
+      onClick={() => setPressed((prev) => !prev)}
+    >
+      {pressed ? 'Like' : 'Like'}
+    </Button>
+  )
+}
+
 const meta = {
   title: 'UI/Button',
   component: Button,
@@ -28,7 +110,11 @@ const meta = {
   argTypes: {
     variant: {
       control: 'select',
-      options: ['primary', 'secondary', 'ghost'],
+      options: ['primary', 'secondary', 'ghost', 'toggle', 'danger'],
+    },
+    size: {
+      control: 'select',
+      options: ['small', 'medium', 'large'],
     },
   },
 } satisfies Meta<typeof Button>
@@ -36,56 +122,177 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const Primary: Story = {
+export const Default: Story = {
+  name: 'All Variants',
   args: {
-    children: 'Primary',
+    size: 'medium',
+  },
+  argTypes: {
+    variant: {
+      control: false,
+      table: {
+        disable: true,
+      },
+    },
+  },
+  render: (args) => (
+    <div className="flex flex-wrap items-center gap-3">
+      <Button variant="primary" size={args.size}>
+        Primary
+      </Button>
+      <Button variant="secondary" size={args.size}>
+        Secondary
+      </Button>
+      <Button variant="ghost" size={args.size}>
+        Ghost
+      </Button>
+      <Button variant="danger" size={args.size}>
+        Danger
+      </Button>
+    </div>
+  ),
+}
+
+export const Sizes: Story = {
+  name: 'Sizes',
+  args: {
     variant: 'primary',
   },
-}
-
-export const Secondary: Story = {
-  args: {
-    children: 'Secondary',
-    variant: 'secondary',
+  argTypes: {
+    size: {
+      control: false,
+      table: {
+        disable: true,
+      },
+    },
   },
-}
-
-export const Ghost: Story = {
-  args: {
-    children: 'Ghost',
-    variant: 'ghost',
-  },
+  render: (args) => (
+    <div className="flex flex-wrap items-end gap-3">
+      <Button variant={args.variant} size="small">
+        {`${args.variant} Small`}
+      </Button>
+      <Button variant={args.variant} size="medium">
+        {`${args.variant} Medium`}
+      </Button>
+      <Button variant={args.variant} size="large">
+        {`${args.variant} Large`}
+      </Button>
+    </div>
+  ),
 }
 
 export const Disabled: Story = {
+  name: 'Disabled',
   args: {
     children: 'Disabled',
     disabled: true,
+    size: 'medium',
   },
 }
 
-export const WithStartIcon: Story = {
+export const WithIcons: Story = {
+  name: 'With Icons',
   args: {
-    children: 'Добавить',
-    startIcon: <PlusIcon />,
+    children: 'Action',
     variant: 'primary',
+    size: 'medium',
+    startIcon: <PlusIcon />,
+    endIcon: undefined,
+  },
+  argTypes: {
+    startIcon: {
+      options: ['off', 'on'],
+      mapping: {
+        off: undefined,
+        on: <PlusIcon />,
+      },
+      control: {
+        type: 'inline-radio',
+      },
+    },
+    endIcon: {
+      options: ['off', 'on'],
+      mapping: {
+        off: undefined,
+        on: <ChevronIcon />,
+      },
+      control: {
+        type: 'inline-radio',
+      },
+    },
   },
 }
 
-export const WithEndIcon: Story = {
+export const WithLoadingState: Story = {
+  name: 'With Loading State',
   args: {
-    children: 'Далее',
-    endIcon: <ChevronIcon />,
-    variant: 'secondary',
+    variant: 'primary',
+    size: 'medium',
   },
+  argTypes: {
+    children: {
+      control: false,
+      table: {
+        disable: true,
+      },
+    },
+    startIcon: {
+      control: false,
+      table: {
+        disable: true,
+      },
+    },
+    endIcon: {
+      control: false,
+      table: {
+        disable: true,
+      },
+    },
+  },
+  render: (args) => <LoadingButtonDemo {...args} />,
+}
+
+export const ToggleButton: Story = {
+  name: 'Toggle Button',
+  args: {
+    size: 'small',
+  },
+  argTypes: {
+    variant: {
+      control: false,
+      table: {
+        disable: true,
+      },
+    },
+    size: {
+      control: false,
+      table: {
+        disable: true,
+      },
+    },
+    startIcon: {
+      control: false,
+      table: {
+        disable: true,
+      },
+    },
+    endIcon: {
+      control: false,
+      table: {
+        disable: true,
+      },
+    },
+  },
+  render: (args) => <ToggleButtonDemo {...args} />,
 }
 
 export const IconOnly: Story = {
-  name: 'Только иконка',
+  name: 'Icon Only',
   args: {
     children: undefined,
     startIcon: <PlusIcon />,
     variant: 'primary',
+    size: 'medium',
     'aria-label': 'Добавить',
   },
 }
