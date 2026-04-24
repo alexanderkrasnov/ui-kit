@@ -76,6 +76,7 @@ export function Dropdown({
 
   const isIcon = mode === 'icon'
   const triggerClass = `${triggerShell} ${triggerVariant[variant]}`.trim()
+  const menuClass = isIcon ? menuPanel : `${menuPanel} w-full min-w-0`
 
   return (
     <div ref={rootRef} className={`relative inline-block text-left ${className}`.trim()}>
@@ -101,7 +102,7 @@ export function Dropdown({
       </button>
 
       {open ? (
-        <ul id={listId} role="menu" className={menuPanel}>
+        <ul id={listId} role="menu" className={menuClass}>
           {items.map((item) => (
             <li key={item.label} role="none">
               <button

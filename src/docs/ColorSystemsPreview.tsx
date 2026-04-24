@@ -1,104 +1,204 @@
-interface ColorItemProps {
+import { useLayoutEffect, useState } from 'react'
+
+interface TokenItem {
   name: string
   variable: string
-  cssVariable?: string
 }
 
-function ColorItem({ cssVariable, name, variable }: ColorItemProps) {
-  const computedColor =
-    typeof window !== 'undefined'
-      ? getComputedStyle(document.documentElement).getPropertyValue(cssVariable || variable).trim()
-      : ''
+interface TokenGroup {
+  title: string
+  tokens: TokenItem[]
+}
+
+interface TokenSectionProps {
+  description?: string
+  title: string
+  groups: TokenGroup[]
+}
+
+const bridgeGroups: TokenGroup[] = [
+  {
+    title: 'Base utilities',
+    tokens: [
+      { name: 'Color Background', variable: '--color-background' },
+      { name: 'Color Foreground', variable: '--color-foreground' },
+      { name: 'Color Foreground Secondary', variable: '--color-foreground-secondary' },
+      { name: 'Color Foreground Tertiary', variable: '--color-foreground-tertiary' },
+    ],
+  },
+  {
+    title: 'Surface utilities',
+    tokens: [
+      { name: 'Color Surface Primary', variable: '--color-surface-primary' },
+      { name: 'Color Surface Secondary', variable: '--color-surface-secondary' },
+      { name: 'Color Surface Tertiary', variable: '--color-surface-tertiary' },
+      { name: 'Color Surface Primary Hover', variable: '--color-surface-primary-hover' },
+      { name: 'Color Surface Secondary Hover', variable: '--color-surface-secondary-hover' },
+    ],
+  },
+  {
+    title: 'Accent utilities',
+    tokens: [
+      { name: 'Color Accent', variable: '--color-accent' },
+      { name: 'Color Accent Foreground', variable: '--color-accent-foreground' },
+      { name: 'Color Accent Hover', variable: '--color-accent-hover' },
+    ],
+  },
+  {
+    title: 'Status utilities',
+    tokens: [
+      { name: 'Color Success', variable: '--color-success' },
+      { name: 'Color Success Foreground', variable: '--color-success-foreground' },
+      { name: 'Color Warning', variable: '--color-warning' },
+      { name: 'Color Warning Foreground', variable: '--color-warning-foreground' },
+      { name: 'Color Danger', variable: '--color-danger' },
+      { name: 'Color Danger Foreground', variable: '--color-danger-foreground' },
+      { name: 'Color Danger Hover', variable: '--color-danger-hover' },
+    ],
+  },
+  {
+    title: 'Border utilities',
+    tokens: [{ name: 'Color Border', variable: '--color-border' }],
+  },
+  {
+    title: 'Field utilities',
+    tokens: [
+      { name: 'Color Field Background', variable: '--color-field-background' },
+      { name: 'Color Field Foreground', variable: '--color-field-foreground' },
+      { name: 'Color Field Placeholder', variable: '--color-field-placeholder' },
+      { name: 'Color Field Border', variable: '--color-field-border' },
+      { name: 'Color Field Border Focus', variable: '--color-field-border-focus' },
+      { name: 'Color Field Border Invalid Focus', variable: '--color-field-border-invalid-focus' },
+    ],
+  },
+]
+
+function readComputedTokenValue(variable: string) {
+  if (typeof window === 'undefined') return ''
+
+  return getComputedStyle(document.documentElement).getPropertyValue(variable).trim()
+}
+
+function useThemeVersion() {
+  const [version, setVersion] = useState(0)
+
+  useLayoutEffect(() => {
+    if (typeof window === 'undefined') return undefined
+
+    const observer = new MutationObserver((mutations) => {
+      if (mutations.some((mutation) => mutation.attributeName === 'class' || mutation.attributeName === 'data-theme')) {
+        setVersion((currentVersion) => currentVersion + 1)
+      }
+    })
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class', 'data-theme'],
+    })
+
+    return () => observer.disconnect()
+  }, [])
+
+  return version
+}
+
+function TokenCard({ name, variable, themeVersion }: TokenItem & { themeVersion: number }) {
+  const [computedValue, setComputedValue] = useState('')
+
+  useLayoutEffect(() => {
+    setComputedValue(readComputedTokenValue(variable))
+  }, [themeVersion, variable])
 
   return (
-    <div className="flex items-center gap-4 rounded-3xl bg-surface-primary p-4 shadow-sm">
+    <div className="flex items-center gap-4 rounded-3xl border border-border bg-surface-primary p-4 shadow-sm">
       <div
+        aria-hidden="true"
         className="size-12 shrink-0 rounded-xl border border-border"
         style={{ backgroundColor: `var(${variable})` }}
       />
-      <div className="flex flex-1 flex-col gap-1">
-        <span className="text-sm font-medium text-foreground">{name}</span>
-        <code className="text-xs opacity-70">{variable}</code>
-      </div>
-      {!!computedColor && (
-        <div className="text-right">
-          <code className="font-mono text-xs opacity-70">{computedColor}</code>
+      <div className="min-w-0 flex-1">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-sm font-medium text-foreground">{name}</span>
+          <code className="rounded-md bg-surface-secondary px-2 py-1 text-[11px] text-foreground-tertiary">
+            {variable}
+          </code>
         </div>
+      </div>
+      {!!computedValue && (
+        <code className="max-w-[14rem] truncate rounded-md border border-border px-2 py-1 text-right font-mono text-xs text-foreground-tertiary">
+          {computedValue}
+        </code>
       )}
     </div>
   )
 }
 
-interface ColorSectionProps {
-  title: string
-  colors: ColorItemProps[]
-}
-
-function ColorSection({ colors, title }: ColorSectionProps) {
+function TokenGroupView({
+  group,
+  themeVersion,
+}: {
+  group: TokenGroup
+  themeVersion: number
+}) {
   return (
-    <div className="mb-8">
-      <h3 className="mb-4 text-lg font-semibold text-foreground">{title}</h3>
+    <section className="mb-8">
+      <h3 className="mb-4 text-lg font-semibold text-foreground">{group.title}</h3>
       <div className="grid gap-3">
-        {colors.map((color) => (
-          <ColorItem key={color.variable} {...color} />
+        {group.tokens.map((token) => (
+          <TokenCard key={token.variable} themeVersion={themeVersion} {...token} />
         ))}
       </div>
-    </div>
+    </section>
+  )
+}
+
+function TokenSection({
+  description,
+  groups,
+  title,
+}: TokenSectionProps) {
+  const themeVersion = useThemeVersion()
+
+  return (
+    <section className="rounded-3xl border border-border bg-surface-primary p-6 shadow-sm">
+      <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h2 className="mb-2 text-2xl font-bold text-foreground">{title}</h2>
+          {description ? <p className="max-w-3xl text-sm text-foreground-secondary">{description}</p> : null}
+        </div>
+      </div>
+      <div className="grid gap-8">
+        {groups.map((group) => (
+          <TokenGroupView key={group.title} group={group} themeVersion={themeVersion} />
+        ))}
+      </div>
+    </section>
   )
 }
 
 export function ColorSystemsPreview() {
-  const baseColors: ColorItemProps[] = [
-    { name: 'Background', variable: '--color-background' },
-    { name: 'Foreground', variable: '--color-foreground' },
-  ]
-
-  const backgroundAndSurfaceColors: ColorItemProps[] = [
-    { name: 'Surface Primary', variable: '--color-surface-primary' },
-    { name: 'Surface Primary Hover', variable: '--color-surface-primary-hover' },
-    { name: 'Surface Secondary', variable: '--color-surface-secondary' },
-    { name: 'Surface Secondary Hover', variable: '--color-surface-secondary-hover' },
-    { name: 'Surface Tertiary', variable: '--color-surface-tertiary' },
-    { name: 'Border', variable: '--color-border' },
-  ]
-
-  const foregroundScaleColors: ColorItemProps[] = [
-    { name: 'Foreground Secondary', variable: '--color-foreground-secondary' },
-    { name: 'Foreground Tertiary', variable: '--color-foreground-tertiary' },
-  ]
-
-  const primaryColors: ColorItemProps[] = [
-    { name: 'Accent', variable: '--color-accent' },
-    { name: 'Accent Hover', variable: '--color-accent-hover' },
-    { name: 'Accent Foreground', variable: '--color-accent-foreground' },
-  ]
-
-  const statusColors: ColorItemProps[] = [{ name: 'Danger', variable: '--color-danger' }]
-
-  const formFieldColors: ColorItemProps[] = [
-    { name: 'Field Background', variable: '--color-field-background' },
-    { name: 'Field Foreground', variable: '--color-field-foreground' },
-    { name: 'Field Placeholder', variable: '--color-field-placeholder' },
-    { name: 'Field Border', variable: '--color-field-border' },
-  ]
-
   return (
-    <div className="plexo-color-system mx-auto max-w-4xl p-6">
+    <div className="plexo-color-system mx-auto max-w-6xl p-6">
       <div className="mb-8">
         <h1 className="mb-2 text-3xl font-bold text-foreground">Color System</h1>
-        <p className="opacity-70">
-          Цветовые токены, которые реально используются текущими{' '}
-          <code className="text-xs">Button</code> и <code className="text-xs">Input</code>, разложены
-          по hero-ui-подобным секциям.
+        <p className="max-w-3xl text-sm text-foreground-secondary">
+          Эта docs-страница показывает только <code className="text-xs">@theme</code>-токены из
+          <code className="text-xs">src/styles/tokens.css</code>. При переключении Light/Dark в
+          Storybook карточки и вычисленные значения обновляются вместе с темой.
+        </p>
+        <p className="mt-2 max-w-3xl text-sm text-foreground-secondary">
+          Для консистентности OKLCH в проекте записывается как <code className="text-xs">oklch(L% C H)</code>:
+          lightness через проценты, chroma числом, hue числом-углом.
         </p>
       </div>
 
-      <ColorSection colors={baseColors} title="Base Colors" />
-      <ColorSection colors={foregroundScaleColors} title="Text / Foreground" />
-      <ColorSection colors={backgroundAndSurfaceColors} title="Background & Surface" />
-      <ColorSection colors={primaryColors} title="Primary Colors" />
-      <ColorSection colors={statusColors} title="Status Colors" />
-      <ColorSection colors={formFieldColors} title="Form Field Colors" />
+      <div className="grid gap-8">
+        <TokenSection
+          description="Utility-токены из `@theme`, которые используют компоненты и Tailwind-классы."
+          groups={bridgeGroups}
+          title="Tailwind color bridge"
+        />
+      </div>
     </div>
   )
 }

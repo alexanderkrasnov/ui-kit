@@ -71,9 +71,15 @@ export const Secondary: Story = {
 
 export const Disabled: Story = {
   render: () => (
-    <RadioGroup defaultValue="a">
-      <Radio value="a" label="On" variant="default" />
-      <Radio value="b" label="Off" variant="default" disabled />
-    </RadioGroup>
+    <div className="flex w-[min(100%,24rem)] flex-col gap-4">
+      <RadioGroup defaultValue="a">
+        <Radio value="a" label="Default selected disabled" variant="default" disabled />
+        <Radio value="b" label="Default unselected disabled" variant="default" disabled />
+      </RadioGroup>
+      <RadioGroup defaultValue="x">
+        <Radio value="x" label="Secondary selected disabled" variant="secondary" disabled />
+        <Radio value="y" label="Secondary unselected disabled" variant="secondary" disabled />
+      </RadioGroup>
+    </div>
   ),
 }

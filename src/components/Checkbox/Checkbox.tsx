@@ -24,10 +24,10 @@ const variantBox: Record<
 > = {
   default: {
     normal:
-      `${peerShell} shadow-sm bg-field-background peer-checked:bg-accent ` +
+      `${peerShell} shadow-sm bg-field-background peer-checked:bg-accent peer-checked:shadow-none ` +
       'peer-focus-visible:ring-field-border-focus/35',
     error:
-      `${peerShell} shadow-sm bg-field-background peer-checked:bg-accent ` +
+      `${peerShell} shadow-sm bg-field-background peer-checked:bg-accent peer-checked:shadow-none ` +
       'peer-focus-visible:ring-field-border-focus/35',
   },
   secondary: {
@@ -42,7 +42,7 @@ const variantBox: Record<
 
 /** Минимальный checkmark без анимации */
 const checkWrapClass =
-  'relative z-10 inline-flex size-2.5 shrink-0 items-center justify-center opacity-0 ' +
+  'pointer-events-none absolute inset-0 z-10 flex items-center justify-center opacity-0 ' +
   'group-has-[input:checked]:opacity-100'
 
 export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Checkbox(
@@ -85,12 +85,11 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Che
         aria-label={label == null ? (props['aria-label'] as string | undefined) ?? 'Checkbox' : undefined}
       />
       <span className={boxClass} aria-hidden>
-        <span className={`${checkWrapClass} pointer-events-none`.trim()}>
+        <span className={checkWrapClass}>
           <Check
-            size={10}
             strokeWidth={4}
             color={checkStroke}
-            className="shrink-0"
+            className="size-2.5 shrink-0"
             aria-hidden
           />
         </span>

@@ -21,15 +21,15 @@ const shell =
 const variantRing: Record<NonNullable<RadioProps['variant']>, string> = {
   default:
     `${shell} shadow-sm bg-field-background ` +
-    'group-has-[input:checked]:bg-accent group-has-[input:checked]:shadow-sm',
+    'group-has-[input:checked]:bg-accent group-has-[input:checked]:shadow-none',
   secondary: `${shell} bg-surface-secondary ` + 'group-has-[input:checked]:bg-accent',
 }
 
 const dotIndicatorWrapClass =
-  'inline-flex size-2 shrink-0 items-center justify-center opacity-0 ' +
+  'pointer-events-none absolute inset-0 flex items-center justify-center opacity-0 ' +
   'group-has-[input:checked]:opacity-100'
 
-const dotFill = 'size-2 rounded-full bg-[var(--color-accent-foreground)]'
+const dotFill = 'block size-2 shrink-0 rounded-full bg-[var(--color-accent-foreground)]'
 
 export const Radio = forwardRef<HTMLInputElement, RadioProps>(function Radio(
   {

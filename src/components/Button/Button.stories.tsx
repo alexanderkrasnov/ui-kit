@@ -291,8 +291,22 @@ export const IconOnly: Story = {
   args: {
     children: undefined,
     startIcon: <PlusIcon />,
-    variant: 'primary',
     size: 'medium',
     'aria-label': 'Добавить',
   },
+  argTypes: {
+    variant: {
+      control: false,
+      table: {
+        disable: true,
+      },
+    },
+  },
+  render: (args) => (
+    <div className="flex flex-wrap items-center gap-3">
+      <Button {...args} variant="primary" />
+      <Button {...args} variant="secondary" />
+      <Button {...args} variant="ghost" />
+    </div>
+  ),
 }

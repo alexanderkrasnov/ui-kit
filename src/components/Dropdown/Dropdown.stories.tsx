@@ -37,48 +37,74 @@ export const Variants: Story = {
   name: 'Variants',
   render: () => (
     <div className="flex w-[min(100%,24rem)] flex-col gap-3">
-      <Dropdown items={sampleItems} mode="chevron" label="Default dropdown" icon={<ChevronDown />} variant="default" />
       <Dropdown
         items={sampleItems}
         mode="chevron"
-        label="Secondary dropdown"
+        label="Default with chevron"
         icon={<ChevronDown />}
+        variant="default"
+      />
+      <Dropdown
+        items={sampleItems}
+        mode="chevron"
+        label="Secondary with chevron"
+        icon={<ChevronDown />}
+        variant="secondary"
+      />
+      <Dropdown
+        items={sampleItems}
+        mode="icon"
+        icon={<MoreVertical />}
+        aria-label="Icon only default"
+        variant="default"
+      />
+      <Dropdown
+        items={sampleItems}
+        mode="icon"
+        icon={<MoreVertical />}
+        aria-label="Icon only secondary"
         variant="secondary"
       />
     </div>
   ),
 }
 
-export const AllModes: Story = {
-  name: 'All modes',
-  render: () => (
-    <div className="flex flex-wrap items-start justify-center gap-6">
-      <Dropdown items={sampleItems} mode="chevron" label="Menu" icon={<ChevronDown />} variant="default" />
-      <Dropdown
-        items={sampleItems}
-        mode="icon"
-        icon={<MoreVertical />}
-        aria-label="More actions"
-        variant="default"
-      />
-    </div>
-  ),
-}
-
-export const WithChevron: Story = {
-  name: 'With chevron',
+export const DefaultWithChevron: Story = {
+  name: 'Default with chevron',
   args: {
     mode: 'chevron',
-    label: 'Options',
+    label: 'Default with chevron',
     icon: <ChevronDown />,
+    variant: 'default',
   },
 }
 
-export const WithMenuIcon: Story = {
-  name: 'With menu icon',
+export const SecondaryWithChevron: Story = {
+  name: 'Secondary with chevron',
+  args: {
+    mode: 'chevron',
+    label: 'Secondary with chevron',
+    icon: <ChevronDown />,
+    variant: 'secondary',
+  },
+}
+
+export const IconOnlyDefault: Story = {
+  name: 'Icon only default',
   args: {
     mode: 'icon',
     icon: <MoreVertical />,
-    'aria-label': 'More actions',
+    'aria-label': 'Icon only default',
+    variant: 'default',
+  },
+}
+
+export const IconOnlySecondary: Story = {
+  name: 'Icon only secondary',
+  args: {
+    mode: 'icon',
+    icon: <MoreVertical />,
+    'aria-label': 'Icon only secondary',
+    variant: 'secondary',
   },
 }
