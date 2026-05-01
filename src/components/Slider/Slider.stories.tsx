@@ -15,7 +15,7 @@ function formatCompactCurrencyValue(value: number) {
 }
 
 const meta = {
-  title: 'UI/Slider',
+  title: 'Controls/Slider',
   component: Slider,
   parameters: { layout: 'centered' },
   tags: ['autodocs'],

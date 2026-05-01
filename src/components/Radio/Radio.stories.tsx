@@ -4,7 +4,7 @@ import { Radio } from './Radio'
 import { RadioGroup } from './RadioGroup'
 
 const meta = {
-  title: 'UI/Radio',
+  title: 'Forms/Radio Button',
   component: Radio,
   args: {
     value: 'b',

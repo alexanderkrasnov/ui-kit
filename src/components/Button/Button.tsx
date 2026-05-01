@@ -2,7 +2,7 @@ import type { ButtonHTMLAttributes, ReactNode } from 'react'
 
 export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   /** Visual style variant */
-  variant?: 'primary' | 'secondary' | 'ghost' | 'toggle' | 'danger'
+  variant?: 'primary' | 'secondary' | 'ghost' | 'danger'
   /** Visual size scale */
   size?: 'small' | 'medium' | 'large'
   /** Icon before label (any React node, typically an SVG icon) */
@@ -50,10 +50,6 @@ export function Button({
       'focus-visible:outline-accent',
     ghost:
       'bg-transparent text-foreground shadow-none hover:bg-surface-secondary-hover ' +
-      'focus-visible:outline-accent',
-    toggle:
-      'bg-transparent text-foreground shadow-none hover:bg-surface-secondary-hover ' +
-      'aria-pressed:bg-accent/15 aria-pressed:hover:bg-accent/20 aria-pressed:text-accent aria-pressed:shadow-none ' +
       'focus-visible:outline-accent',
     danger:
       'bg-danger text-accent-foreground shadow-sm hover:bg-danger-hover ' +

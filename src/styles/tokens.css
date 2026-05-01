@@ -53,8 +53,8 @@
 
     /* Surface */
     --surface-primary: var(--white);
-    --surface-secondary: var(--neutral-200);
-    --surface-tertiary: var(--neutral-300);
+    --surface-secondary: var(--neutral-100);
+    --surface-tertiary: var(--neutral-200);
 
     /* Accent */
     --accent: var(--brand-500);
@@ -179,13 +179,6 @@
     var(--color-accent-foreground) 10%
   );
 
-  /* Hover для primary surface */
-  --color-surface-primary-hover: color-mix(
-    in oklab,
-    var(--color-surface-primary) 96%,
-    var(--color-foreground) 4%
-  );
-
   /* Hover для secondary surface */
   --color-surface-secondary-hover: color-mix(
     in oklab,
@@ -225,10 +218,17 @@
     color: inherit;
   }
 
+  .sb-show-main,
+  .sb-main-centered,
+  .sb-main-padded,
+  #storybook-root {
+    background-color: #fff !important;
+  }
+
   .docs-story,
   .sbdocs-preview,
   [data-story-block='true'] {
-    background-color: var(--color-background) !important;
+    background-color: #fff !important;
     color: var(--color-foreground);
     transition:
       background-color 160ms ease,
@@ -247,6 +247,67 @@
    Смотри сюда, когда нужно быстро назначить размер и жирность одним классом
    (например heading-1, heading-2, heading-3). */
 @layer components {
+  @keyframes date-picker-popover-in {
+    from {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .date-picker-popover {
+    animation: date-picker-popover-in 150ms ease-in-out;
+    transform-origin: top center;
+  }
+
+  @keyframes input-otp-digit-in {
+    from {
+      opacity: 0;
+      transform: translateY(5px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .input-otp-digit {
+    animation: input-otp-digit-in 150ms ease-in-out;
+  }
+
+  @keyframes input-otp-helper-in {
+    from {
+      opacity: 0;
+      transform: translateX(-5px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  .input-otp-helper {
+    animation: input-otp-helper-in 150ms ease-out;
+  }
+
+  @keyframes tooltip-enter {
+    from {
+      opacity: 0;
+      transform: translateY(5px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
   .heading-1 {
     @apply text-4xl font-bold;
   }

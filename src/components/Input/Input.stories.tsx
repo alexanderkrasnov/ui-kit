@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { Input } from './Input'
 
 const meta = {
-  title: 'UI/Input',
+  title: 'Forms/Input',
   component: Input,
   parameters: {
     layout: 'centered',
@@ -11,7 +11,7 @@ const meta = {
   tags: ['autodocs'],
   decorators: [
     (Story) => (
-      <div className="w-[min(100%,20rem)]">
+      <div className="w-[250px]">
         <Story />
       </div>
     ),
@@ -28,7 +28,7 @@ type Story = StoryObj<typeof meta>
 
 export const Variants: Story = {
   render: () => (
-    <div className="flex w-[min(100%,24rem)] flex-col gap-3">
+    <div className="flex w-[250px] flex-col gap-3">
       <Input placeholder="Default input" variant="default" />
       <Input placeholder="Secondary input" variant="secondary" />
     </div>

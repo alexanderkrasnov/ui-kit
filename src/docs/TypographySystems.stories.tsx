@@ -8,8 +8,9 @@ const meta = {
   parameters: {
     layout: 'fullscreen',
     backgrounds: {
-      default: 'theme background',
+      default: 'white',
       values: [
+        { name: 'white', value: '#ffffff' },
         { name: 'theme background', value: 'var(--color-background)' },
         { name: 'surface primary', value: 'var(--color-surface-primary)' },
         { name: 'surface secondary', value: 'var(--color-surface-secondary)' },

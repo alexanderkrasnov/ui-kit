@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { Avatar } from './Avatar'
 
 const meta = {
-  title: 'UI/Avatar',
+  title: 'UI Chunks/Avatar',
   component: Avatar,
   parameters: { layout: 'centered' },
   tags: ['autodocs'],

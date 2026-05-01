@@ -10,7 +10,7 @@ const sampleItems = [
 ]
 
 const meta = {
-  title: 'UI/Dropdown',
+  title: 'Forms/Dropdown menu',
   component: Dropdown,
   parameters: { layout: 'centered' },
   tags: ['autodocs'],
@@ -23,7 +23,7 @@ const meta = {
   },
   decorators: [
     (Story) => (
-      <div className="w-[min(100%,20rem)]">
+      <div className="flex items-start">
         <Story />
       </div>
     ),
@@ -34,20 +34,19 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Variants: Story = {
-  name: 'Variants',
   render: () => (
-    <div className="flex w-[min(100%,24rem)] flex-col gap-3">
+    <div className="flex flex-col items-start gap-3">
       <Dropdown
         items={sampleItems}
         mode="chevron"
-        label="Default with chevron"
+        label="Dropdown menu"
         icon={<ChevronDown />}
         variant="default"
       />
       <Dropdown
         items={sampleItems}
         mode="chevron"
-        label="Secondary with chevron"
+        label="Dropdown menu"
         icon={<ChevronDown />}
         variant="secondary"
       />
@@ -69,21 +68,19 @@ export const Variants: Story = {
   ),
 }
 
-export const DefaultWithChevron: Story = {
-  name: 'Default with chevron',
+export const Default: Story = {
   args: {
     mode: 'chevron',
-    label: 'Default with chevron',
+    label: 'Dropdown menu',
     icon: <ChevronDown />,
     variant: 'default',
   },
 }
 
-export const SecondaryWithChevron: Story = {
-  name: 'Secondary with chevron',
+export const Secondary: Story = {
   args: {
     mode: 'chevron',
-    label: 'Secondary with chevron',
+    label: 'Dropdown menu',
     icon: <ChevronDown />,
     variant: 'secondary',
   },

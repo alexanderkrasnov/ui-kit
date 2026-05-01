@@ -12,7 +12,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   ref,
 ) {
   const base =
-    'block w-full min-w-0 rounded-md border px-3 py-2 text-sm transition-[border-color,box-shadow] ' +
+    'block w-full min-w-0 rounded-lg border px-3 py-2 text-sm transition-[border-color,box-shadow] ' +
     'font-sans  ' +
     'placeholder:text-field-placeholder ' +
     'focus-visible:outline-none ' +

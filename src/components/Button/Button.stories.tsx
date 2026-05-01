@@ -34,18 +34,6 @@ function LoadingSpinner() {
   )
 }
 
-function HeartIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-      <path
-        d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  )
-}
-
 function PaperclipIcon() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
@@ -82,26 +70,8 @@ function LoadingButtonDemo(args: ButtonProps) {
   )
 }
 
-function ToggleButtonDemo(args: ButtonProps) {
-  const [pressed, setPressed] = useState(false)
-
-  return (
-    <Button
-      {...args}
-      variant="toggle"
-      size="small"
-      aria-pressed={pressed}
-      startIcon={<HeartIcon />}
-      endIcon={undefined}
-      onClick={() => setPressed((prev) => !prev)}
-    >
-      {pressed ? 'Like' : 'Like'}
-    </Button>
-  )
-}
-
 const meta = {
-  title: 'UI/Button',
+  title: 'Buttons/Button',
   component: Button,
   parameters: {
     layout: 'centered',
@@ -110,7 +80,7 @@ const meta = {
   argTypes: {
     variant: {
       control: 'select',
-      options: ['primary', 'secondary', 'ghost', 'toggle', 'danger'],
+      options: ['primary', 'secondary', 'ghost', 'danger'],
     },
     size: {
       control: 'select',
@@ -221,6 +191,7 @@ export const WithIcons: Story = {
       },
     },
   },
+  render: (args) => <LoadingButtonDemo {...args} />,
 }
 
 export const WithLoadingState: Story = {
@@ -250,40 +221,6 @@ export const WithLoadingState: Story = {
     },
   },
   render: (args) => <LoadingButtonDemo {...args} />,
-}
-
-export const ToggleButton: Story = {
-  name: 'Toggle Button',
-  args: {
-    size: 'small',
-  },
-  argTypes: {
-    variant: {
-      control: false,
-      table: {
-        disable: true,
-      },
-    },
-    size: {
-      control: false,
-      table: {
-        disable: true,
-      },
-    },
-    startIcon: {
-      control: false,
-      table: {
-        disable: true,
-      },
-    },
-    endIcon: {
-      control: false,
-      table: {
-        disable: true,
-      },
-    },
-  },
-  render: (args) => <ToggleButtonDemo {...args} />,
 }
 
 export const IconOnly: Story = {

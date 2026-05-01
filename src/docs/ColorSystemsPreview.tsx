@@ -32,7 +32,6 @@ const bridgeGroups: TokenGroup[] = [
       { name: 'Color Surface Primary', variable: '--color-surface-primary' },
       { name: 'Color Surface Secondary', variable: '--color-surface-secondary' },
       { name: 'Color Surface Tertiary', variable: '--color-surface-tertiary' },
-      { name: 'Color Surface Primary Hover', variable: '--color-surface-primary-hover' },
       { name: 'Color Surface Secondary Hover', variable: '--color-surface-secondary-hover' },
     ],
   },

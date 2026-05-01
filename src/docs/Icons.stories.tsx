@@ -16,7 +16,7 @@ import {
  * уже подключён в проекте и tree-shakeable.
  */
 const meta = {
-  title: 'UI/Icons',
+  title: 'UI Chunks/Icons',
   parameters: { layout: 'centered' },
   tags: ['autodocs'],
 } satisfies Meta

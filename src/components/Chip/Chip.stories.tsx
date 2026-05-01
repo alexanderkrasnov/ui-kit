@@ -28,7 +28,7 @@ const toneLabels: Record<(typeof tones)[number], string> = {
 }
 
 const meta = {
-  title: 'UI/Chip',
+  title: 'UI Chunks/Chip',
   component: Chip,
   parameters: { layout: 'centered' },
   tags: ['autodocs'],
