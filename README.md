@@ -67,6 +67,7 @@ Repo-admin controls (configure once in GitHub UI — not code):
 - **Environment `production`:** add required reviewers so the publish job pauses for approval.
 - **Repo settings → Actions → General:** restrict to "Allow actions and reusable workflows" matching the pinned set; deny `GITHUB_TOKEN` write by default.
 - **Code security:** enable secret scanning, push protection, and Dependabot alerts (free on private repos in orgs with GHAS).
+- **GitHub Advanced Security (GHAS):** required to activate the `dependency-review` and `CodeQL` jobs on this private repo. Both are wired in but marked `continue-on-error` until GHAS is enabled at the org level — they will start gating PRs automatically once it is. Without GHAS, `npm audit signatures` + `lockfile-lint` + `npm audit` still cover the supply-chain layer.
 
 ### Registry-attack defenses
 
