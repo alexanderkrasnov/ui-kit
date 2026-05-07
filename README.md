@@ -52,9 +52,10 @@ Pipeline-level (already wired in `.github/`):
 | Pinned actions | All workflows | Third-party actions pinned to commit SHA (Dependabot keeps them current) |
 | Pinned runner | All workflows | `ubuntu-24.04`, not `ubuntu-latest` |
 | Deterministic install | All workflows | `npm ci` against committed lockfile |
-| Dependency vulnerability scan | `ci.yml` audit job, `publish.yml` | `npm audit --audit-level=high --omit=dev` |
-| PR dependency review | `ci.yml` | Blocks PRs that introduce high-severity advisories |
-| SAST | `codeql.yml` | CodeQL `security-and-quality` queries on push, PR, weekly cron |
+| Dependency vulnerability scan (npm advisories) | `ci.yml` audit job, `publish.yml` | `npm audit --audit-level=high --omit=dev` |
+| Dependency vulnerability scan (OSV.dev) | `ci.yml` vuln-scan job | OSV-Scanner against `package-lock.json` — broader source than npm advisories |
+| Package-signature verification | `ci.yml` audit job, `publish.yml` | `npm audit signatures` (Sigstore-backed) |
+| SAST | `ci.yml` sast job | Semgrep with `p/javascript`, `p/typescript`, `p/react`, `p/security-audit` rulesets |
 | Automated dep updates | `dependabot.yml` | Weekly grouped PRs for npm + GitHub Actions |
 | Tag–version match check | `publish.yml` | Refuses to publish if `vX.Y.Z` tag doesn't match `package.json` |
 | `production` environment gate | `publish.yml` | Lets org admins require manual approval before a release runs |
@@ -62,12 +63,11 @@ Pipeline-level (already wired in `.github/`):
 
 Repo-admin controls (configure once in GitHub UI — not code):
 
-- **Branch protection on `master`:** require PR + passing `CI / build`, `CI / audit`, `CI / lockfile-lint`, `CodeQL / analyze`; block force-push and direct pushes; require signed commits.
+- **Branch protection on `master`:** require PR + passing `CI / build`, `CI / audit`, `CI / lockfile-lint`, `CI / sast`, `CI / vuln-scan`; block force-push and direct pushes; require signed commits.
 - **Tag protection rule** for `v*`: only maintainers can push release tags.
 - **Environment `production`:** add required reviewers so the publish job pauses for approval.
 - **Repo settings → Actions → General:** restrict to "Allow actions and reusable workflows" matching the pinned set; deny `GITHUB_TOKEN` write by default.
-- **Code security:** enable secret scanning, push protection, and Dependabot alerts (free on private repos in orgs with GHAS).
-- **GitHub Advanced Security (GHAS):** required to activate the `dependency-review` and `CodeQL` jobs on this private repo. Both are wired in but marked `continue-on-error` until GHAS is enabled at the org level — they will start gating PRs automatically once it is. Without GHAS, `npm audit signatures` + `lockfile-lint` + `npm audit` still cover the supply-chain layer.
+- **Code security (free, no GHAS needed):** enable Dependabot alerts in repo settings — works on private repos at no cost.
 
 ### Registry-attack defenses
 
@@ -90,7 +90,7 @@ Specific to the package-supply-chain class (dependency confusion, lockfile poiso
 | **NIST SSDF (SP 800-218)** — PS.2, PS.3, PW.4, PW.7, RV.1 | Fully covered (provenance via tags, secure tools, code review via PRs, vuln response via Dependabot/audit) |
 | **SLSA** (Supply-chain Levels for Software Artifacts) | ~Level 2 (versioned source, hosted scripted build, isolated runner). Level 3 requires signed build provenance — npm `--provenance` is not available on GitHub Packages, but `slsa-framework/slsa-github-generator` can attach SLSA attestations to releases as a future hardening step. |
 | **OWASP CI/CD Top 10** | Addressed: insufficient flow control (env gate), inadequate identity (least-priv tokens, OIDC-style `GITHUB_TOKEN`), poisoned pipeline execution (PR jobs cannot write to packages), insecure system config (pinned actions, default-deny perms) |
-| **OpenSSF Scorecard** | Pinned-deps, branch-protection, signed-commits, dependency-update-tool, SAST, token-permissions, vulnerabilities — all green-able |
+| **OpenSSF Scorecard** | Pinned-deps, branch-protection, signed-commits, dependency-update-tool, SAST (Semgrep), token-permissions, vulnerabilities — all green-able |
 | **CycloneDX SBOM** (NTIA minimum elements / EO 14028) | Generated and attached to every GitHub Release as `sbom.cdx.json` |
 | **Sigstore** | Used transitively via `npm audit signatures` — every published version of every dep is verified against the registry's Sigstore log |
 | **CIS Software Supply Chain Security Guide v1.1** | Aligned on source, build pipeline, dependency, and artifact controls |

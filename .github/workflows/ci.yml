@@ -52,8 +52,6 @@ jobs:
         run: npm audit --audit-level=high --omit=dev
 
       - name: Verify package signatures (Sigstore)
-        # Defends against tampered tarballs and compromised-maintainer releases
-        # by validating registry-issued Sigstore attestations on every dep.
         run: |
           npm ci --ignore-scripts
           npm audit signatures
@@ -72,9 +70,6 @@ jobs:
           node-version: 22
 
       - name: Validate lockfile registry pins (anti-poisoning)
-        # Refuses any `resolved` URL that points outside the allow-list, lacks
-        # https, or is missing an integrity hash. Mitigates lockfile-poisoning
-        # PRs and dependency-confusion via a tampered package-lock.json.
         run: |
           npx --yes lockfile-lint@4 \
             --path package-lock.json \
@@ -84,22 +79,43 @@ jobs:
             --validate-package-names \
             --allowed-hosts npm npm.pkg.github.com
 
-  dependency-review:
-    # Requires GitHub Advanced Security (Dependency Graph) on private repos.
-    # Marked non-blocking until GHAS is enabled at the org level — once it is,
-    # this job will start gating PRs automatically. No code change needed.
-    if: github.event_name == 'pull_request'
+  sast:
+    # Semgrep SAST. Replaces CodeQL on this private repo (no GHAS required).
+    # Uses curated community rulesets; runs fully offline, no account needed.
     runs-on: ubuntu-24.04
-    continue-on-error: true
     permissions:
       contents: read
-      pull-requests: write
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           persist-credentials: false
 
-      - uses: actions/dependency-review-action@2031cfc080254a8a887f58cffee85186f0e49e48 # v4.9.0
+      - name: Install Semgrep
+        run: python3 -m pip install --user semgrep==1.115.0
+
+      - name: Run Semgrep
+        run: |
+          semgrep scan \
+            --config p/javascript \
+            --config p/typescript \
+            --config p/react \
+            --config p/security-audit \
+            --error \
+            --strict \
+            --metrics=off
+
+  vuln-scan:
+    # OSV-Scanner. Queries OSV.dev (broader vulnerability source than npm
+    # advisories), catching deps before they show up in `npm audit`.
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
-          fail-on-severity: high
-          comment-summary-in-pr: on-failure
+          persist-credentials: false
+
+      - uses: google/osv-scanner-action/osv-scanner-action@c51854704019a247608d928f370c98740469d4b5 # v2.3.5
+        with:
+          scan-args: |-
+            --lockfile=./package-lock.json
