@@ -1,8 +1,14 @@
 {
-  "name": "@remide/ui-kit",
-  "private": true,
+  "name": "@remide-tech/ui-kit",
   "version": "0.1.0",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RemiDe-Tech/ui-kit.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "files": [
     "dist"
   ],
@@ -24,7 +30,8 @@
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "typecheck": "tsc -b"
+    "typecheck": "tsc -b",
+    "prepublishOnly": "npm run build"
   },
   "peerDependencies": {
     "react": "^18 || ^19",
