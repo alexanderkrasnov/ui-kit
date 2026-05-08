@@ -48,13 +48,46 @@ jobs:
         with:
           node-version: 22
 
-      - name: Audit runtime dependencies (fails on high/critical)
-        run: npm audit --audit-level=high --omit=dev
+      - name: Audit runtime dependencies
+        run: |
+          set +e
+          npm audit --audit-level=high --omit=dev | tee npm-audit.txt
+          RESULT=${PIPESTATUS[0]}
+          {
+            echo "## npm audit (production tree, fail on high+)"
+            echo
+            echo '```'
+            cat npm-audit.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          npm audit --json --omit=dev > npm-audit.json || true
+          exit $RESULT
 
       - name: Verify package signatures (Sigstore)
         run: |
-          npm ci --ignore-scripts
-          npm audit signatures
+          set +e
+          npm ci --ignore-scripts > /dev/null
+          npm audit signatures | tee npm-signatures.txt
+          RESULT=${PIPESTATUS[0]}
+          {
+            echo "## npm audit signatures (Sigstore verification)"
+            echo
+            echo '```'
+            cat npm-signatures.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit $RESULT
+
+      - name: Upload npm-audit reports
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: npm-audit
+          path: |
+            npm-audit.txt
+            npm-audit.json
+            npm-signatures.txt
+          retention-days: 90
 
   lockfile-lint:
     runs-on: ubuntu-24.04
@@ -71,17 +104,34 @@ jobs:
 
       - name: Validate lockfile registry pins (anti-poisoning)
         run: |
+          set +e
           npx --yes lockfile-lint@4 \
             --path package-lock.json \
             --type npm \
             --validate-https \
             --validate-integrity \
             --validate-package-names \
-            --allowed-hosts npm npm.pkg.github.com
+            --allowed-hosts npm npm.pkg.github.com 2>&1 | tee lockfile-lint.txt
+          RESULT=${PIPESTATUS[0]}
+          {
+            echo "## lockfile-lint (anti-poisoning + dependency-confusion)"
+            echo
+            echo '```'
+            cat lockfile-lint.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit $RESULT
+
+      - name: Upload lockfile-lint report
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: lockfile-lint
+          path: lockfile-lint.txt
+          retention-days: 90
 
   sast:
     # Semgrep SAST. Replaces CodeQL on this private repo (no GHAS required).
-    # Uses curated community rulesets; runs fully offline, no account needed.
     runs-on: ubuntu-24.04
     permissions:
       contents: read
@@ -95,6 +145,8 @@ jobs:
 
       - name: Run Semgrep
         run: |
+          set +e
+          # Human-readable text report for the step summary
           semgrep scan \
             --config p/javascript \
             --config p/typescript \
@@ -102,7 +154,35 @@ jobs:
             --config p/security-audit \
             --error \
             --strict \
-            --metrics=off
+            --metrics=off 2>&1 | tee semgrep.txt
+          RESULT=${PIPESTATUS[0]}
+          # SARIF artifact (importable into other tools / Code Scanning later)
+          semgrep scan \
+            --config p/javascript \
+            --config p/typescript \
+            --config p/react \
+            --config p/security-audit \
+            --sarif \
+            --output=semgrep.sarif \
+            --metrics=off > /dev/null 2>&1 || true
+          {
+            echo "## Semgrep SAST"
+            echo
+            echo '```'
+            cat semgrep.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit $RESULT
+
+      - name: Upload Semgrep reports
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: semgrep
+          path: |
+            semgrep.txt
+            semgrep.sarif
+          retention-days: 90
 
   vuln-scan:
     # OSV-Scanner. Queries OSV.dev (broader vulnerability source than npm
@@ -115,8 +195,45 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: google/osv-scanner-action/osv-scanner-action@c51854704019a247608d928f370c98740469d4b5 # v2.3.5
+      - name: Run OSV-Scanner (markdown report)
+        uses: google/osv-scanner-action/osv-scanner-action@c51854704019a247608d928f370c98740469d4b5 # v2.3.5
         with:
           scan-args: |-
             --config=./osv-scanner.toml
+            --format=markdown
+            --output=osv-report.md
             --lockfile=./package-lock.json
+
+      - name: Run OSV-Scanner (JSON artifact)
+        if: always()
+        uses: google/osv-scanner-action/osv-scanner-action@c51854704019a247608d928f370c98740469d4b5 # v2.3.5
+        continue-on-error: true
+        with:
+          scan-args: |-
+            --config=./osv-scanner.toml
+            --format=json
+            --output=osv-report.json
+            --lockfile=./package-lock.json
+
+      - name: Append report to step summary
+        if: always()
+        run: |
+          {
+            echo "## OSV-Scanner (production deps)"
+            echo
+            if [ -s osv-report.md ]; then
+              cat osv-report.md
+            else
+              echo "_No vulnerabilities found._"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload OSV-Scanner reports
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: osv-scanner
+          path: |
+            osv-report.md
+            osv-report.json
+          retention-days: 90

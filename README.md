@@ -42,6 +42,17 @@ git push --tags
 
 The workflow verifies the tag matches `package.json` `version`, runs the build, and publishes.
 
+## Where to read security reports in GitHub
+
+Each CI run produces inline reports rendered directly in the GitHub UI — no GHAS or external service required.
+
+- **Step Summary** — visit any workflow run (Actions tab → click a run, or the PR's "Checks" tab → click a run). The top of the run page renders a Markdown summary for each scan job: `npm audit`, `npm audit signatures`, `lockfile-lint`, Semgrep, and OSV-Scanner.
+- **Artifacts** — the same run page has a "Artifacts" section at the bottom with downloadable files: `npm-audit` (text + JSON), `lockfile-lint` (text), `semgrep` (text + SARIF), `osv-scanner` (markdown + JSON), and on releases also `sbom-vX.Y.Z` (CycloneDX). Retention is 90 days for scans, 1 year for SBOMs.
+- **Job annotations** — failing rules and lint warnings appear inline in the run log and on the PR's "Files Changed" tab where applicable.
+- **GitHub Releases** — every published version has the CycloneDX SBOM attached as `sbom.cdx.json`.
+
+The SARIF file from Semgrep is portable: if GHAS is ever enabled, dropping it into a `github/codeql-action/upload-sarif` step pushes findings directly into the Security tab — no rewrite needed.
+
 ## Security controls
 
 Pipeline-level (already wired in `.github/`):
