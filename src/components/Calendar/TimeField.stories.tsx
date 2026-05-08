@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
+import { secondaryStorySurface } from '../../docs/story-surfaces'
 import { TimeField } from './TimeField'
 
 const meta = {
@@ -30,7 +31,9 @@ export const Variants: Story = {
   render: () => (
     <div className="flex w-[250px] flex-col gap-4">
       <TimeField label="Default" defaultValue="09:30" variant="default" />
-      <TimeField label="Secondary" defaultValue="09:30" variant="secondary" />
+      <div className={secondaryStorySurface}>
+        <TimeField label="Secondary" defaultValue="09:30" variant="secondary" />
+      </div>
     </div>
   ),
 }
@@ -46,6 +49,11 @@ export const Secondary: Story = {
     label: 'Time',
     variant: 'secondary',
   },
+  render: (args) => (
+    <div className={secondaryStorySurface}>
+      <TimeField {...args} />
+    </div>
+  ),
 }
 
 export const Required: Story = {

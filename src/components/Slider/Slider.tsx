@@ -113,15 +113,10 @@ export function Slider({
   )
 
   const latestValueRef = useRef<SliderValue>(currentValue)
-  latestValueRef.current = currentValue
 
   useEffect(() => {
-    if (isControlled) return
-
-    setUncontrolledValue((previousValue) =>
-      normalizeSliderValue(previousValue, min, resolvedMax, resolvedStep),
-    )
-  }, [isControlled, min, resolvedMax, resolvedStep])
+    latestValueRef.current = currentValue
+  }, [currentValue])
 
   const isRange = isRangeValue(currentValue)
   const currentRange = isRange ? currentValue : undefined
@@ -141,6 +136,7 @@ export function Slider({
   const visualFillWidth = isRange
     ? `calc(${visualFillEnd} - ${visualFillStart})`
     : visualFillEnd
+  const fillRadiusClass = isRange ? '' : 'rounded-l-full'
 
   const commitValue = (nextValue: SliderValue, options?: { emitEnd?: boolean }) => {
     latestValueRef.current = nextValue
@@ -227,7 +223,7 @@ export function Slider({
       window.removeEventListener('pointermove', handlePointerMove)
       window.removeEventListener('pointerup', handlePointerUp)
     }
-  }, [draggingThumb, handlePointerMove, handlePointerUp])
+  }, [draggingThumb])
 
   const handleTrackPointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
     if (disabled) return
@@ -298,8 +294,8 @@ export function Slider({
     ? 'text-sm font-sans font-medium leading-snug tabular-nums text-foreground'
     : 'text-sm font-sans font-medium leading-snug tabular-nums text-foreground-secondary'
   const trackShellClass = 'h-5'
-  const railClass = 'absolute inset-x-0 top-1/2 h-5 -translate-y-1/2 rounded-full bg-surface-secondary'
-  const fillClass = 'absolute top-1/2 h-5 -translate-y-1/2 rounded-full bg-accent'
+  const railClass = 'absolute inset-x-0 top-1/2 h-5 -translate-y-1/2 overflow-hidden rounded-full bg-surface-secondary'
+  const fillClass = 'absolute top-0 h-full bg-accent'
   const thumbClass =
     'absolute top-1/2 z-10 h-5 w-7 -translate-x-1/2 -translate-y-1/2 appearance-none rounded-full border-0 bg-accent p-0.5 outline-none transition-transform'
   const thumbInnerClass = 'block h-4 w-6 rounded-full bg-surface-primary shadow-md'
@@ -328,11 +324,12 @@ export function Slider({
         className={`relative flex w-full touch-none items-center ${trackShellClass} ${disabled ? 'opacity-50' : ''}`.trim()}
         onPointerDown={handleTrackPointerDown}
       >
-        <div className={railClass} />
-        <div
-          className={fillClass}
-          style={{ left: visualFillStart, width: visualFillWidth }}
-        />
+        <div className={railClass}>
+          <div
+            className={`${fillClass} ${fillRadiusClass}`.trim()}
+            style={{ left: visualFillStart, width: visualFillWidth }}
+          />
+        </div>
 
         {currentValues.map((thumbValue, thumbIndex) => (
           <button

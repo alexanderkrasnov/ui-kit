@@ -1,6 +1,5 @@
 import {
   forwardRef,
-  useEffect,
   useId,
   useMemo,
   useRef,
@@ -13,6 +12,17 @@ import {
   type ReactNode,
 } from 'react'
 
+import { cx } from '../_internal/cx'
+import {
+  getFieldBorderClass,
+  getFieldContainerClass,
+  getFieldDescribedBy,
+  getFieldHelperClass,
+  getFieldLabelClass,
+  getFieldSurfaceClass,
+  type FieldVariant,
+} from '../_internal/fieldStyles'
+
 export type DateFieldValue = string
 
 export type DateFieldProps = Omit<
@@ -22,7 +32,7 @@ export type DateFieldProps = Omit<
   label?: ReactNode
   description?: ReactNode
   errorMessage?: ReactNode
-  variant?: 'default' | 'secondary'
+  variant?: FieldVariant
   value?: DateFieldValue
   defaultValue?: DateFieldValue
   onChange?: (value: DateFieldValue) => void
@@ -124,19 +134,16 @@ export const DateField = forwardRef<HTMLDivElement, DateFieldProps>(function Dat
   const fieldId = id ?? `datefield-${autoId}`
   const descriptionId = description != null ? `${fieldId}-description` : undefined
   const errorId = errorMessage != null ? `${fieldId}-error` : undefined
-  const [segments, setSegments] = useState(() => getSegmentsFromValue(value ?? defaultValue))
+  const [uncontrolledSegments, setUncontrolledSegments] = useState(() =>
+    getSegmentsFromValue(value ?? defaultValue),
+  )
   const [activeSegment, setActiveSegment] = useState<DateSegment | null>(null)
   const [shouldReplaceSegment, setShouldReplaceSegment] = useState(true)
   const dayRef = useRef<HTMLInputElement>(null)
   const monthRef = useRef<HTMLInputElement>(null)
   const yearRef = useRef<HTMLInputElement>(null)
 
-  useEffect(() => {
-    if (value !== undefined) {
-      setSegments(getSegmentsFromValue(value))
-    }
-  }, [value])
-
+  const segments = value !== undefined ? getSegmentsFromValue(value) : uncontrolledSegments
   const dateValue = useMemo(() => getValueFromSegments(segments), [segments])
   const isComplete = dateValue !== ''
   const isOutOfRange =
@@ -145,23 +152,15 @@ export const DateField = forwardRef<HTMLDivElement, DateFieldProps>(function Dat
   const isInvalid =
     invalid || error || (isComplete && (!isValidDateValue(dateValue) || isOutOfRange))
   const helperId = isInvalid ? errorId : descriptionId
-  const describedBy =
-    [ariaDescribedByProp, helperId].filter(Boolean).join(' ') || undefined
+  const describedBy = getFieldDescribedBy(ariaDescribedByProp, helperId)
   const helperText = isInvalid ? errorMessage : description
-  const labelClass = disabled ? 'text-foreground-tertiary' : 'text-foreground'
-  const helperClass = isInvalid ? 'text-danger' : 'text-foreground-tertiary'
+  const labelClass = getFieldLabelClass(disabled)
+  const helperClass = getFieldHelperClass(isInvalid)
 
   const groupBase =
     'inline-flex w-full min-w-0 items-center rounded-lg border px-3 py-2 text-sm ' +
     'font-sans transition-[border-color,box-shadow] focus-within:outline-none ' +
     'disabled:cursor-not-allowed'
-  const groupVariant =
-    variant === 'secondary'
-      ? 'bg-surface-secondary text-foreground'
-      : 'bg-field-background text-field-foreground shadow-sm'
-  const groupState = isInvalid
-    ? 'border-danger focus-within:border-field-border-invalid-focus'
-    : 'border-transparent focus-within:border-field-border-focus'
   const segmentClass =
     'min-w-0 shrink-0 select-none p-0 text-center font-sans text-sm tabular-nums caret-transparent outline-none ' +
     'placeholder:text-field-placeholder disabled:cursor-not-allowed disabled:text-foreground-tertiary'
@@ -212,7 +211,10 @@ export const DateField = forwardRef<HTMLDivElement, DateFieldProps>(function Dat
   }
 
   function commitSegments(nextSegments: DateSegments) {
-    setSegments(nextSegments)
+    if (value === undefined) {
+      setUncontrolledSegments(nextSegments)
+    }
+
     onChange?.(getValueFromSegments(nextSegments))
   }
 
@@ -360,7 +362,7 @@ export const DateField = forwardRef<HTMLDivElement, DateFieldProps>(function Dat
   return (
     <div
       ref={ref}
-      className={`inline-flex w-full max-w-sm flex-col gap-1.5 font-sans ${className}`.trim()}
+      className={getFieldContainerClass(className)}
       {...props}
     >
       {label != null ? (
@@ -382,9 +384,13 @@ export const DateField = forwardRef<HTMLDivElement, DateFieldProps>(function Dat
         onMouseDown={handleFieldMouseDown}
         onBlur={handleFieldBlur}
         onPaste={handlePaste}
-        className={`${groupBase} ${groupVariant} ${groupState} ${
-          disabled ? 'cursor-not-allowed opacity-50' : 'cursor-text'
-        } ${inputClassName}`.trim()}
+        className={cx(
+          groupBase,
+          getFieldSurfaceClass(variant),
+          getFieldBorderClass(isInvalid),
+          disabled ? 'cursor-not-allowed opacity-50' : 'cursor-text',
+          inputClassName,
+        )}
       >
         <input
           ref={dayRef}

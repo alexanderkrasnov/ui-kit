@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
+import { secondaryStorySurface } from '../../docs/story-surfaces'
 import { Radio } from './Radio'
 import { RadioGroup } from './RadioGroup'
 
@@ -35,10 +36,12 @@ export const Variants: Story = {
         <Radio value="a" label="Default radio" variant="default" />
         <Radio value="b" label="Another (default)" variant="default" />
       </RadioGroup>
-      <RadioGroup defaultValue="y">
-        <Radio value="x" label="Secondary radio" variant="secondary" />
-        <Radio value="y" label="Another (secondary)" variant="secondary" />
-      </RadioGroup>
+      <div className={secondaryStorySurface}>
+        <RadioGroup defaultValue="y">
+          <Radio value="x" label="Secondary radio" variant="secondary" />
+          <Radio value="y" label="Another (secondary)" variant="secondary" />
+        </RadioGroup>
+      </div>
     </div>
   ),
 }
@@ -61,11 +64,13 @@ export const Secondary: Story = {
     variant: 'secondary',
   },
   render: (args) => (
-    <RadioGroup defaultValue="b">
-      <Radio value="a" label="Option A" variant={args.variant} helperText={args.helperText} />
-      <Radio value="b" label="Option B" variant={args.variant} helperText={args.helperText} />
-      <Radio value="c" label="Option C" variant={args.variant} helperText={args.helperText} />
-    </RadioGroup>
+    <div className={secondaryStorySurface}>
+      <RadioGroup defaultValue="b">
+        <Radio value="a" label="Option A" variant={args.variant} helperText={args.helperText} />
+        <Radio value="b" label="Option B" variant={args.variant} helperText={args.helperText} />
+        <Radio value="c" label="Option C" variant={args.variant} helperText={args.helperText} />
+      </RadioGroup>
+    </div>
   ),
 }
 
@@ -76,10 +81,12 @@ export const Disabled: Story = {
         <Radio value="a" label="Default selected disabled" variant="default" disabled />
         <Radio value="b" label="Default unselected disabled" variant="default" disabled />
       </RadioGroup>
-      <RadioGroup defaultValue="x">
-        <Radio value="x" label="Secondary selected disabled" variant="secondary" disabled />
-        <Radio value="y" label="Secondary unselected disabled" variant="secondary" disabled />
-      </RadioGroup>
+      <div className={secondaryStorySurface}>
+        <RadioGroup defaultValue="x">
+          <Radio value="x" label="Secondary selected disabled" variant="secondary" disabled />
+          <Radio value="y" label="Secondary unselected disabled" variant="secondary" disabled />
+        </RadioGroup>
+      </div>
     </div>
   ),
 }

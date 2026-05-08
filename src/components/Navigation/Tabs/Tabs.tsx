@@ -9,6 +9,8 @@ import {
   type ReactNode,
 } from 'react'
 
+import { cx } from '../../_internal/cx'
+
 export type TabsItem = {
   value: string
   label: ReactNode
@@ -32,10 +34,6 @@ type IndicatorState = {
   x: number
   y: number
   ready: boolean
-}
-
-function cx(...classes: Array<string | false | null | undefined>) {
-  return classes.filter(Boolean).join(' ')
 }
 
 function getInitialValue(items: TabsItem[], defaultValue?: string) {
@@ -219,7 +217,7 @@ export function Tabs({
           className={cx(
             'pointer-events-none absolute left-0 transition-[transform,width,height,opacity] duration-[80ms] ease-out',
             variant === 'default'
-              ? 'top-0 rounded-lg bg-surface-primary shadow-sm'
+              ? 'top-0 rounded-lg bg-tabs-active-background shadow-sm'
               : '-bottom-px rounded-full bg-accent',
           )}
           style={indicatorStyle}

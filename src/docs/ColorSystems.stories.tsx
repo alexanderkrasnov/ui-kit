@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { ColorSystemsPreview } from './ColorSystemsPreview'
 
 const meta = {
-  title: 'Color System',
+  title: 'Design System/Color System',
   component: ColorSystemsPreview,
   parameters: {
     layout: 'fullscreen',

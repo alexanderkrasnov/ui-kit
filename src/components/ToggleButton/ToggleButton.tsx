@@ -41,7 +41,7 @@ export function ToggleButton({
       'aria-pressed:bg-accent/15 aria-pressed:hover:bg-accent/20 aria-pressed:text-accent aria-pressed:shadow-none',
     secondary:
       'bg-surface-secondary text-foreground shadow-none hover:bg-surface-tertiary ' +
-      'aria-pressed:text-accent',
+      'aria-pressed:bg-accent/15 aria-pressed:hover:bg-accent/20 aria-pressed:text-accent',
   }
 
   return (

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
+import { secondaryStorySurfaceFit } from '../../docs/story-surfaces'
 import { Button, type ButtonProps } from './Button'
 
 function PlusIcon() {
@@ -106,7 +107,7 @@ export const Default: Story = {
     },
   },
   render: (args) => (
-    <div className="flex flex-wrap items-center gap-3">
+    <div className={`${secondaryStorySurfaceFit} flex flex-wrap items-center gap-3`}>
       <Button variant="primary" size={args.size}>
         Primary
       </Button>
@@ -240,7 +241,7 @@ export const IconOnly: Story = {
     },
   },
   render: (args) => (
-    <div className="flex flex-wrap items-center gap-3">
+    <div className={`${secondaryStorySurfaceFit} flex flex-wrap items-center gap-3`}>
       <Button {...args} variant="primary" />
       <Button {...args} variant="secondary" />
       <Button {...args} variant="ghost" />

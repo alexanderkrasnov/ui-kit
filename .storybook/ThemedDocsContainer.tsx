@@ -10,11 +10,12 @@ const THEME_CLASSES = {
 
 function syncDocumentTheme(themeKey: string) {
   const el = document.documentElement
-  for (const c of Object.values(THEME_CLASSES)) {
-    el.classList.remove(c)
-  }
+
+  el.classList.remove('light', 'dark', 'default')
+
   const cls = THEME_CLASSES[themeKey as keyof typeof THEME_CLASSES] ?? THEME_CLASSES.light
   el.classList.add(cls)
+  el.dataset.theme = cls
 }
 
 function themeFromChannelPayload(payload: unknown): string {

@@ -1,8 +1,11 @@
 import { forwardRef, type InputHTMLAttributes } from 'react'
 
+import { cx } from '../_internal/cx'
+import { getFieldBorderClass, getFieldSurfaceClass, type FieldVariant } from '../_internal/fieldStyles'
+
 export type InputProps = InputHTMLAttributes<HTMLInputElement> & {
   /** Visual style variant */
-  variant?: 'default' | 'secondary'
+  variant?: FieldVariant
   /** Invalid / error visual state (border усиливается при фокусе) */
   error?: boolean
 }
@@ -18,20 +21,11 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     'focus-visible:outline-none ' +
     'disabled:cursor-not-allowed disabled:opacity-50'
 
-  const variants: Record<NonNullable<InputProps['variant']>, string> = {
-    default: 'bg-field-background shadow-sm text-field-foreground',
-    secondary: 'bg-surface-secondary text-foreground',
-  }
-
-  const normal = 'border-transparent focus-visible:border-field-border-focus'
-
-  const invalid = 'border-danger focus-visible:border-field-border-invalid-focus'
-
   return (
     <input
       ref={ref}
       aria-invalid={error ? true : undefined}
-      className={`${base} ${variants[variant]} ${error ? invalid : normal} ${className}`.trim()}
+      className={cx(base, getFieldSurfaceClass(variant), getFieldBorderClass(error), className)}
       {...props}
     />
   )

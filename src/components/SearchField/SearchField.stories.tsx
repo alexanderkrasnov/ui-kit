@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
+import { secondaryStorySurface } from '../../docs/story-surfaces'
 import { SearchField } from './SearchField'
 
 const meta = {
@@ -30,7 +31,9 @@ export const Variants: Story = {
   render: () => (
     <div className="flex w-[250px] flex-col gap-4">
       <SearchField label="Default" placeholder="Search" variant="default" defaultValue="Design" />
-      <SearchField label="Secondary" placeholder="Search" variant="secondary" defaultValue="Design" />
+      <div className={secondaryStorySurface}>
+        <SearchField label="Secondary" placeholder="Search" variant="secondary" defaultValue="Design" />
+      </div>
     </div>
   ),
 }
@@ -75,4 +78,9 @@ export const SecondaryWithButton: Story = {
     },
     className: 'w-[300px] max-w-none',
   },
+  render: (args) => (
+    <div className={secondaryStorySurface}>
+      <SearchField {...args} />
+    </div>
+  ),
 }

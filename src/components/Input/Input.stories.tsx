@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
+import { secondaryStorySurface } from '../../docs/story-surfaces'
 import { Input } from './Input'
 
 const meta = {
@@ -30,7 +31,9 @@ export const Variants: Story = {
   render: () => (
     <div className="flex w-[250px] flex-col gap-3">
       <Input placeholder="Default input" variant="default" />
-      <Input placeholder="Secondary input" variant="secondary" />
+      <div className={secondaryStorySurface}>
+        <Input placeholder="Secondary input" variant="secondary" />
+      </div>
     </div>
   ),
 }
@@ -47,6 +50,11 @@ export const Secondary: Story = {
     placeholder: 'Secondary input',
     variant: 'secondary',
   },
+  render: (args) => (
+    <div className={secondaryStorySurface}>
+      <Input {...args} />
+    </div>
+  ),
 }
 
 export const Disabled: Story = {

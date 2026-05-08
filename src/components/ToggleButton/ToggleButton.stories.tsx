@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
+import { secondaryStorySurfaceFit } from '../../docs/story-surfaces'
 import { ToggleButton, type ToggleButtonProps } from './ToggleButton'
 
 function HeartIcon() {
@@ -53,7 +54,9 @@ export const Variants: Story = {
   render: () => (
     <div className="flex flex-wrap items-center gap-3">
       <ToggleButtonDemo variant="primary" />
-      <ToggleButtonDemo variant="secondary" />
+      <div className={secondaryStorySurfaceFit}>
+        <ToggleButtonDemo variant="secondary" />
+      </div>
     </div>
   ),
 }

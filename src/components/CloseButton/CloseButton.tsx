@@ -56,9 +56,9 @@ export const CloseButton = forwardRef<HTMLButtonElement, CloseButtonProps>(funct
   const selectedSize = sizes[size]
   const variants: Record<NonNullable<CloseButtonProps['variant']>, string> = {
     default:
-      'bg-surface-secondary text-foreground-secondary group-hover:bg-surface-tertiary group-hover:text-foreground',
+      'bg-surface-primary text-foreground-secondary group-hover:bg-surface-primary group-hover:text-foreground',
     ghost:
-      'bg-transparent text-foreground-secondary group-hover:bg-surface-secondary group-hover:text-foreground',
+      'bg-transparent text-foreground-tertiary group-hover:bg-transparent group-hover:text-foreground',
   }
 
   return (

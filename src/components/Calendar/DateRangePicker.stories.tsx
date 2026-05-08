@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
+import { secondaryStorySurface } from '../../docs/story-surfaces'
 import { Button } from '../Button'
 import { DateRangePicker, type DateRangePickerValue } from './DateRangePicker'
 
@@ -89,11 +90,13 @@ export const Variants: Story = {
         defaultValue={{ start: '2026-04-24', end: '2026-04-30' }}
         variant="default"
       />
-      <DateRangePicker
-        label="Secondary"
-        defaultValue={{ start: '2026-04-24', end: '2026-04-30' }}
-        variant="secondary"
-      />
+      <div className={secondaryStorySurface}>
+        <DateRangePicker
+          label="Secondary"
+          defaultValue={{ start: '2026-04-24', end: '2026-04-30' }}
+          variant="secondary"
+        />
+      </div>
     </div>
   ),
 }
@@ -109,6 +112,11 @@ export const Secondary: Story = {
     label: 'Date',
     variant: 'secondary',
   },
+  render: (args) => (
+    <div className={secondaryStorySurface}>
+      <DateRangePicker {...args} />
+    </div>
+  ),
 }
 
 export const WithValidation: Story = {

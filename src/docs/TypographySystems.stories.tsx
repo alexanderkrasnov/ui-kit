@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { TypographySystemsPreview } from './TypographySystemsPreview'
 
 const meta = {
-  title: 'Typography System',
+  title: 'Design System/Typography System',
   component: TypographySystemsPreview,
   parameters: {
     layout: 'fullscreen',
