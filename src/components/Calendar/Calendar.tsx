@@ -1,3 +1,4 @@
+import type { ButtonHTMLAttributes } from 'react'
 import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp } from 'lucide-react'
 import {
   DayPicker,
@@ -5,11 +6,10 @@ import {
   type DayPickerProps,
 } from 'react-day-picker'
 
-export type CalendarProps = DayPickerProps
+import { cx } from '../_internal/cx'
+import { Button } from '../Button'
 
-function cx(...classes: Array<string | false | null | undefined>) {
-  return classes.filter(Boolean).join(' ')
-}
+export type CalendarProps = DayPickerProps
 
 type CalendarChevronProps = {
   className?: string
@@ -20,7 +20,6 @@ type CalendarChevronProps = {
 
 function CalendarChevron({
   className,
-  disabled,
   orientation = 'right',
 }: CalendarChevronProps) {
   const Icon =
@@ -35,29 +34,42 @@ function CalendarChevron({
   return (
     <Icon
       aria-hidden
-      className={cx('size-4 shrink-0', disabled && 'opacity-40', className)}
+      className={cx('size-4 shrink-0', className)}
       strokeWidth={2}
+    />
+  )
+}
+
+function CalendarNavigationButton({
+  className,
+  disabled,
+  'aria-disabled': ariaDisabled,
+  ...props
+}: ButtonHTMLAttributes<HTMLButtonElement>) {
+  const isDisabled = disabled || ariaDisabled === true || ariaDisabled === 'true'
+
+  return (
+    <Button
+      variant="ghost"
+      size="small"
+      iconOnly
+      className={cx('pointer-events-auto', className)}
+      disabled={isDisabled}
+      aria-disabled={ariaDisabled}
+      {...props}
     />
   )
 }
 
 const calendarClassNames: Partial<ClassNames> = {
   root:
-    'w-fit rounded-[14px] border border-border bg-surface-primary p-3 font-sans text-foreground shadow-sm',
+    'w-fit rounded-[14px] bg-surface-primary p-3 font-sans text-foreground',
   months: 'relative flex flex-col gap-4 md:flex-row',
   month: 'space-y-4',
   month_caption: 'relative flex h-8 items-center justify-center',
   caption_label: 'text-sm font-medium text-foreground',
   nav:
     'pointer-events-none absolute inset-x-0 top-0 z-10 flex items-center justify-between',
-  button_previous:
-    'pointer-events-auto inline-flex size-8 items-center justify-center rounded-lg text-foreground transition-colors ' +
-    'hover:bg-surface-secondary-hover hover:text-foreground focus-visible:outline focus-visible:outline-2 ' +
-    'focus-visible:outline-offset-2 focus-visible:outline-accent disabled:pointer-events-none disabled:opacity-40',
-  button_next:
-    'pointer-events-auto inline-flex size-8 items-center justify-center rounded-lg text-foreground transition-colors ' +
-    'hover:bg-surface-secondary-hover hover:text-foreground focus-visible:outline focus-visible:outline-2 ' +
-    'focus-visible:outline-offset-2 focus-visible:outline-accent disabled:pointer-events-none disabled:opacity-40',
   chevron: 'text-current',
   dropdowns: 'flex items-center justify-center gap-2',
   dropdown_root:
@@ -115,6 +127,8 @@ export function Calendar({
       }}
       components={{
         Chevron: CalendarChevron,
+        PreviousMonthButton: CalendarNavigationButton,
+        NextMonthButton: CalendarNavigationButton,
         ...components,
       }}
       {...props}

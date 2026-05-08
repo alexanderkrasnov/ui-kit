@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
+import { secondaryStorySurface } from '../../docs/story-surfaces'
 import { Checkbox } from './Checkbox'
 
 const meta = {
@@ -29,7 +30,9 @@ export const Variants: Story = {
   render: () => (
     <div className="flex w-[min(100%,24rem)] flex-col gap-3">
       <Checkbox label="Default checkbox" variant="default" />
-      <Checkbox label="Secondary checkbox" variant="secondary" />
+      <div className={secondaryStorySurface}>
+        <Checkbox label="Secondary checkbox" variant="secondary" />
+      </div>
     </div>
   ),
 }
@@ -48,6 +51,11 @@ export const Secondary: Story = {
     variant: 'secondary',
     defaultChecked: false,
   },
+  render: (args) => (
+    <div className={secondaryStorySurface}>
+      <Checkbox {...args} />
+    </div>
+  ),
 }
 
 export const Error: Story = {

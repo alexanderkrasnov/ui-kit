@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
+import { secondaryStorySurface } from '../../docs/story-surfaces'
 import { Slider } from './Slider'
 
 function formatCompactCurrencyValue(value: number) {
@@ -21,7 +22,7 @@ const meta = {
   tags: ['autodocs'],
   decorators: [
     (Story) => (
-      <div className="w-[min(100%,24rem)]">
+      <div className="w-80">
         <Story />
       </div>
     ),
@@ -33,7 +34,7 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
   render: () => (
-    <div className="w-80">
+    <div className={`${secondaryStorySurface} `}>
       <Slider
         label="Volume"
         defaultValue={30}
@@ -47,7 +48,7 @@ export const Default: Story = {
 
 export const Range: Story = {
   render: () => (
-    <div className="w-80">
+    <div className={`${secondaryStorySurface} `}>
       <Slider
         label="Price Range"
         defaultValue={[0, 100_000_000]}

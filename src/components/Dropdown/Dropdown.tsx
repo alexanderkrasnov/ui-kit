@@ -1,5 +1,6 @@
 import {
   useEffect,
+  useEffectEvent,
   useId,
   useRef,
   useState,
@@ -38,6 +39,8 @@ export type DropdownProps = {
   menuContent?: ReactNode
   /** Extra classes for the floating menu panel */
   menuClassName?: string
+  /** Floating menu width. Defaults to trigger width for chevron dropdowns. */
+  menuWidth?: number | string
   /** aria-label for icon-only trigger */
   'aria-label'?: string
   /** Как у `Checkbox` / `Input`: `default` — field, `secondary` — surface-secondary */
@@ -63,18 +66,33 @@ const triggerVariant: Record<NonNullable<DropdownProps['variant']>, string> = {
 
 const menuPanel =
   'fixed z-[9999] max-h-[min(18rem,calc(100vh-1rem))] overflow-auto rounded-lg border border-border ' +
-  'bg-surface-primary text-foreground shadow-md'
+  'bg-surface-primary text-foreground shadow-md dropdown-menu-enter'
 
 const menuItem =
-  'inline-flex w-fit cursor-pointer items-center whitespace-nowrap px-3 py-2 text-left text-sm text-foreground ' +
+  'inline-flex w-full cursor-pointer items-center whitespace-nowrap px-3 py-2 text-left text-sm text-foreground ' +
   'hover:bg-surface-secondary-hover focus:bg-surface-secondary-hover focus:outline-none ' +
   'disabled:cursor-not-allowed disabled:opacity-50'
 
 const itemIconClass =
-  'inline-flex shrink-0 text-foreground-secondary [&_img]:h-4 [&_img]:w-5 [&_svg]:size-4'
+  'inline-flex h-3 shrink-0 items-center justify-center text-foreground-secondary [&_img]:h-3 [&_img]:w-auto [&_svg]:size-4'
 
 function getItemValue(item: DropdownItem) {
   return item.value ?? item.label
+}
+
+function getMenuPosition(
+  rect: DOMRect,
+  mode: NonNullable<DropdownProps['mode']>,
+  menuWidth: DropdownProps['menuWidth'],
+): CSSProperties {
+  const resolvedMenuWidth = mode === 'icon' ? undefined : menuWidth ?? rect.width
+
+  return {
+    left: rect.left,
+    top: rect.bottom + 6,
+    minWidth: mode === 'icon' ? 192 : rect.width,
+    width: resolvedMenuWidth,
+  }
 }
 
 export function Dropdown({
@@ -89,6 +107,7 @@ export function Dropdown({
   prefixIcon,
   menuContent,
   menuClassName = '',
+  menuWidth,
   'aria-label': ariaLabel,
   variant = 'default',
   className = '',
@@ -111,20 +130,18 @@ export function Dropdown({
   const triggerPrefixIcon = selectedItem?.icon ?? prefixIcon
   const isPlaceholder = isSelectDropdown && selectedItem == null && placeholder != null
 
-  function updateMenuPosition() {
+  function getCurrentMenuPosition() {
     const rect = triggerRef.current?.getBoundingClientRect()
-
-    if (rect == null) {
-      return
-    }
-
-    setMenuStyle({
-      left: rect.left,
-      top: rect.bottom + 4,
-      minWidth: mode === 'icon' ? 192 : rect.width,
-      width: mode === 'icon' ? undefined : rect.width,
-    })
+    return rect == null ? undefined : getMenuPosition(rect, mode, menuWidth)
   }
+
+  const updateMenuPosition = useEffectEvent(() => {
+    const nextMenuStyle = getCurrentMenuPosition()
+
+    if (nextMenuStyle != null) {
+      setMenuStyle(nextMenuStyle)
+    }
+  })
 
   useEffect(() => {
     if (!open) return
@@ -138,18 +155,15 @@ export function Dropdown({
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setOpen(false)
     }
-    const onPositionChange = () => updateMenuPosition()
-
-    updateMenuPosition()
     document.addEventListener('mousedown', onDoc)
     document.addEventListener('keydown', onKey)
-    window.addEventListener('resize', onPositionChange)
-    window.addEventListener('scroll', onPositionChange, true)
+    window.addEventListener('resize', updateMenuPosition)
+    window.addEventListener('scroll', updateMenuPosition, true)
     return () => {
       document.removeEventListener('mousedown', onDoc)
       document.removeEventListener('keydown', onKey)
-      window.removeEventListener('resize', onPositionChange)
-      window.removeEventListener('scroll', onPositionChange, true)
+      window.removeEventListener('resize', updateMenuPosition)
+      window.removeEventListener('scroll', updateMenuPosition, true)
     }
   }, [open])
 
@@ -170,7 +184,7 @@ export function Dropdown({
             style={menuStyle}
           >
             {menuContent ?? (
-              <ul role="menu" className="py-1">
+              <ul role="menu">
                 {(items ?? []).map((item) => {
                   const itemValue = getItemValue(item)
                   const selected = isSelectDropdown && itemValue === currentValue
@@ -226,7 +240,11 @@ export function Dropdown({
         aria-label={isIcon ? (ariaLabel ?? 'Open menu') : undefined}
         onClick={() => {
           if (!open) {
-            updateMenuPosition()
+            const nextMenuStyle = getCurrentMenuPosition()
+
+            if (nextMenuStyle != null) {
+              setMenuStyle(nextMenuStyle)
+            }
           }
 
           setOpen((v) => !v)

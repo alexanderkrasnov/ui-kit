@@ -6,6 +6,9 @@
 @import "@fontsource/ibm-plex-mono/500.css";
 
 @import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
 @import "./tokens.css";
 
 @source "../**/*.{js,ts,jsx,tsx,mdx}";

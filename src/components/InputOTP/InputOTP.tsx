@@ -14,6 +14,16 @@ import {
   type ReactNode,
 } from 'react'
 
+import { cx } from '../_internal/cx'
+import {
+  getFieldBorderClass,
+  getFieldDescribedBy,
+  getFieldHelperClass,
+  getFieldLabelClass,
+  getFieldSurfaceClass,
+  type FieldVariant,
+} from '../_internal/fieldStyles'
+
 export type InputOTPValue = string
 
 export type InputOTPProps = Omit<HTMLAttributes<HTMLDivElement>, 'defaultValue' | 'onChange'> & {
@@ -30,7 +40,7 @@ export type InputOTPProps = Omit<HTMLAttributes<HTMLDivElement>, 'defaultValue' 
   /** Removes focus from the last slot when fully completed. */
   blurOnComplete?: boolean
   /** Visual style variant */
-  variant?: 'default' | 'secondary'
+  variant?: FieldVariant
   label?: ReactNode
   description?: ReactNode
   errorMessage?: ReactNode
@@ -118,21 +128,13 @@ export const InputOTP = forwardRef<HTMLDivElement, InputOTPProps>(function Input
   const errorId = errorMessage != null ? `${inputId}-error` : undefined
   const isInvalid = invalid || error
   const helperId = isInvalid ? errorId : descriptionId
-  const describedBy =
-    [ariaDescribedByProp, helperId].filter(Boolean).join(' ') || undefined
+  const describedBy = getFieldDescribedBy(ariaDescribedByProp, helperId)
   const helperText = isInvalid ? errorMessage : description
-  const labelClass = disabled ? 'text-foreground-tertiary' : 'text-foreground'
-  const helperClass = isInvalid ? 'text-danger' : 'text-foreground-tertiary'
-  const tabStopIndex = firstEmptyIndex ?? activeIndex
+  const labelClass = getFieldLabelClass(disabled)
+  const helperClass = getFieldHelperClass(isInvalid)
+  const activeSlotIndex = clampIndex(activeIndex, slotCount - 1)
+  const tabStopIndex = firstEmptyIndex ?? activeSlotIndex
   const shouldResetForInvalidRetry = isInvalid && currentValue.length === slotCount
-
-  useEffect(() => {
-    setInternalValue((current) => sanitizeValue(current, slotCount))
-    setAnimationKeys((current) =>
-      Array.from({ length: slotCount }, (_, index) => current[index] ?? 0),
-    )
-    setActiveIndex((current) => clampIndex(current, slotCount - 1))
-  }, [slotCount])
 
   useEffect(() => {
     setAnimationKeys((current) => {
@@ -354,13 +356,6 @@ export const InputOTP = forwardRef<HTMLDivElement, InputOTPProps>(function Input
     'relative inline-flex h-10 w-8 shrink-0 items-center justify-center rounded-lg border ' +
     'text-center font-sans text-2xl tabular-nums transition-[background-color,border-color,box-shadow,color] ' +
     'focus-within:outline-none'
-  const slotVariant =
-    variant === 'secondary'
-      ? 'bg-surface-secondary text-foreground'
-      : 'bg-field-background text-field-foreground shadow-sm'
-  const slotState = isInvalid
-    ? 'border-danger focus-within:border-field-border-invalid-focus'
-    : 'border-transparent focus-within:border-field-border-focus'
   const inputClass =
     'absolute inset-0 h-full w-full rounded-lg border-0 bg-transparent p-0 text-center ' +
     'font-sans text-2xl tabular-nums text-transparent caret-transparent outline-none ' +
@@ -372,7 +367,7 @@ export const InputOTP = forwardRef<HTMLDivElement, InputOTPProps>(function Input
   return (
     <div
       ref={ref}
-      className={`inline-flex w-full max-w-sm flex-col gap-3 font-sans ${className}`.trim()}
+      className={cx('inline-flex w-full max-w-sm flex-col gap-3 font-sans', className)}
       {...props}
     >
       {label != null ? (
@@ -396,7 +391,12 @@ export const InputOTP = forwardRef<HTMLDivElement, InputOTPProps>(function Input
         {slots.map((slot, index) => (
           <Fragment key={index}>
             <div
-              className={`${slotBase} ${slotVariant} ${slotState} ${slotClassName}`.trim()}
+              className={cx(
+                slotBase,
+                getFieldSurfaceClass(variant),
+                getFieldBorderClass(isInvalid),
+                slotClassName,
+              )}
             >
               <input
                 ref={(node) => {

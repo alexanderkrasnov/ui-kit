@@ -1,6 +1,8 @@
 import { type ButtonHTMLAttributes, type ReactNode, useId } from 'react'
 import { Info } from 'lucide-react'
 
+import { cx } from '../_internal/cx'
+
 export type TooltipProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   children?: ReactNode
   iconLabel?: string
@@ -8,10 +10,6 @@ export type TooltipProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 
 const defaultContent =
   'Legal Entity Identifier is a 20-character alphanumeric code (ISO 17442) that uniquely identifies legal entities.'
-
-function cx(...classes: Array<string | false | null | undefined>) {
-  return classes.filter(Boolean).join(' ')
-}
 
 export function Tooltip({
   children = defaultContent,
@@ -38,7 +36,7 @@ export function Tooltip({
         role="tooltip"
         className="pointer-events-none absolute bottom-full left-1/2 mb-1 w-max max-w-[250px] -translate-x-1/2 opacity-0 transition-opacity duration-50 ease-out group-hover:opacity-100 group-hover:duration-150 group-focus-within:opacity-100 group-focus-within:duration-150"
       >
-        <span className="block rounded-lg bg-black px-3 py-2 text-xs font-semibold leading-4 text-white shadow-sm group-hover:animate-[tooltip-enter_150ms_ease-out] group-focus-within:animate-[tooltip-enter_150ms_ease-out]">
+        <span className="block rounded-lg bg-black px-3 py-2 text-xs font-semibold leading-4 text-white shadow-sm dark:bg-surface-tertiary group-hover:animate-[tooltip-enter_150ms_ease-out] group-focus-within:animate-[tooltip-enter_150ms_ease-out]">
           {children}
         </span>
       </span>

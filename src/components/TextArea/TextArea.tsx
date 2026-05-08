@@ -1,5 +1,16 @@
 import { forwardRef, useId, type ReactNode, type TextareaHTMLAttributes } from 'react'
 
+import { cx } from '../_internal/cx'
+import {
+  getFieldBorderClass,
+  getFieldContainerClass,
+  getFieldDescribedBy,
+  getFieldHelperClass,
+  getFieldLabelClass,
+  getFieldSurfaceClass,
+  type FieldVariant,
+} from '../_internal/fieldStyles'
+
 export type TextAreaProps = Omit<
   TextareaHTMLAttributes<HTMLTextAreaElement>,
   'aria-describedby' | 'aria-invalid' | 'className'
@@ -8,7 +19,7 @@ export type TextAreaProps = Omit<
   description?: ReactNode
   errorMessage?: ReactNode
   /** Visual style variant */
-  variant?: 'default' | 'secondary'
+  variant?: FieldVariant
   /** Invalid / error visual state */
   invalid?: boolean
   /** Alias for `invalid`, aligned with the lower-level Input prop */
@@ -44,11 +55,9 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(function 
   const isInvalid = invalid || error
   const helperId = isInvalid ? errorId : descriptionId
 
-  const describedBy =
-    [ariaDescribedByProp, helperId].filter(Boolean).join(' ') || undefined
-
-  const labelClass = disabled ? 'text-foreground-tertiary' : 'text-foreground'
-  const helperClass = isInvalid ? 'text-danger' : 'text-foreground-tertiary'
+  const describedBy = getFieldDescribedBy(ariaDescribedByProp, helperId)
+  const labelClass = getFieldLabelClass(disabled)
+  const helperClass = getFieldHelperClass(isInvalid)
   const helperText = isInvalid ? errorMessage : description
 
   const base =
@@ -56,16 +65,8 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(function 
     'font-sans placeholder:text-field-placeholder focus-visible:outline-none ' +
     'disabled:cursor-not-allowed disabled:opacity-50'
 
-  const variants: Record<NonNullable<TextAreaProps['variant']>, string> = {
-    default: 'bg-field-background shadow-sm text-field-foreground',
-    secondary: 'bg-surface-secondary text-foreground',
-  }
-
-  const normal = 'border-transparent focus-visible:border-field-border-focus'
-  const invalidClass = 'border-danger focus-visible:border-field-border-invalid-focus'
-
   return (
-    <div className={`inline-flex w-full max-w-sm flex-col gap-1.5 font-sans ${className}`.trim()}>
+    <div className={getFieldContainerClass(className)}>
       {label != null ? (
         <label htmlFor={textareaId} className={`text-sm font-medium leading-snug ${labelClass}`}>
           {label}
@@ -84,9 +85,7 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(function 
         disabled={disabled}
         aria-invalid={isInvalid ? true : undefined}
         aria-describedby={describedBy}
-        className={`${base} ${variants[variant]} ${
-          isInvalid ? invalidClass : normal
-        } ${textareaClassName}`.trim()}
+        className={cx(base, getFieldSurfaceClass(variant), getFieldBorderClass(isInvalid), textareaClassName)}
         {...props}
       />
       {helperText != null ? (

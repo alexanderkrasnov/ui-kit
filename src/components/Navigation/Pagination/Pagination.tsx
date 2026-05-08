@@ -1,6 +1,8 @@
 import { useState, type HTMLAttributes, type ReactNode } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
+import { cx } from '../../_internal/cx'
+
 type PaginationRangeItem = number | 'ellipsis'
 
 export type PaginationProps = Omit<HTMLAttributes<HTMLElement>, 'onChange'> & {
@@ -13,10 +15,6 @@ export type PaginationProps = Omit<HTMLAttributes<HTMLElement>, 'onChange'> & {
   listClassName?: string
   itemClassName?: string
   summaryClassName?: string
-}
-
-function cx(...classes: Array<string | false | null | undefined>) {
-  return classes.filter(Boolean).join(' ')
 }
 
 function getSafeTotal(total: number) {

@@ -16,6 +16,16 @@ import {
 import { createPortal } from 'react-dom'
 import type { DateRange } from 'react-day-picker'
 
+import { cx } from '../_internal/cx'
+import {
+  getFieldBorderClass,
+  getFieldContainerClass,
+  getFieldDescribedBy,
+  getFieldHelperClass,
+  getFieldLabelClass,
+  getFieldSurfaceClass,
+  type FieldVariant,
+} from '../_internal/fieldStyles'
 import { Calendar } from './Calendar'
 
 export type DateRangePickerDateValue = string
@@ -48,7 +58,7 @@ export type DateRangePickerProps = Omit<
   label?: ReactNode
   description?: ReactNode
   errorMessage?: ReactNode
-  variant?: 'default' | 'secondary'
+  variant?: FieldVariant
   value?: DateRangePickerValue
   defaultValue?: DateRangePickerValue
   onChange?: (value: DateRangePickerValue) => void
@@ -187,7 +197,7 @@ export const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
     const [internalValue, setInternalValue] = useState<DateRangePickerValue>(
       defaultValue ?? { start: '', end: '' },
     )
-    const [segments, setSegments] = useState(() =>
+    const [uncontrolledSegments, setUncontrolledSegments] = useState(() =>
       getSegmentsFromRangeValue(value ?? defaultValue),
     )
     const [activeSegment, setActiveSegment] = useState<ActiveSegment | null>(null)
@@ -202,6 +212,9 @@ export const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
     const endDate = useMemo(() => parseDateValue(rangeValue.end), [rangeValue.end])
     const minDate = useMemo(() => parseDateValue(min), [min])
     const maxDate = useMemo(() => parseDateValue(max), [max])
+    const segments = value !== undefined
+      ? getSegmentsFromRangeValue(value)
+      : uncontrolledSegments
     const disabledMatchers: Array<{ before: Date } | { after: Date }> = []
 
     if (minDate) {
@@ -237,19 +250,12 @@ export const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
         (!parseDateValue(rangeValue.end) || isEndOutOfRange)) ||
       isRangeOutOfOrder
     const helperId = isInvalid ? errorId : descriptionId
-    const describedBy =
-      [ariaDescribedByProp, helperId].filter(Boolean).join(' ') || undefined
+    const describedBy = getFieldDescribedBy(ariaDescribedByProp, helperId)
     const helperText = isInvalid ? errorMessage : description
-    const labelClass = disabled ? 'text-foreground-tertiary' : 'text-foreground'
-    const helperClass = isInvalid ? 'text-danger' : 'text-foreground-tertiary'
+    const labelClass = getFieldLabelClass(disabled)
+    const helperClass = getFieldHelperClass(isInvalid)
     const [dayPlaceholder = 'dd', monthPlaceholder = 'mm', yearPlaceholder = 'yyyy'] =
       placeholder.split('.')
-
-    useEffect(() => {
-      if (value !== undefined) {
-        setSegments(getSegmentsFromRangeValue(value))
-      }
-    }, [value])
 
     useEffect(() => {
       function updatePopoverPosition() {
@@ -310,13 +316,6 @@ export const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
     const groupBase =
       'inline-flex w-full min-w-[360px] items-center rounded-lg border py-2 pl-3 pr-2 text-sm ' +
       'font-sans transition-[border-color,box-shadow] focus-within:outline-none'
-    const groupVariant =
-      variant === 'secondary'
-        ? 'bg-surface-secondary text-foreground'
-        : 'bg-field-background text-field-foreground shadow-sm'
-    const groupState = isInvalid
-      ? 'border-danger focus-within:border-field-border-invalid-focus'
-      : 'border-transparent focus-within:border-field-border-focus'
     const segmentClass =
       'min-w-0 shrink-0 select-none p-0 text-center font-sans text-sm tabular-nums caret-transparent outline-none ' +
       'placeholder:text-field-placeholder disabled:cursor-not-allowed disabled:text-foreground-tertiary'
@@ -335,7 +334,10 @@ export const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
     function commitSegments(nextSegments: RangeSegments) {
       const nextValue = getValueFromSegments(nextSegments)
 
-      setSegments(nextSegments)
+      if (value === undefined) {
+        setUncontrolledSegments(nextSegments)
+      }
+
       commitValue(nextValue)
     }
 
@@ -345,7 +347,10 @@ export const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
         end: nextRange?.to ? formatDateValue(nextRange.to) : '',
       }
 
-      setSegments(getSegmentsFromRangeValue(nextValue))
+      if (value === undefined) {
+        setUncontrolledSegments(getSegmentsFromRangeValue(nextValue))
+      }
+
       commitValue(nextValue)
 
       if (nextValue.start !== '' && nextValue.end !== '') {
@@ -715,7 +720,7 @@ export const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
     return (
       <div
         ref={setRootNode}
-        className={`inline-flex w-full max-w-sm flex-col gap-1.5 font-sans ${className}`.trim()}
+        className={getFieldContainerClass(className)}
         {...props}
       >
         <div>
@@ -743,9 +748,13 @@ export const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
           aria-disabled={disabled ? true : undefined}
           onMouseDown={handleFieldMouseDown}
           onBlur={handleFieldBlur}
-          className={`${groupBase} ${groupVariant} ${groupState} ${
-            disabled ? 'cursor-not-allowed opacity-50' : 'cursor-text'
-          } ${inputClassName}`.trim()}
+          className={cx(
+            groupBase,
+            getFieldSurfaceClass(variant),
+            getFieldBorderClass(isInvalid),
+            disabled ? 'cursor-not-allowed opacity-50' : 'cursor-text',
+            inputClassName,
+          )}
         >
           <div className="flex min-w-0 flex-none items-center">
             {renderDateSegments('start', true)}

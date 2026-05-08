@@ -1,11 +1,31 @@
-import type { Preview } from '@storybook/react-vite'
+import type { Decorator, Preview } from '@storybook/react-vite'
 import { withThemeByClassName } from '@storybook/addon-themes'
 
 import '../src/styles/tailwind.css'
 import './docs-overrides.css'
+import { ThemedDocsContainer } from './ThemedDocsContainer'
+
+function syncStorybookThemeRoot(theme: 'light' | 'dark') {
+  if (typeof document === 'undefined') return
+
+  const root = document.documentElement
+
+  root.classList.remove('light', 'dark', 'default')
+  root.classList.add(theme)
+  root.dataset.theme = theme
+}
+
+const withThemeRoot: Decorator = (Story, context) => {
+  const theme = context.globals.theme === 'dark' ? 'dark' : 'light'
+
+  syncStorybookThemeRoot(theme)
+
+  return <Story />
+}
 
 const preview: Preview = {
   decorators: [
+    withThemeRoot,
     withThemeByClassName({
       defaultTheme: 'light',
       themes: {
@@ -15,11 +35,14 @@ const preview: Preview = {
     }),
   ],
   parameters: {
+    docs: {
+      container: ThemedDocsContainer,
+    },
     options: {
       storySort: {
         order: [
-          'Color System',
-          'Typography System',
+          'Design System',
+          ['Color System', 'Typography System'],
           'Buttons',
           ['Button', 'Toggle Button', 'Close Button', 'Link'],
           'Navigation',
@@ -45,10 +68,10 @@ const preview: Preview = {
       },
     },
     backgrounds: {
-      default: 'white',
+      default: 'theme background',
       values: [
-        { name: 'white', value: '#ffffff' },
         { name: 'theme background', value: 'var(--color-background)' },
+        { name: 'white', value: '#ffffff' },
         { name: 'surface primary', value: 'var(--color-surface-primary)' },
         { name: 'surface secondary', value: 'var(--color-surface-secondary)' },
         { name: 'neutral light', value: '#f5f5f5' },

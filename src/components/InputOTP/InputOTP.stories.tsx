@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useEffect, useMemo, useState } from 'react'
 
+import { secondaryStorySurface } from '../../docs/story-surfaces'
 import { InputOTP } from './InputOTP'
 import { Spinner } from '../Spinner'
 
@@ -40,12 +41,14 @@ export const Variants: Story = {
         description={authenticatorDescription}
         variant="default"
       />
-      <InputOTP
-        label="Secondary"
-        defaultValue="123"
-        description={authenticatorDescription}
-        variant="secondary"
-      />
+      <div className={secondaryStorySurface}>
+        <InputOTP
+          label="Secondary"
+          defaultValue="123"
+          description={authenticatorDescription}
+          variant="secondary"
+        />
+      </div>
     </div>
   ),
 }
@@ -73,18 +76,23 @@ function ExampleDemo() {
   const isInvalid = status === 'invalid'
 
   useEffect(() => {
+    const statusTimer = window.setTimeout(() => {
+      setStatus(value.length === 6 ? 'verifying' : 'idle')
+    }, 0)
+
     if (value.length !== 6) {
-      setStatus('idle')
-      return
+      return () => {
+        window.clearTimeout(statusTimer)
+      }
     }
 
-    setStatus('verifying')
-    const timer = window.setTimeout(() => {
+    const invalidTimer = window.setTimeout(() => {
       setStatus('invalid')
     }, 2000)
 
     return () => {
-      window.clearTimeout(timer)
+      window.clearTimeout(statusTimer)
+      window.clearTimeout(invalidTimer)
     }
   }, [value])
 

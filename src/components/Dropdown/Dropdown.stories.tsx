@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { ChevronDown, MoreVertical } from 'lucide-react'
 
+import { secondaryStorySurfaceFit } from '../../docs/story-surfaces'
 import { Dropdown } from './Dropdown'
 
 const sampleItems = [
@@ -35,35 +36,39 @@ type Story = StoryObj<typeof meta>
 
 export const Variants: Story = {
   render: () => (
-    <div className="flex flex-col items-start gap-3">
-      <Dropdown
-        items={sampleItems}
-        mode="chevron"
-        label="Dropdown menu"
-        icon={<ChevronDown />}
-        variant="default"
-      />
-      <Dropdown
-        items={sampleItems}
-        mode="chevron"
-        label="Dropdown menu"
-        icon={<ChevronDown />}
-        variant="secondary"
-      />
-      <Dropdown
-        items={sampleItems}
-        mode="icon"
-        icon={<MoreVertical />}
-        aria-label="Icon only default"
-        variant="default"
-      />
-      <Dropdown
-        items={sampleItems}
-        mode="icon"
-        icon={<MoreVertical />}
-        aria-label="Icon only secondary"
-        variant="secondary"
-      />
+    <div className="flex flex-col items-start gap-6">
+      <div className="flex flex-col items-start gap-3">
+        <Dropdown
+          items={sampleItems}
+          mode="chevron"
+          label="Dropdown menu"
+          icon={<ChevronDown />}
+          variant="default"
+        />
+        <Dropdown
+          items={sampleItems}
+          mode="icon"
+          icon={<MoreVertical />}
+          aria-label="Icon only default"
+          variant="default"
+        />
+      </div>
+      <div className={`${secondaryStorySurfaceFit} flex flex-col items-start gap-6`}>
+        <Dropdown
+          items={sampleItems}
+          mode="chevron"
+          label="Dropdown menu"
+          icon={<ChevronDown />}
+          variant="secondary"
+        />
+        <Dropdown
+          items={sampleItems}
+          mode="icon"
+          icon={<MoreVertical />}
+          aria-label="Icon only secondary"
+          variant="secondary"
+        />
+      </div>
     </div>
   ),
 }
@@ -84,6 +89,11 @@ export const Secondary: Story = {
     icon: <ChevronDown />,
     variant: 'secondary',
   },
+  render: (args) => (
+    <div className={secondaryStorySurfaceFit}>
+      <Dropdown {...args} />
+    </div>
+  ),
 }
 
 export const IconOnlyDefault: Story = {
@@ -104,4 +114,9 @@ export const IconOnlySecondary: Story = {
     'aria-label': 'Icon only secondary',
     variant: 'secondary',
   },
+  render: (args) => (
+    <div className={secondaryStorySurfaceFit}>
+      <Dropdown {...args} />
+    </div>
+  ),
 }

@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
+import { secondaryStorySurfaceFit } from '../../../docs/story-surfaces'
 import { Tabs, type TabsItem } from './Tabs'
 
 const demoItems: TabsItem[] = [
@@ -66,4 +67,9 @@ export const Secondary: Story = {
     size: 'medium',
     variant: 'secondary',
   },
+  render: (args) => (
+    <div className={secondaryStorySurfaceFit}>
+      <Tabs {...args} />
+    </div>
+  ),
 }

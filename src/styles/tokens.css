@@ -6,6 +6,16 @@
     /* брендовый цвет */
     --brand-500: oklch(72.31% 0.1759 43.25);
 
+    /* цвета для labels */
+    --label-olive: oklch(71.45% 0.1305 101.59);
+    --label-orange: oklch(76.76% 0.1486 67.64);
+    --label-violet: oklch(62.69% 0.215 298.03);
+    --label-teal: oklch(57.08% 0.0788 222.11);
+    --label-red: oklch(63.06% 0.2062 28.03);
+    --label-pink: oklch(61.95% 0.2098 339.87);
+    --label-lime: oklch(79.24% 0.1841 130.76);
+    --label-blue: oklch(55.86% 0.2268 263.93);
+
     /* нейтральная шкала */
     --neutral-50: oklch(98.5% 0 0);
     --neutral-100: oklch(97% 0 0);
@@ -69,7 +79,7 @@
     --danger-foreground: var(--white);
 
     /* Border */
-    --border: color-mix(in oklab, var(--foreground) 15%, transparent);
+    --border: color-mix(in oklab, var(--foreground) 10%, transparent);
 
     /* Field */
     --field-background: var(--white);
@@ -78,6 +88,9 @@
     --field-border: var(--border);
     --field-border-focus: var(--accent);
     --field-border-invalid-focus: var(--red-600);
+
+    /* Component */
+    --tabs-active-background: var(--surface-primary);
   }
 
   /* Dark theme */
@@ -88,11 +101,11 @@
     /* Base */
     --background: var(--neutral-950);
     --foreground: var(--neutral-50);
-    --foreground-secondary: color-mix(in oklab, var(--foreground) 78%, var(--background) 22%);
-    --foreground-tertiary: color-mix(in oklab, var(--foreground) 62%, var(--background) 38%);
+    --foreground-secondary: var(--neutral-300);
+    --foreground-tertiary: var(--neutral-500);
 
     /* Surface */
-    --surface-primary: var(--neutral-800);
+    --surface-primary: var(--neutral-900);
     --surface-secondary: var(--neutral-800);
     --surface-tertiary: var(--neutral-700);
 
@@ -109,7 +122,7 @@
     --danger-foreground: var(--foreground);
 
     /* Border */
-    --border: color-mix(in oklab, var(--foreground) 15%, transparent);
+    --border: color-mix(in oklab, var(--foreground) 10%, transparent);
 
     /* Field */
     --field-background: var(--neutral-900);
@@ -118,6 +131,9 @@
     --field-border: var(--border);
     --field-border-focus: var(--accent);
     --field-border-invalid-focus: var(--red-400);
+
+    /* Component */
+    --tabs-active-background: var(--surface-tertiary);
   }
 }
 
@@ -170,6 +186,19 @@
   --color-field-border-focus: var(--field-border-focus);
   --color-field-border-invalid-focus: var(--field-border-invalid-focus);
 
+  /* Component utilities */
+  --color-tabs-active-background: var(--tabs-active-background);
+
+  /* Label utilities */
+  --color-label-olive: var(--label-olive);
+  --color-label-orange: var(--label-orange);
+  --color-label-violet: var(--label-violet);
+  --color-label-teal: var(--label-teal);
+  --color-label-red: var(--label-red);
+  --color-label-pink: var(--label-pink);
+  --color-label-lime: var(--label-lime);
+  --color-label-blue: var(--label-blue);
+
   /* Computed utilities */
 
   /* Hover для акцентных элементов */
@@ -179,11 +208,25 @@
     var(--color-accent-foreground) 10%
   );
 
+  /* Hover для primary surface */
+  --color-surface-primary-hover: color-mix(
+    in oklab,
+    var(--color-surface-primary) 97%,
+    var(--color-foreground) 3%
+  );
+
   /* Hover для secondary surface */
   --color-surface-secondary-hover: color-mix(
     in oklab,
-    var(--color-surface-secondary) 99%,
-    var(--color-foreground) 1%
+    var(--color-surface-secondary) 97%,
+    var(--color-foreground) 3%
+  );
+
+  /* Hover для tertiary surface */
+  --color-surface-tertiary-hover: color-mix(
+    in oklab,
+    var(--color-surface-tertiary) 97%,
+    var(--color-foreground) 3%
   );
 
   /* Hover для danger (как accent-hover: смесь базового danger и foreground на нём) */
@@ -221,15 +264,12 @@
   .sb-show-main,
   .sb-main-centered,
   .sb-main-padded,
-  #storybook-root {
-    background-color: #fff !important;
-  }
-
+  #storybook-root,
+  #storybook-docs,
   .docs-story,
   .sbdocs-preview,
   [data-story-block='true'] {
-    background-color: #fff !important;
-    color: var(--color-foreground);
+    @apply bg-background text-foreground;
     transition:
       background-color 160ms ease,
       color 160ms ease,
@@ -294,6 +334,22 @@
 
   .input-otp-helper {
     animation: input-otp-helper-in 150ms ease-out;
+  }
+
+  @keyframes dropdown-menu-enter {
+    from {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .dropdown-menu-enter {
+    animation: dropdown-menu-enter 50ms ease-out;
   }
 
   @keyframes tooltip-enter {

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
+import { secondaryStorySurface } from '../../docs/story-surfaces'
 import { TextArea } from './TextArea'
 
 const meta = {
@@ -48,7 +49,9 @@ export const Variants: Story = {
   render: () => (
     <div className="flex w-[250px] flex-col gap-4">
       <TextArea label="Default" placeholder="Default text area" variant="default" />
-      <TextArea label="Secondary" placeholder="Secondary text area" variant="secondary" />
+      <div className={secondaryStorySurface}>
+        <TextArea label="Secondary" placeholder="Secondary text area" variant="secondary" />
+      </div>
     </div>
   ),
 }
@@ -67,6 +70,11 @@ export const Secondary: Story = {
     placeholder: 'Enter your message',
     variant: 'secondary',
   },
+  render: (args) => (
+    <div className={secondaryStorySurface}>
+      <TextArea {...args} />
+    </div>
+  ),
 }
 
 export const Required: Story = {

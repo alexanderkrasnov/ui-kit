@@ -113,7 +113,7 @@ function RangeCalendarDemo() {
   }
 
   return (
-    <div className="mx-auto flex w-fit flex-col overflow-hidden rounded-[14px] bg-surface-primary shadow-[0_0_0_1px_var(--color-border)]">
+    <div className="mx-auto flex w-fit flex-col overflow-hidden rounded-[14px] bg-surface-primary">
       <Calendar
         mode="range"
         selected={range}
@@ -127,7 +127,7 @@ function RangeCalendarDemo() {
         numberOfMonths={2}
         resetOnSelect
         showOutsideDays={false}
-        className="rounded-none border-0 shadow-none"
+        className="rounded-none shadow-none"
       />
       <CalendarPresetActions today={today} onSelect={handlePresetSelect} />
     </div>
@@ -180,7 +180,7 @@ type CalendarPresetActionsProps = {
 
 function CalendarPresetActions({ today, onSelect }: CalendarPresetActionsProps) {
   return (
-    <div className="flex flex-wrap gap-2 border-t border-border bg-surface-secondary/50 p-3">
+    <div className="flex flex-wrap gap-2 border-t border-border bg-surface-primary p-3">
       {presetItems.map((preset) => {
         return (
           <Button

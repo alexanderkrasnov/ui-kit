@@ -1,5 +1,11 @@
 import { forwardRef, useId, type ReactNode } from 'react'
 
+import {
+  getFieldContainerClass,
+  getFieldDescribedBy,
+  getFieldHelperClass,
+  getFieldLabelClass,
+} from '../_internal/fieldStyles'
 import { Input, type InputProps } from '../Input'
 
 export type TextFieldProps = Omit<
@@ -42,15 +48,13 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(function T
   const isInvalid = invalid || error
   const helperId = isInvalid ? errorId : descriptionId
 
-  const describedBy =
-    [ariaDescribedByProp, helperId].filter(Boolean).join(' ') || undefined
-
-  const labelClass = disabled ? 'text-foreground-tertiary' : 'text-foreground'
-  const helperClass = isInvalid ? 'text-danger' : 'text-foreground-tertiary'
+  const describedBy = getFieldDescribedBy(ariaDescribedByProp, helperId)
+  const labelClass = getFieldLabelClass(disabled)
+  const helperClass = getFieldHelperClass(isInvalid)
   const helperText = isInvalid ? errorMessage : description
 
   return (
-    <div className={`inline-flex w-full max-w-sm flex-col gap-1.5 font-sans ${className}`.trim()}>
+    <div className={getFieldContainerClass(className)}>
       {label != null ? (
         <label htmlFor={inputId} className={`text-sm font-medium leading-snug ${labelClass}`}>
           {label}

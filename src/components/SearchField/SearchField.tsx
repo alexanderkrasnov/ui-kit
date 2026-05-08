@@ -10,6 +10,15 @@ import {
   type ReactNode,
 } from 'react'
 
+import { cx } from '../_internal/cx'
+import {
+  getFieldBorderClass,
+  getFieldDescribedBy,
+  getFieldHelperClass,
+  getFieldLabelClass,
+  getFieldSurfaceClass,
+  type FieldVariant,
+} from '../_internal/fieldStyles'
 import { Button, type ButtonProps } from '../Button'
 import { CloseButton } from '../CloseButton'
 
@@ -21,7 +30,7 @@ export type SearchFieldProps = Omit<
   description?: ReactNode
   errorMessage?: ReactNode
   /** Visual style variant */
-  variant?: 'default' | 'secondary'
+  variant?: FieldVariant
   /** Invalid / error visual state */
   invalid?: boolean
   /** Alias for `invalid`, aligned with the lower-level Input prop */
@@ -97,11 +106,9 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(functi
   const currentValue = String(value ?? internalValue ?? '')
   const showClearButton = !disabled && currentValue.length > 0 && !isInputFocused
 
-  const describedBy =
-    [ariaDescribedByProp, helperId].filter(Boolean).join(' ') || undefined
-
-  const labelClass = disabled ? 'text-foreground-tertiary' : 'text-foreground'
-  const helperClass = isInvalid ? 'text-danger' : 'text-foreground-tertiary'
+  const describedBy = getFieldDescribedBy(ariaDescribedByProp, helperId)
+  const labelClass = getFieldLabelClass(disabled)
+  const helperClass = getFieldHelperClass(isInvalid)
   const helperText = isInvalid ? errorMessage : description
 
   const fieldBase =
@@ -110,14 +117,6 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(functi
 
   const fieldSize = hasAction ? 'h-10 py-1 pl-3 pr-1' : 'h-9 px-3 py-2'
   const fieldRadius = hasAction ? 'rounded-xl' : 'rounded-lg'
-
-  const variants: Record<NonNullable<SearchFieldProps['variant']>, string> = {
-    default: 'bg-field-background shadow-sm text-field-foreground',
-    secondary: 'bg-surface-secondary text-foreground',
-  }
-
-  const normal = 'border-transparent focus-within:border-field-border-focus'
-  const invalidClass = 'border-danger focus-within:border-field-border-invalid-focus'
 
   function handleActionClick(event: React.MouseEvent<HTMLButtonElement>) {
     const query = inputRef.current?.value.trim() ?? ''
@@ -167,7 +166,7 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(functi
   }
 
   return (
-    <div className={`inline-flex min-w-[250px] flex-col gap-1.5 font-sans ${className}`.trim()}>
+    <div className={cx('inline-flex min-w-[250px] flex-col gap-1.5 font-sans', className)}>
       {label != null ? (
         <label htmlFor={inputId} className={`text-sm font-medium leading-snug ${labelClass}`}>
           {label}
@@ -179,9 +178,14 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(functi
         </label>
       ) : null}
       <div
-        className={`${fieldBase} ${fieldSize} ${fieldRadius} ${variants[variant]} ${
-          isInvalid ? invalidClass : normal
-        } ${disabled ? 'opacity-50' : ''}`.trim()}
+        className={cx(
+          fieldBase,
+          fieldSize,
+          fieldRadius,
+          getFieldSurfaceClass(variant),
+          getFieldBorderClass(isInvalid),
+          disabled ? 'opacity-50' : undefined,
+        )}
       >
         <div className="flex min-w-0 flex-1 items-center gap-2">
           <span className="inline-flex shrink-0 text-foreground-secondary [&_svg]:size-4">

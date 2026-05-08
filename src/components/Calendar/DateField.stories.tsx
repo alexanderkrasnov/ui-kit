@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
+import { secondaryStorySurface } from '../../docs/story-surfaces'
 import { DateField } from './DateField'
 
 const meta = {
@@ -30,7 +31,9 @@ export const Variants: Story = {
   render: () => (
     <div className="flex w-[250px] flex-col gap-4">
       <DateField label="Default" defaultValue="2026-04-24" variant="default" />
-      <DateField label="Secondary" defaultValue="2026-04-24" variant="secondary" />
+      <div className={secondaryStorySurface}>
+        <DateField label="Secondary" defaultValue="2026-04-24" variant="secondary" />
+      </div>
     </div>
   ),
 }
@@ -46,6 +49,11 @@ export const Secondary: Story = {
     label: 'Date',
     variant: 'secondary',
   },
+  render: (args) => (
+    <div className={secondaryStorySurface}>
+      <DateField {...args} />
+    </div>
+  ),
 }
 
 export const Required: Story = {
