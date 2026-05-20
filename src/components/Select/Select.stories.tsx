@@ -8,8 +8,7 @@ import geFlag from 'flag-icons/flags/4x3/ge.svg?url'
 import usFlag from 'flag-icons/flags/4x3/us.svg?url'
 
 import { secondaryStorySurface } from '../../docs/story-surfaces'
-import { Checkbox } from '../Checkbox'
-import { Select } from './Select'
+import { Select, type SelectProps } from './Select'
 
 function CountryFlag({ src, label }: { src: string; label: string }) {
   return (
@@ -53,6 +52,13 @@ const columnItems = [
   { label: 'Last active', value: 'lastActive' },
 ]
 
+const pethRoleItems = [
+  { label: 'Compliance officer', value: 'complianceOfficer' },
+  { label: 'Risk analyst', value: 'riskAnalyst' },
+  { label: 'Treasury manager', value: 'treasuryManager' },
+  { label: 'Operations reviewer', value: 'operationsReviewer' },
+]
+
 function ColumnsSelectDemo({ variant }: { variant: 'default' | 'secondary' }) {
   const [selectedColumns, setSelectedColumns] = useState([
     'name',
@@ -63,42 +69,30 @@ function ColumnsSelectDemo({ variant }: { variant: 'default' | 'secondary' }) {
 
   return (
     <Select
+      selectionMode="multiple"
+      items={columnItems}
+      value={selectedColumns}
+      onValueChange={setSelectedColumns}
       label="Columns"
       prefixIcon={<Funnel />}
       variant={variant}
       className="w-fit"
       triggerClassName="justify-start"
       menuWidth={250}
-      menuContent={
-        <div className="flex w-full flex-col">
-          {columnItems.map((item) => {
-            const checked = selectedColumns.includes(item.value)
+    />
+  )
+}
 
-            return (
-              <button
-                key={item.value}
-                type="button"
-                className="inline-flex w-full cursor-pointer items-center px-3 py-2 text-left hover:bg-surface-secondary-hover focus:bg-surface-secondary-hover focus:outline-none"
-                onClick={() => {
-                  setSelectedColumns((current) =>
-                    checked
-                      ? current.filter((value) => value !== item.value)
-                      : [...current, item.value],
-                  )
-                }}
-              >
-                <Checkbox
-                  label={item.label}
-                  checked={checked}
-                  variant="default"
-                  readOnly
-                  tabIndex={-1}
-                />
-              </button>
-            )
-          })}
-        </div>
-      }
+function RoleSelectDemo({ variant }: { variant: 'default' | 'secondary' }) {
+  return (
+    <Select
+      items={pethRoleItems}
+      defaultValue="complianceOfficer"
+      placeholder="Select role"
+      icon={<ChevronDown />}
+      variant={variant}
+      className="w-full"
+      triggerClassName="w-full justify-between"
     />
   )
 }
@@ -115,16 +109,17 @@ const meta = {
       </div>
     ),
   ],
-} satisfies Meta<typeof Select>
+} satisfies Meta<SelectProps>
 
 export default meta
-type Story = StoryObj<typeof meta>
+type Story = StoryObj<SelectProps>
 
 export const Variants: Story = {
   render: () => (
     <div className="flex w-[250px] flex-col items-start gap-6">
       <div className="flex w-full flex-col items-start gap-3">
         <ColumnsSelectDemo variant="default" />
+        <RoleSelectDemo variant="default" />
         <Select
           items={countryItems}
           placeholder="Select country"
@@ -136,6 +131,7 @@ export const Variants: Story = {
       </div>
       <div className={`${secondaryStorySurface} flex flex-col items-start gap-6`}>
         <ColumnsSelectDemo variant="secondary" />
+        <RoleSelectDemo variant="secondary" />
         <Select
           items={countryItems}
           placeholder="Select country"
@@ -185,7 +181,38 @@ export const SelectCountrySecondary: Story = {
     className: 'w-full',
     triggerClassName: 'w-full justify-between',
   },
-  render: (args) => (
+  render: (args: SelectProps) => (
+    <div className={secondaryStorySurface}>
+      <Select {...args} />
+    </div>
+  ),
+}
+
+export const SingleValueWithCheckmark: Story = {
+  name: 'Single value with checkmark',
+  args: {
+    items: pethRoleItems,
+    defaultValue: 'complianceOfficer',
+    placeholder: 'Select role',
+    icon: <ChevronDown />,
+    variant: 'default',
+    className: 'w-full',
+    triggerClassName: 'w-full justify-between',
+  },
+}
+
+export const SingleValueWithCheckmarkSecondary: Story = {
+  name: 'Single value with checkmark secondary',
+  args: {
+    items: pethRoleItems,
+    defaultValue: 'complianceOfficer',
+    placeholder: 'Select role',
+    icon: <ChevronDown />,
+    variant: 'secondary',
+    className: 'w-full',
+    triggerClassName: 'w-full justify-between',
+  },
+  render: (args: SelectProps) => (
     <div className={secondaryStorySurface}>
       <Select {...args} />
     </div>

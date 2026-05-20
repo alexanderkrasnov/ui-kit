@@ -11,7 +11,6 @@ import { createPortal } from 'react-dom'
 
 export type DropdownItem = {
   label: string
-  value?: string
   icon?: ReactNode
   onSelect?: () => void
   disabled?: boolean
@@ -21,14 +20,6 @@ export type DropdownProps = {
   items?: DropdownItem[]
   /** Label next to chevron (chevron mode) */
   label?: string
-  /** Placeholder for select-like dropdowns */
-  placeholder?: string
-  /** Controlled selected item value */
-  value?: string
-  /** Uncontrolled initial selected item value */
-  defaultValue?: string
-  /** Called when an item is selected */
-  onValueChange?: (value: string, item: DropdownItem) => void
   /** `chevron` — text + ChevronDown; `icon` — icon-only trigger (e.g. three dots) */
   mode?: 'chevron' | 'icon'
   /** Used when mode is `icon` */
@@ -76,10 +67,6 @@ const menuItem =
 const itemIconClass =
   'inline-flex h-3 shrink-0 items-center justify-center text-foreground-secondary [&_img]:h-3 [&_img]:w-auto [&_svg]:size-4'
 
-function getItemValue(item: DropdownItem) {
-  return item.value ?? item.label
-}
-
 function getMenuPosition(
   rect: DOMRect,
   mode: NonNullable<DropdownProps['mode']>,
@@ -98,10 +85,6 @@ function getMenuPosition(
 export function Dropdown({
   items,
   label = 'Actions',
-  placeholder,
-  value,
-  defaultValue,
-  onValueChange,
   mode = 'chevron',
   icon,
   prefixIcon,
@@ -114,21 +97,11 @@ export function Dropdown({
   triggerClassName = '',
 }: DropdownProps) {
   const [open, setOpen] = useState(false)
-  const [internalValue, setInternalValue] = useState(defaultValue ?? '')
   const [menuStyle, setMenuStyle] = useState<CSSProperties>()
   const rootRef = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
   const menuRef = useRef<HTMLDivElement>(null)
   const listId = useId()
-  const currentValue = value ?? internalValue
-  const isSelectDropdown =
-    placeholder != null || value != null || defaultValue != null || onValueChange != null
-  const selectedItem = isSelectDropdown
-    ? items?.find((item) => getItemValue(item) === currentValue)
-    : undefined
-  const triggerLabel = selectedItem?.label ?? placeholder ?? label
-  const triggerPrefixIcon = selectedItem?.icon ?? prefixIcon
-  const isPlaceholder = isSelectDropdown && selectedItem == null && placeholder != null
 
   function getCurrentMenuPosition() {
     const rect = triggerRef.current?.getBoundingClientRect()
@@ -170,9 +143,6 @@ export function Dropdown({
   const isIcon = mode === 'icon'
   const triggerPadding = isIcon ? 'px-2.5' : 'px-3'
   const triggerClass = `${triggerShell} ${triggerPadding} ${triggerVariant[variant]} ${triggerClassName}`.trim()
-  const labelClass = `${isSelectDropdown ? 'min-w-0 flex-1 truncate text-left' : ''} ${
-    isPlaceholder ? 'text-field-placeholder' : ''
-  }`.trim()
   const menuClass = `${menuPanel} ${isIcon ? 'min-w-48' : ''} ${menuClassName}`.trim()
   const menu =
     open && typeof document !== 'undefined'
@@ -185,42 +155,27 @@ export function Dropdown({
           >
             {menuContent ?? (
               <ul role="menu">
-                {(items ?? []).map((item) => {
-                  const itemValue = getItemValue(item)
-                  const selected = isSelectDropdown && itemValue === currentValue
-
-                  return (
-                    <li key={itemValue} role="none">
-                      <button
-                        type="button"
-                        role="menuitem"
-                        disabled={item.disabled}
-                        aria-selected={selected ? true : undefined}
-                        className={menuItem}
-                        onClick={() => {
-                          item.onSelect?.()
-
-                          if (isSelectDropdown) {
-                            if (value === undefined) {
-                              setInternalValue(itemValue)
-                            }
-
-                            onValueChange?.(itemValue, item)
-                          }
-
-                          setOpen(false)
-                        }}
-                      >
-                        {item.icon != null ? (
-                          <span className={`${itemIconClass} mr-2`} aria-hidden>
-                            {item.icon}
-                          </span>
-                        ) : null}
-                        {item.label}
-                      </button>
-                    </li>
-                  )
-                })}
+                {(items ?? []).map((item, index) => (
+                  <li key={`${item.label}-${index}`} role="none">
+                    <button
+                      type="button"
+                      role="menuitem"
+                      disabled={item.disabled}
+                      className={menuItem}
+                      onClick={() => {
+                        item.onSelect?.()
+                        setOpen(false)
+                      }}
+                    >
+                      {item.icon != null ? (
+                        <span className={`${itemIconClass} mr-2`} aria-hidden>
+                          {item.icon}
+                        </span>
+                      ) : null}
+                      <span className="min-w-0 flex-1 truncate">{item.label}</span>
+                    </button>
+                  </li>
+                ))}
               </ul>
             )}
           </div>,
@@ -254,12 +209,12 @@ export function Dropdown({
           <span className="inline-flex shrink-0 [&_svg]:size-4">{icon}</span>
         ) : (
           <>
-            {triggerPrefixIcon != null ? (
+            {prefixIcon != null ? (
               <span className={itemIconClass} aria-hidden>
-                {triggerPrefixIcon}
+                {prefixIcon}
               </span>
             ) : null}
-            <span className={labelClass}>{triggerLabel}</span>
+            <span className="min-w-0 flex-1 truncate text-left">{label}</span>
             {icon != null ? (
               <span className="inline-flex shrink-0 text-foreground-secondary [&_svg]:size-4" aria-hidden>
                 {icon}
