@@ -306,6 +306,10 @@
   @apply text-sm font-normal;
 }
 
+@utility type-body-xs {
+  @apply text-xs font-normal;
+}
+
 @utility type-caption {
   @apply font-mono text-xs font-medium tracking-widest;
 }

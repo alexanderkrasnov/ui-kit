@@ -80,6 +80,12 @@ const semanticTypography: SemanticTypographyItem[] = [
     sample: 'The quick brown fox jumps over the lazy dog.',
   },
   {
+    name: 'Body xs',
+    utilityClass: 'type-body-xs',
+    parts: ['text-xs', 'font-normal'],
+    sample: 'The quick brown fox jumps over the lazy dog.',
+  },
+  {
     name: 'Caption',
     utilityClass: 'type-caption',
     parts: ['font-mono', 'text-xs', 'font-medium', 'tracking-widest'],

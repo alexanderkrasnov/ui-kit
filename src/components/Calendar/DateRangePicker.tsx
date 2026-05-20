@@ -791,7 +791,7 @@ export const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
         {helperText != null ? (
           <p
             id={helperId}
-            className={`text-xs leading-snug ${helperClass}`}
+            className={`type-body-xs leading-snug ${helperClass}`}
             aria-live={isInvalid ? 'polite' : undefined}
           >
             {helperText}
