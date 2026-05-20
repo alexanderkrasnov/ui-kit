@@ -11,6 +11,13 @@ interface TypeScaleItem {
   lineHeightRem: string
 }
 
+interface SemanticTypographyItem {
+  name: string
+  utilityClass: string
+  parts: string[]
+  sample: string
+}
+
 const fontFamilies: FontFamilyItem[] = [
   {
     name: 'Sans',
@@ -33,6 +40,51 @@ const typeScale: TypeScaleItem[] = [
   { className: 'text-2xl', px: '24px', rem: '1.5rem', lineHeightRem: '2rem' },
   { className: 'text-3xl', px: '30px', rem: '1.875rem', lineHeightRem: '2.25rem' },
   { className: 'text-4xl', px: '36px', rem: '2.25rem', lineHeightRem: '2.5rem' },
+]
+
+const semanticTypography: SemanticTypographyItem[] = [
+  {
+    name: 'H1',
+    utilityClass: 'type-h1',
+    parts: ['text-4xl', 'font-bold'],
+    sample: 'Plan confidently across the product surface.',
+  },
+  {
+    name: 'H2',
+    utilityClass: 'type-h2',
+    parts: ['text-3xl', 'font-bold'],
+    sample: 'Plan confidently across the product surface.',
+  },
+  {
+    name: 'H3',
+    utilityClass: 'type-h3',
+    parts: ['text-2xl', 'font-semibold'],
+    sample: 'Plan confidently across the product surface.',
+  },
+  {
+    name: 'Body lg',
+    utilityClass: 'type-body-lg',
+    parts: ['text-lg', 'font-normal'],
+    sample: 'The quick brown fox jumps over the lazy dog.',
+  },
+  {
+    name: 'Body',
+    utilityClass: 'type-body',
+    parts: ['text-base', 'font-normal'],
+    sample: 'The quick brown fox jumps over the lazy dog.',
+  },
+  {
+    name: 'Body sm',
+    utilityClass: 'type-body-sm',
+    parts: ['text-sm', 'font-normal'],
+    sample: 'The quick brown fox jumps over the lazy dog.',
+  },
+  {
+    name: 'Caption',
+    utilityClass: 'type-caption',
+    parts: ['font-mono', 'text-xs', 'font-medium', 'tracking-widest'],
+    sample: 'UPDATED 12:30 UTC',
+  },
 ]
 
 function FontFamilyCard({ name, token, utilityClass }: FontFamilyItem) {
@@ -67,8 +119,8 @@ export function TypographySystemsPreview() {
         </div>
       </section>
 
-      <section>
-        <h2 className="mb-4 text-xl font-semibold text-foreground">Type Scale</h2>
+      <section className="mb-10">
+        <h2 className="mb-4 text-xl font-semibold text-foreground">Primitive Scale</h2>
         <div className="overflow-hidden rounded-3xl border border-border bg-surface-primary shadow-sm">
           {typeScale.map((item) => (
             <div key={item.className} className="border-b border-border p-4 last:border-b-0">
@@ -93,6 +145,42 @@ export function TypographySystemsPreview() {
               >
                 The quick brown fox jumps over the lazy dog.
               </p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section>
+        <h2 className="mb-4 text-xl font-semibold text-foreground">Semantic Styles</h2>
+        <div className="overflow-hidden rounded-3xl border border-border bg-surface-primary shadow-sm">
+          {semanticTypography.map((item) => (
+            <div
+              key={item.name}
+              className="grid gap-4 border-b border-border p-4 last:border-b-0 md:grid-cols-[8rem_1fr]"
+            >
+              <div>
+                <h3 className="text-sm font-semibold text-foreground">{item.name}</h3>
+              </div>
+
+              <div className="min-w-0">
+                <div className="mb-2 flex flex-wrap items-center gap-1 text-xs">
+                  <code className="rounded-md bg-surface-secondary px-2 py-1 text-foreground">
+                    {item.utilityClass}
+                  </code>
+                  {item.parts.map((part) => (
+                    <code
+                      key={part}
+                      className="rounded-md border border-border px-2 py-1 text-foreground-tertiary"
+                    >
+                      {part}
+                    </code>
+                  ))}
+                </div>
+
+                <p className={`${item.utilityClass} text-foreground`}>
+                  {item.sample}
+                </p>
+              </div>
             </div>
           ))}
         </div>
