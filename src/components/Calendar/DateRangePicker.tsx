@@ -266,17 +266,22 @@ export const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
         }
 
         const calendarHeight = 340
+        const calendarWidth = 604
         const gap = 8
         const opensAbove =
           window.innerHeight - rect.bottom < calendarHeight && rect.top > calendarHeight
         const top = opensAbove
           ? Math.max(gap, rect.top - calendarHeight - gap)
           : rect.bottom + gap
+        const left = Math.min(
+          Math.max(gap, rect.left),
+          Math.max(gap, window.innerWidth - calendarWidth - gap),
+        )
 
         setPopoverStyle({
-          left: Math.max(gap, rect.left),
+          left,
           top,
-          width: rect.width,
+          minWidth: rect.width,
         })
       }
 
@@ -686,30 +691,23 @@ export const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
             <div
               ref={popoverRef}
               style={popoverStyle}
-              className="date-picker-popover fixed z-50"
+              className="date-picker-popover fixed z-50 max-w-[calc(100vw-16px)] overflow-x-auto"
             >
               <Calendar
                 mode="range"
                 selected={selectedRange}
                 onSelect={commitRange}
                 defaultMonth={startDate ?? endDate ?? new Date(2026, 3)}
-                captionLayout="dropdown"
                 startMonth={minDate ?? new Date(1926, 0)}
                 endMonth={maxDate ?? new Date(2026, 11)}
                 disabled={disabledMatchers}
+                excludeDisabled
+                numberOfMonths={2}
                 resetOnSelect
+                showOutsideDays={false}
                 classNames={{
                   root:
-                    'w-full rounded-[14px] border border-border bg-surface-primary p-3 font-sans text-foreground shadow-sm',
-                  month: 'w-full space-y-4',
-                  month_grid: 'w-full border-collapse',
-                  weekday:
-                    'flex h-8 min-w-0 items-center justify-center pb-1 text-center text-xs font-normal text-foreground-tertiary',
-                  day: 'relative h-8 min-w-0 p-0 text-center text-sm',
-                  day_button:
-                    'inline-flex size-8 items-center justify-center rounded-[10px] text-sm font-normal leading-none transition-colors ' +
-                    'hover:bg-surface-secondary-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ' +
-                    'focus-visible:outline-accent disabled:pointer-events-none',
+                    'rounded-[14px] border border-border bg-surface-primary p-3 font-sans text-foreground shadow-sm',
                 }}
               />
             </div>,

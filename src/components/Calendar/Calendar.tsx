@@ -102,12 +102,14 @@ const calendarClassNames: Partial<ClassNames> = {
     '[&_button]:text-foreground-tertiary [&_button]:opacity-40',
   hidden: 'invisible',
   range_start:
-    'rounded-l-[10px] bg-accent/15 [&_button]:bg-accent [&_button]:text-accent-foreground [&_button]:hover:bg-accent-hover',
+    'plexo-range-start overflow-hidden rounded-l-[10px] before:absolute before:inset-y-0 before:left-1/2 before:right-0 before:bg-accent/15 before:content-[""] ' +
+    '[&.plexo-range-end]:before:hidden [&_button]:relative [&_button]:z-[1] [&_button]:bg-accent [&_button]:text-accent-foreground [&_button]:hover:bg-accent-hover',
   range_middle:
     'bg-accent/15 first:rounded-l-[10px] last:rounded-r-[10px] ' +
     '[&_button]:rounded-none [&_button]:bg-transparent [&_button]:text-foreground [&_button]:hover:bg-accent/20',
   range_end:
-    'rounded-r-[10px] bg-accent/15 [&_button]:bg-accent [&_button]:text-accent-foreground [&_button]:hover:bg-accent-hover',
+    'plexo-range-end overflow-hidden rounded-r-[10px] before:absolute before:inset-y-0 before:left-0 before:right-1/2 before:bg-accent/15 before:content-[""] ' +
+    '[&.plexo-range-start]:before:hidden [&_button]:relative [&_button]:z-[1] [&_button]:bg-accent [&_button]:text-accent-foreground [&_button]:hover:bg-accent-hover',
 }
 
 export function Calendar({
