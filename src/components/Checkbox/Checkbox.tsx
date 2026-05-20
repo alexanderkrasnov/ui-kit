@@ -1,6 +1,8 @@
 import { Check } from 'lucide-react'
 import { forwardRef, useId, type InputHTMLAttributes, type ReactNode } from 'react'
 
+import { cx } from '../_internal/cx'
+
 export type CheckboxProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | 'size'> & {
   label?: ReactNode
   /** Текст под строкой чекбокса; при `error` — цвет `danger`, как у рамки */
@@ -11,39 +13,49 @@ export type CheckboxProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'type' |
   error?: boolean
 }
 
-const peerShell =
-  'peer relative inline-flex size-4 shrink-0 items-center justify-center rounded-sm text-sm ' +
-  'overflow-hidden font-sans ' +
-  'peer-focus-visible:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-offset-2 ' +
-  'peer-focus-visible:ring-offset-[var(--color-background)] ' +
-  'peer-disabled:cursor-not-allowed peer-disabled:opacity-50'
+const peerShell = cx(
+  'peer relative inline-flex size-4 shrink-0 items-center justify-center rounded-sm text-sm',
+  'overflow-hidden font-sans',
+  'peer-focus-visible:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-offset-2',
+  'peer-focus-visible:ring-offset-[var(--color-background)]',
+  'peer-disabled:cursor-not-allowed peer-disabled:opacity-50',
+)
 
 const variantBox: Record<
   NonNullable<CheckboxProps['variant']>,
   { normal: string; error: string }
 > = {
   default: {
-    normal:
-      `${peerShell} shadow-sm bg-field-background peer-checked:bg-accent peer-checked:shadow-none ` +
+    normal: cx(
+      peerShell,
+      'shadow-sm bg-field-background peer-checked:bg-accent peer-checked:shadow-none',
       'peer-focus-visible:ring-field-border-focus/35',
-    error:
-      `${peerShell} shadow-sm bg-field-background peer-checked:bg-accent peer-checked:shadow-none ` +
+    ),
+    error: cx(
+      peerShell,
+      'shadow-sm bg-field-background peer-checked:bg-accent peer-checked:shadow-none',
       'peer-focus-visible:ring-field-border-focus/35',
+    ),
   },
   secondary: {
-    normal:
-      `${peerShell} bg-surface-secondary peer-checked:bg-accent ` +
+    normal: cx(
+      peerShell,
+      'bg-surface-secondary peer-checked:bg-accent',
       'peer-focus-visible:ring-field-border-focus/35',
-    error:
-      `${peerShell} bg-surface-secondary peer-checked:bg-accent ` +
+    ),
+    error: cx(
+      peerShell,
+      'bg-surface-secondary peer-checked:bg-accent',
       'peer-focus-visible:ring-field-border-focus/35',
+    ),
   },
 }
 
 /** Минимальный checkmark без анимации */
-const checkWrapClass =
-  'pointer-events-none absolute inset-0 z-10 flex items-center justify-center opacity-0 ' +
-  'group-has-[input:checked]:opacity-100'
+const checkWrapClass = cx(
+  'pointer-events-none absolute inset-0 z-10 flex items-center justify-center opacity-0',
+  'group-has-[input:checked]:opacity-100',
+)
 
 export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Checkbox(
   {
@@ -62,7 +74,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Che
   const inputId = id ?? `checkbox-${autoId}`
   const helperId = `checkbox-helper-${autoId}`
 
-  const boxClass = (error ? variantBox[variant].error : variantBox[variant].normal).trim()
+  const boxClass = error ? variantBox[variant].error : variantBox[variant].normal
 
   const describedBy =
     [ariaDescribedByProp, helperText != null ? helperId : undefined].filter(Boolean).join(' ') ||
@@ -78,7 +90,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Che
         ref={ref}
         id={inputId}
         type="checkbox"
-        className={`peer sr-only ${className}`.trim()}
+        className={cx('peer sr-only', className)}
         {...props}
         aria-invalid={error ? true : props['aria-invalid']}
         aria-describedby={describedBy}
@@ -116,13 +128,13 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Che
       >
         {control}
         {label != null ? (
-          <span className={`text-sm font-sans leading-snug ${labelTextClass}`}>{label}</span>
+          <span className={cx('text-sm font-sans leading-snug', labelTextClass)}>{label}</span>
         ) : null}
       </label>
       {helperText != null ? (
         <div
           id={helperId}
-          className={`${helperClass} font-sans ${label != null ? 'ml-6' : ''}`.trim()}
+          className={cx(helperClass, 'font-sans', label != null && 'ml-6')}
           aria-live={error ? 'polite' : undefined}
         >
           {helperText}

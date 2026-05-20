@@ -1,5 +1,7 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react'
 
+import { cx } from '../_internal/cx'
+
 export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   /** Visual style variant */
   variant?: 'primary' | 'secondary' | 'ghost' | 'danger'
@@ -32,11 +34,12 @@ export function Button({
     !(typeof children === 'string' && children.trim() === '')
   const hideIconFromA11y = Boolean(hasText)
 
-  const base =
-    'inline-flex items-center justify-center gap-2 font-medium transition-colors ease-in-out duration-150 ' +
-    'rounded-lg ' +
-    'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ' +
-    'disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50'
+  const base = cx(
+    'inline-flex items-center justify-center gap-2 font-medium transition-colors ease-in-out duration-150',
+    'rounded-lg',
+    'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
+    'disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50',
+  )
 
   const sizes: Record<NonNullable<ButtonProps['size']>, string> = {
     small: 'h-8 px-3 text-sm',
@@ -51,24 +54,28 @@ export function Button({
   }
 
   const variants: Record<NonNullable<ButtonProps['variant']>, string> = {
-    primary:
-      'bg-accent text-accent-foreground shadow-sm hover:bg-accent-hover ' +
+    primary: cx(
+      'bg-accent text-accent-foreground shadow-sm hover:bg-accent-hover',
       'focus-visible:outline-accent',
-    secondary:
-      'bg-surface-secondary text-foreground shadow-none hover:bg-surface-secondary-hover ' +
+    ),
+    secondary: cx(
+      'bg-surface-secondary text-foreground shadow-none hover:bg-surface-secondary-hover',
       'focus-visible:outline-surface-tertiary',
-    ghost:
-      'bg-transparent text-foreground shadow-none hover:bg-surface-secondary-hover ' +
+    ),
+    ghost: cx(
+      'bg-transparent text-foreground shadow-none hover:bg-surface-secondary-hover',
       'focus-visible:outline-surface-primary',
-    danger:
-      'bg-danger text-accent-foreground shadow-sm hover:bg-danger-hover ' +
+    ),
+    danger: cx(
+      'bg-danger text-accent-foreground shadow-sm hover:bg-danger-hover',
       'focus-visible:outline-danger',
+    ),
   }
 
   return (
     <button
       type={type}
-      className={`${base} ${iconOnly ? iconSizes[size] : sizes[size]} ${variants[variant]} ${className}`.trim()}
+      className={cx(base, iconOnly ? iconSizes[size] : sizes[size], variants[variant], className)}
       {...props}
     >
       {startIcon != null ? (

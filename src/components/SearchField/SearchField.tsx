@@ -111,9 +111,10 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(functi
   const helperClass = getFieldHelperClass(isInvalid)
   const helperText = isInvalid ? errorMessage : description
 
-  const fieldBase =
-    'flex w-full min-w-0 items-center border text-sm transition-[border-color,box-shadow] ' +
-    'font-sans focus-within:outline-none disabled:cursor-not-allowed'
+  const fieldBase = cx(
+    'flex w-full min-w-0 items-center border text-sm transition-[border-color,box-shadow]',
+    'font-sans focus-within:outline-none disabled:cursor-not-allowed',
+  )
 
   const fieldSize = hasAction ? 'h-10 py-1 pl-3 pr-1' : 'h-9 px-3 py-2'
   const fieldRadius = hasAction ? 'rounded-xl' : 'rounded-lg'
@@ -168,7 +169,7 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(functi
   return (
     <div className={cx('inline-flex min-w-[250px] flex-col gap-1.5 font-sans', className)}>
       {label != null ? (
-        <label htmlFor={inputId} className={`text-sm font-medium leading-snug ${labelClass}`}>
+        <label htmlFor={inputId} className={cx('text-sm font-medium leading-snug', labelClass)}>
           {label}
           {required ? (
             <span className="ml-1 text-danger" aria-hidden>
@@ -207,7 +208,12 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(functi
             onBlur={handleInputBlur}
             onChange={handleInputChange}
             onFocus={handleInputFocus}
-            className={`min-w-0 flex-1 appearance-none bg-transparent p-0 text-sm text-inherit outline-none placeholder:text-field-placeholder disabled:cursor-not-allowed [&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:appearance-none [&::-webkit-search-results-button]:appearance-none [&::-webkit-search-results-decoration]:appearance-none ${inputClassName}`.trim()}
+            className={cx(
+              'min-w-0 flex-1 appearance-none bg-transparent p-0 text-sm text-inherit outline-none placeholder:text-field-placeholder',
+              'disabled:cursor-not-allowed [&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:appearance-none',
+              '[&::-webkit-search-results-button]:appearance-none [&::-webkit-search-results-decoration]:appearance-none',
+              inputClassName,
+            )}
             {...props}
           />
         </div>
@@ -237,7 +243,7 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(functi
       {helperText != null ? (
         <p
           id={helperId}
-          className={`text-xs leading-snug ${helperClass}`}
+          className={cx('text-xs leading-snug', helperClass)}
           aria-live={isInvalid ? 'polite' : undefined}
         >
           {helperText}

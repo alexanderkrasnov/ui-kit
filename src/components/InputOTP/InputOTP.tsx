@@ -352,17 +352,20 @@ export const InputOTP = forwardRef<HTMLDivElement, InputOTPProps>(function Input
     }
   }
 
-  const slotBase =
-    'relative inline-flex h-10 w-8 shrink-0 items-center justify-center rounded-lg border ' +
-    'text-center font-sans text-2xl tabular-nums transition-[background-color,border-color,box-shadow,color] ' +
-    'focus-within:outline-none'
-  const inputClass =
-    'absolute inset-0 h-full w-full rounded-lg border-0 bg-transparent p-0 text-center ' +
-    'font-sans text-2xl tabular-nums text-transparent caret-transparent outline-none ' +
-    'selection:bg-transparent disabled:cursor-not-allowed'
-  const digitClass =
-    'input-otp-digit pointer-events-none absolute inset-0 flex items-center justify-center ' +
-    'text-2xl tabular-nums leading-none'
+  const slotBase = cx(
+    'relative inline-flex h-10 w-8 shrink-0 items-center justify-center rounded-lg border',
+    'text-center font-sans text-2xl tabular-nums transition-[background-color,border-color,box-shadow,color]',
+    'focus-within:outline-none',
+  )
+  const inputClass = cx(
+    'absolute inset-0 h-full w-full rounded-lg border-0 bg-transparent p-0 text-center',
+    'font-sans text-2xl tabular-nums text-transparent caret-transparent outline-none',
+    'selection:bg-transparent disabled:cursor-not-allowed',
+  )
+  const digitClass = cx(
+    'input-otp-digit pointer-events-none absolute inset-0 flex items-center justify-center',
+    'text-2xl tabular-nums leading-none',
+  )
 
   return (
     <div
@@ -371,7 +374,7 @@ export const InputOTP = forwardRef<HTMLDivElement, InputOTPProps>(function Input
       {...props}
     >
       {label != null ? (
-        <label htmlFor={`${inputId}-slot-0`} className={`text-sm font-medium leading-snug ${labelClass}`}>
+        <label htmlFor={`${inputId}-slot-0`} className={cx('text-sm font-medium leading-snug', labelClass)}>
           {label}
           {required ? (
             <span className="ml-1 text-danger" aria-hidden>
@@ -386,7 +389,7 @@ export const InputOTP = forwardRef<HTMLDivElement, InputOTPProps>(function Input
         aria-invalid={isInvalid ? true : undefined}
         aria-required={required ? true : undefined}
         aria-disabled={disabled ? true : undefined}
-        className={`flex w-full items-center gap-2 ${disabled ? 'opacity-50' : ''}`}
+        className={cx('flex w-full items-center gap-2', disabled && 'opacity-50')}
       >
         {slots.map((slot, index) => (
           <Fragment key={index}>
@@ -439,7 +442,7 @@ export const InputOTP = forwardRef<HTMLDivElement, InputOTPProps>(function Input
       {helperText != null ? (
         <p
           id={helperId}
-          className={`min-h-[34px] text-xs leading-snug ${helperClass}`}
+          className={cx('min-h-[34px] text-xs leading-snug', helperClass)}
           aria-live={isInvalid ? 'polite' : undefined}
         >
           {helperText}

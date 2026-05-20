@@ -1,5 +1,6 @@
 import { forwardRef, useId, type ReactNode } from 'react'
 
+import { cx } from '../_internal/cx'
 import {
   getFieldContainerClass,
   getFieldDescribedBy,
@@ -56,7 +57,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(function T
   return (
     <div className={getFieldContainerClass(className)}>
       {label != null ? (
-        <label htmlFor={inputId} className={`text-sm font-medium leading-snug ${labelClass}`}>
+        <label htmlFor={inputId} className={cx('text-sm font-medium leading-snug', labelClass)}>
           {label}
           {required ? (
             <span className="ml-1 text-danger" aria-hidden>
@@ -79,7 +80,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(function T
       {helperText != null ? (
         <p
           id={helperId}
-          className={`text-xs leading-snug ${helperClass}`}
+          className={cx('text-xs leading-snug', helperClass)}
           aria-live={isInvalid ? 'polite' : undefined}
         >
           {helperText}

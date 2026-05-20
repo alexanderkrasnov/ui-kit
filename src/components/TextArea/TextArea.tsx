@@ -60,15 +60,16 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(function 
   const helperClass = getFieldHelperClass(isInvalid)
   const helperText = isInvalid ? errorMessage : description
 
-  const base =
-    'block w-full min-w-0 resize-y rounded-lg border px-3 py-2 text-sm transition-[border-color,box-shadow] ' +
-    'font-sans placeholder:text-field-placeholder focus-visible:outline-none ' +
-    'disabled:cursor-not-allowed disabled:opacity-50'
+  const base = cx(
+    'block w-full min-w-0 resize-y rounded-lg border px-3 py-2 text-sm transition-[border-color,box-shadow]',
+    'font-sans placeholder:text-field-placeholder focus-visible:outline-none',
+    'disabled:cursor-not-allowed disabled:opacity-50',
+  )
 
   return (
     <div className={getFieldContainerClass(className)}>
       {label != null ? (
-        <label htmlFor={textareaId} className={`text-sm font-medium leading-snug ${labelClass}`}>
+        <label htmlFor={textareaId} className={cx('text-sm font-medium leading-snug', labelClass)}>
           {label}
           {required ? (
             <span className="ml-1 text-danger" aria-hidden>
@@ -91,7 +92,7 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(function 
       {helperText != null ? (
         <p
           id={helperId}
-          className={`text-xs leading-snug ${helperClass}`}
+          className={cx('text-xs leading-snug', helperClass)}
           aria-live={isInvalid ? 'polite' : undefined}
         >
           {helperText}

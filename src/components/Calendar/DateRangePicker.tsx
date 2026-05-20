@@ -8,7 +8,6 @@ import {
   useState,
   type CSSProperties,
   type HTMLAttributes,
-  type FocusEvent,
   type KeyboardEvent,
   type MouseEvent,
   type ReactNode,
@@ -35,21 +34,7 @@ export type DateRangePickerValue = {
   end?: DateRangePickerDateValue
 }
 
-type DateSegments = {
-  day: string
-  month: string
-  year: string
-}
-
-type DateSegment = keyof DateSegments
 type DateBoundary = 'start' | 'end'
-
-type RangeSegments = Record<DateBoundary, DateSegments>
-
-type ActiveSegment = {
-  boundary: DateBoundary
-  segment: DateSegment
-}
 
 export type DateRangePickerProps = Omit<
   HTMLAttributes<HTMLDivElement>,
@@ -72,12 +57,6 @@ export type DateRangePickerProps = Omit<
   placeholder?: string
   inputClassName?: string
   'aria-describedby'?: string
-}
-
-const emptySegments: DateSegments = {
-  day: '',
-  month: '',
-  year: '',
 }
 
 function parseDateValue(value?: DateRangePickerDateValue) {
@@ -109,50 +88,6 @@ function formatDateValue(date: Date) {
   const day = String(date.getDate()).padStart(2, '0')
 
   return `${year}-${month}-${day}`
-}
-
-function getSegmentsFromDateValue(value?: DateRangePickerDateValue): DateSegments {
-  const match = value?.match(/^(\d{4})-(\d{2})-(\d{2})$/)
-
-  if (!match) {
-    return emptySegments
-  }
-
-  return {
-    year: match[1],
-    day: match[3],
-    month: match[2],
-  }
-}
-
-function getSegmentsFromRangeValue(value?: DateRangePickerValue): RangeSegments {
-  return {
-    start: getSegmentsFromDateValue(value?.start),
-    end: getSegmentsFromDateValue(value?.end),
-  }
-}
-
-function getDateValueFromSegments(segments: DateSegments) {
-  if (segments.year.length !== 4 || segments.month.length !== 2 || segments.day.length !== 2) {
-    return ''
-  }
-
-  return `${segments.year}-${segments.month}-${segments.day}`
-}
-
-function getValueFromSegments(segments: RangeSegments): DateRangePickerValue {
-  return {
-    start: getDateValueFromSegments(segments.start),
-    end: getDateValueFromSegments(segments.end),
-  }
-}
-
-function normalizeSegmentValue(value: string, maxLength: number) {
-  return value.replace(/\D/g, '').slice(0, maxLength)
-}
-
-function isSameSegment(first: ActiveSegment | null, second: ActiveSegment) {
-  return first?.boundary === second.boundary && first.segment === second.segment
 }
 
 export const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
@@ -188,33 +123,23 @@ export const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
     const rootRef = useRef<HTMLDivElement>(null)
     const fieldRef = useRef<HTMLDivElement>(null)
     const popoverRef = useRef<HTMLDivElement>(null)
-    const startDayRef = useRef<HTMLInputElement>(null)
-    const startMonthRef = useRef<HTMLInputElement>(null)
-    const startYearRef = useRef<HTMLInputElement>(null)
-    const endDayRef = useRef<HTMLInputElement>(null)
-    const endMonthRef = useRef<HTMLInputElement>(null)
-    const endYearRef = useRef<HTMLInputElement>(null)
+    const startInputRef = useRef<HTMLInputElement>(null)
+    const endInputRef = useRef<HTMLInputElement>(null)
     const [internalValue, setInternalValue] = useState<DateRangePickerValue>(
       defaultValue ?? { start: '', end: '' },
     )
-    const [uncontrolledSegments, setUncontrolledSegments] = useState(() =>
-      getSegmentsFromRangeValue(value ?? defaultValue),
-    )
-    const [activeSegment, setActiveSegment] = useState<ActiveSegment | null>(null)
-    const [shouldReplaceSegment, setShouldReplaceSegment] = useState(true)
     const [isOpen, setIsOpen] = useState(false)
     const [popoverStyle, setPopoverStyle] = useState<CSSProperties>({
       left: 0,
       top: 0,
     })
     const rangeValue = value ?? internalValue
-    const startDate = useMemo(() => parseDateValue(rangeValue.start), [rangeValue.start])
-    const endDate = useMemo(() => parseDateValue(rangeValue.end), [rangeValue.end])
+    const startValue = rangeValue.start ?? ''
+    const endValue = rangeValue.end ?? ''
+    const startDate = useMemo(() => parseDateValue(startValue), [startValue])
+    const endDate = useMemo(() => parseDateValue(endValue), [endValue])
     const minDate = useMemo(() => parseDateValue(min), [min])
     const maxDate = useMemo(() => parseDateValue(max), [max])
-    const segments = value !== undefined
-      ? getSegmentsFromRangeValue(value)
-      : uncontrolledSegments
     const disabledMatchers: Array<{ before: Date } | { after: Date }> = []
 
     if (minDate) {
@@ -226,36 +151,26 @@ export const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
     }
 
     const isStartOutOfRange =
-      rangeValue.start != null &&
-      rangeValue.start !== '' &&
-      ((min != null && rangeValue.start < min) || (max != null && rangeValue.start > max))
+      startValue !== '' &&
+      ((min != null && startValue < min) || (max != null && startValue > max))
     const isEndOutOfRange =
-      rangeValue.end != null &&
-      rangeValue.end !== '' &&
-      ((min != null && rangeValue.end < min) || (max != null && rangeValue.end > max))
+      endValue !== '' &&
+      ((min != null && endValue < min) || (max != null && endValue > max))
     const isRangeOutOfOrder =
-      rangeValue.start != null &&
-      rangeValue.end != null &&
-      rangeValue.start !== '' &&
-      rangeValue.end !== '' &&
-      rangeValue.start > rangeValue.end
+      startValue !== '' &&
+      endValue !== '' &&
+      startValue > endValue
     const isInvalid =
       invalid ||
       error ||
-      (rangeValue.start != null &&
-        rangeValue.start !== '' &&
-        (!parseDateValue(rangeValue.start) || isStartOutOfRange)) ||
-      (rangeValue.end != null &&
-        rangeValue.end !== '' &&
-        (!parseDateValue(rangeValue.end) || isEndOutOfRange)) ||
+      (startValue !== '' && (!parseDateValue(startValue) || isStartOutOfRange)) ||
+      (endValue !== '' && (!parseDateValue(endValue) || isEndOutOfRange)) ||
       isRangeOutOfOrder
     const helperId = isInvalid ? errorId : descriptionId
     const describedBy = getFieldDescribedBy(ariaDescribedByProp, helperId)
     const helperText = isInvalid ? errorMessage : description
     const labelClass = getFieldLabelClass(disabled)
     const helperClass = getFieldHelperClass(isInvalid)
-    const [dayPlaceholder = 'dd', monthPlaceholder = 'mm', yearPlaceholder = 'yyyy'] =
-      placeholder.split('.')
 
     useEffect(() => {
       function updatePopoverPosition() {
@@ -318,12 +233,14 @@ export const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
 
     const selectedRange: DateRange | undefined =
       startDate || endDate ? { from: startDate, to: endDate } : undefined
-    const groupBase =
-      'inline-flex w-full min-w-[360px] items-center rounded-lg border py-2 pl-3 pr-2 text-sm ' +
-      'font-sans transition-[border-color,box-shadow] focus-within:outline-none'
-    const segmentClass =
-      'min-w-0 shrink-0 select-none p-0 text-center font-sans text-sm tabular-nums caret-transparent outline-none ' +
-      'placeholder:text-field-placeholder disabled:cursor-not-allowed disabled:text-foreground-tertiary'
+    const groupBase = cx(
+      'inline-flex w-full min-w-[360px] items-center rounded-lg border py-2 pl-3 pr-2 text-sm',
+      'font-sans transition-[border-color,box-shadow] focus-within:outline-none',
+    )
+    const segmentClass = cx(
+      'min-w-0 shrink-0 select-none p-0 text-center font-sans text-sm tabular-nums caret-transparent outline-none',
+      'placeholder:text-field-placeholder disabled:cursor-not-allowed disabled:text-foreground-tertiary',
+    )
     const segmentCellClass =
       'inline-flex h-5 items-center justify-center rounded px-[0.7px] transition-colors'
     const activeSegmentClass = 'bg-accent/15 text-accent placeholder:!text-accent'
@@ -641,9 +558,12 @@ export const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
             onFocus={() => focusSegment(daySegment)}
             onChange={(event) => updateSegment(daySegment, event.target.value)}
             onKeyDown={(event) => handleSegmentKeyDown(event, daySegment)}
-            className={`${segmentCellClass} ${
-              isSameSegment(activeSegment, daySegment) ? activeSegmentClass : ''
-            } ${segmentClass} w-[3.35ch]`}
+            className={cx(
+              segmentCellClass,
+              isSameSegment(activeSegment, daySegment) && activeSegmentClass,
+              segmentClass,
+              'w-[3.35ch]',
+            )}
           />
           <span className="px-[0.7px] text-foreground-tertiary" aria-hidden>
             .
@@ -659,9 +579,12 @@ export const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
             onFocus={() => focusSegment(monthSegment)}
             onChange={(event) => updateSegment(monthSegment, event.target.value)}
             onKeyDown={(event) => handleSegmentKeyDown(event, monthSegment)}
-            className={`${segmentCellClass} ${
-              isSameSegment(activeSegment, monthSegment) ? activeSegmentClass : ''
-            } ${segmentClass} w-[3.35ch]`}
+            className={cx(
+              segmentCellClass,
+              isSameSegment(activeSegment, monthSegment) && activeSegmentClass,
+              segmentClass,
+              'w-[3.35ch]',
+            )}
           />
           <span className="px-[0.7px] text-foreground-tertiary" aria-hidden>
             .
@@ -677,9 +600,12 @@ export const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
             onFocus={() => focusSegment(yearSegment)}
             onChange={(event) => updateSegment(yearSegment, event.target.value)}
             onKeyDown={(event) => handleSegmentKeyDown(event, yearSegment)}
-            className={`${segmentCellClass} ${
-              isSameSegment(activeSegment, yearSegment) ? activeSegmentClass : ''
-            } ${segmentClass} w-[5ch]`}
+            className={cx(
+              segmentCellClass,
+              isSameSegment(activeSegment, yearSegment) && activeSegmentClass,
+              segmentClass,
+              'w-[5ch]',
+            )}
           />
         </>
       )
@@ -726,7 +652,7 @@ export const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
             <label
               htmlFor={fieldId}
               id={`${fieldId}-label`}
-              className={`text-sm font-medium leading-snug ${labelClass}`}
+              className={cx('text-sm font-medium leading-snug', labelClass)}
             >
               {label}
               {required ? (
@@ -789,7 +715,7 @@ export const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
         {helperText != null ? (
           <p
             id={helperId}
-            className={`type-body-xs leading-snug ${helperClass}`}
+            className={cx('type-body-xs leading-snug', helperClass)}
             aria-live={isInvalid ? 'polite' : undefined}
           >
             {helperText}

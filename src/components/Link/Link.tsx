@@ -1,6 +1,8 @@
 import { forwardRef, type AnchorHTMLAttributes } from 'react'
 import { ArrowUpRight } from 'lucide-react'
 
+import { cx } from '../_internal/cx'
+
 export type LinkProps = AnchorHTMLAttributes<HTMLAnchorElement> & {
   /** Visual color variant */
   variant?: 'primary' | 'secondary'
@@ -18,10 +20,11 @@ export const Link = forwardRef<HTMLAnchorElement, LinkProps>(function Link(
   },
   ref,
 ) {
-  const base =
-    'inline-flex w-fit items-center justify-center gap-1 rounded-sm font-sans text-sm font-medium ' +
-    'transition-colors duration-150 ease-in-out ' +
-    'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent'
+  const base = cx(
+    'inline-flex w-fit items-center justify-center gap-1 rounded-sm font-sans text-sm font-medium',
+    'transition-colors duration-150 ease-in-out',
+    'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent',
+  )
 
   const variants: Record<NonNullable<LinkProps['variant']>, string> = {
     primary: 'text-accent hover:text-accent-hover',
@@ -37,7 +40,7 @@ export const Link = forwardRef<HTMLAnchorElement, LinkProps>(function Link(
   return (
     <a
       ref={ref}
-      className={`${base} ${variants[variant]} ${underlines[underline]} ${className}`.trim()}
+      className={cx(base, variants[variant], underlines[underline], className)}
       {...props}
     >
       {children}

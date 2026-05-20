@@ -9,6 +9,8 @@ import {
   type ReactNode,
 } from 'react'
 
+import { cx } from '../_internal/cx'
+
 export type SliderRangeValue = [number, number]
 export type SliderValue = number | SliderRangeValue
 
@@ -301,7 +303,7 @@ export function Slider({
   const thumbInnerClass = 'block h-4 w-6 rounded-full bg-surface-primary shadow-md'
 
   return (
-    <div className={`${shellClass} ${className}`.trim()}>
+    <div className={cx(shellClass, className)}>
       {(label != null || formatValue(currentValue)) && (
         <div className={headerClass}>
           {label != null ? (
@@ -321,12 +323,16 @@ export function Slider({
 
       <div
         ref={trackRef}
-        className={`relative flex w-full touch-none items-center ${trackShellClass} ${disabled ? 'opacity-50' : ''}`.trim()}
+        className={cx(
+          'relative flex w-full touch-none items-center',
+          trackShellClass,
+          disabled && 'opacity-50',
+        )}
         onPointerDown={handleTrackPointerDown}
       >
         <div className={railClass}>
           <div
-            className={`${fillClass} ${fillRadiusClass}`.trim()}
+            className={cx(fillClass, fillRadiusClass)}
             style={{ left: visualFillStart, width: visualFillWidth }}
           />
         </div>
@@ -350,9 +356,10 @@ export function Slider({
             aria-valuenow={thumbValue}
             aria-valuetext={isRange ? `${thumbValue}` : formatValue(thumbValue)}
             disabled={disabled}
-            className={`${thumbClass} ${
-              disabled ? '' : 'cursor-grab active:cursor-grabbing'
-            }`.trim()}
+            className={cx(
+              thumbClass,
+              !disabled && 'cursor-grab active:cursor-grabbing',
+            )}
             style={{ left: getThumbCenter(toPercent(thumbValue), thumbWidth) }}
             onPointerDown={handleThumbPointerDown(thumbIndex)}
             onKeyDown={handleThumbKeyDown(thumbIndex)}

@@ -1,5 +1,6 @@
 import { useId, useState, type ReactNode } from 'react'
 
+import { cx } from '../_internal/cx'
 import { RadioGroupContext } from './RadioGroupContext'
 
 export type RadioGroupProps = {
@@ -32,7 +33,7 @@ export function RadioGroup({
 
   return (
     <RadioGroupContext.Provider value={{ name, value, onChange }}>
-      <div role="radiogroup" className={`flex flex-col gap-2 ${className}`.trim()}>
+      <div role="radiogroup" className={cx('flex flex-col gap-2', className)}>
         {children}
       </div>
     </RadioGroupContext.Provider>

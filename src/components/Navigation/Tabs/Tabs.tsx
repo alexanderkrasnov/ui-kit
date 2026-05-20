@@ -83,11 +83,12 @@ export function Tabs({
     secondary: 'border-b border-border',
   }
 
-  const tabBase =
-    'relative z-10 inline-flex shrink-0 items-center justify-center whitespace-nowrap rounded-lg ' +
-    'font-sans font-medium transition-colors duration-[80ms] ease-out ' +
-    'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ' +
-    'disabled:pointer-events-none disabled:opacity-50'
+  const tabBase = cx(
+    'relative z-10 inline-flex shrink-0 items-center justify-center whitespace-nowrap rounded-lg',
+    'font-sans font-medium transition-colors duration-[80ms] ease-out',
+    'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent',
+    'disabled:pointer-events-none disabled:opacity-50',
+  )
 
   const tabVariants: Record<NonNullable<TabsProps['variant']>, string> = {
     default: 'text-foreground-secondary hover:text-foreground aria-selected:text-foreground',

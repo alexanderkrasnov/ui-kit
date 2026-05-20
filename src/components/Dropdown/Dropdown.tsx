@@ -9,6 +9,8 @@ import {
 } from 'react'
 import { createPortal } from 'react-dom'
 
+import { cx } from '../_internal/cx'
+
 export type DropdownItem = {
   label: string
   icon?: ReactNode
@@ -40,29 +42,34 @@ export type DropdownProps = {
   triggerClassName?: string
 }
 
-const triggerShell =
-  'inline-flex h-9 items-center justify-center gap-2 rounded-lg border text-sm font-medium font-sans ' +
-  'transition-[border-color,colors,box-shadow] ease-in-out duration-150 ' +
-  'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ' +
-  'disabled:pointer-events-none disabled:opacity-50'
+const triggerShell = cx(
+  'inline-flex h-9 items-center justify-center gap-2 rounded-lg border text-sm font-medium font-sans',
+  'transition-[border-color,colors,box-shadow] ease-in-out duration-150',
+  'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent',
+  'disabled:pointer-events-none disabled:opacity-50',
+)
 
 const triggerVariant: Record<NonNullable<DropdownProps['variant']>, string> = {
-  default:
-    'border-transparent bg-field-background text-field-foreground shadow-sm ' +
+  default: cx(
+    'border-transparent bg-field-background text-field-foreground shadow-sm',
     'focus-visible:border-field-border-focus',
-  secondary:
-    'border-transparent bg-surface-secondary text-foreground ' +
+  ),
+  secondary: cx(
+    'border-transparent bg-surface-secondary text-foreground',
     'focus-visible:border-field-border-focus',
+  ),
 }
 
-const menuPanel =
-  'fixed z-[9999] max-h-[min(18rem,calc(100vh-1rem))] overflow-auto rounded-lg border border-border ' +
-  'bg-surface-primary text-foreground shadow-md dropdown-menu-enter'
+const menuPanel = cx(
+  'fixed z-[9999] max-h-[min(18rem,calc(100vh-1rem))] overflow-auto rounded-lg border border-border',
+  'bg-surface-primary text-foreground shadow-md dropdown-menu-enter',
+)
 
-const menuItem =
-  'inline-flex w-full cursor-pointer items-center whitespace-nowrap px-3 py-2 text-left text-sm text-foreground ' +
-  'hover:bg-surface-secondary-hover focus:bg-surface-secondary-hover focus:outline-none ' +
-  'disabled:cursor-not-allowed disabled:opacity-50'
+const menuItem = cx(
+  'inline-flex w-full cursor-pointer items-center whitespace-nowrap px-3 py-2 text-left text-sm text-foreground',
+  'hover:bg-surface-secondary-hover focus:bg-surface-secondary-hover focus:outline-none',
+  'disabled:cursor-not-allowed disabled:opacity-50',
+)
 
 const itemIconClass =
   'inline-flex h-3 shrink-0 items-center justify-center text-foreground-secondary [&_img]:h-3 [&_img]:w-auto [&_svg]:size-4'
@@ -142,8 +149,8 @@ export function Dropdown({
 
   const isIcon = mode === 'icon'
   const triggerPadding = isIcon ? 'px-2.5' : 'px-3'
-  const triggerClass = `${triggerShell} ${triggerPadding} ${triggerVariant[variant]} ${triggerClassName}`.trim()
-  const menuClass = `${menuPanel} ${isIcon ? 'min-w-48' : ''} ${menuClassName}`.trim()
+  const triggerClass = cx(triggerShell, triggerPadding, triggerVariant[variant], triggerClassName)
+  const menuClass = cx(menuPanel, isIcon && 'min-w-48', menuClassName)
   const menu =
     open && typeof document !== 'undefined'
       ? createPortal(
@@ -168,7 +175,7 @@ export function Dropdown({
                       }}
                     >
                       {item.icon != null ? (
-                        <span className={`${itemIconClass} mr-2`} aria-hidden>
+                        <span className={cx(itemIconClass, 'mr-2')} aria-hidden>
                           {item.icon}
                         </span>
                       ) : null}
@@ -184,7 +191,7 @@ export function Dropdown({
       : null
 
   return (
-    <div ref={rootRef} className={`inline-block text-left ${className}`.trim()}>
+    <div ref={rootRef} className={cx('inline-block text-left', className)}>
       <button
         ref={triggerRef}
         type="button"

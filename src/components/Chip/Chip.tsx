@@ -7,6 +7,8 @@ import {
 } from 'react'
 import { type LucideIcon } from 'lucide-react'
 
+import { cx } from '../_internal/cx'
+
 export type ChipIcon = LucideIcon | ReactNode
 
 export type ChipProps = Omit<HTMLAttributes<HTMLSpanElement>, 'color'> & {
@@ -73,7 +75,7 @@ function renderIcon(icon: ChipIcon, sizeClass: string) {
       : icon
 
   return (
-    <span className={`${sizeClass} shrink-0 [&_svg]:size-full`.trim()} aria-hidden>
+    <span className={cx(sizeClass, 'shrink-0 [&_svg]:size-full')} aria-hidden>
       {content}
     </span>
   )
@@ -94,11 +96,11 @@ export function Chip({
 
   return (
     <span
-      className={`${shell} ${sizeConfig.shell} ${toneClass} ${className}`.trim()}
+      className={cx(shell, sizeConfig.shell, toneClass, className)}
       {...props}
     >
       {startIcon != null ? renderIcon(startIcon, sizeConfig.icon) : null}
-      <span className={`${sizeConfig.label} truncate`.trim()}>{children}</span>
+      <span className={cx(sizeConfig.label, 'truncate')}>{children}</span>
       {endIcon != null ? renderIcon(endIcon, sizeConfig.icon) : null}
     </span>
   )

@@ -147,13 +147,15 @@ export const TimeField = forwardRef<HTMLDivElement, TimeFieldProps>(function Tim
   const labelClass = getFieldLabelClass(disabled)
   const helperClass = getFieldHelperClass(isInvalid)
 
-  const groupBase =
-    'inline-flex w-full min-w-0 items-center rounded-lg border px-3 py-2 text-sm ' +
-    'font-sans transition-[border-color,box-shadow] focus-within:outline-none ' +
-    'disabled:cursor-not-allowed'
-  const segmentClass =
-    'min-w-0 shrink-0 select-none p-0 text-center font-sans text-sm tabular-nums caret-transparent outline-none ' +
-    'placeholder:text-field-placeholder disabled:cursor-not-allowed disabled:text-foreground-tertiary'
+  const groupBase = cx(
+    'inline-flex w-full min-w-0 items-center rounded-lg border px-3 py-2 text-sm',
+    'font-sans transition-[border-color,box-shadow] focus-within:outline-none',
+    'disabled:cursor-not-allowed',
+  )
+  const segmentClass = cx(
+    'min-w-0 shrink-0 select-none p-0 text-center font-sans text-sm tabular-nums caret-transparent outline-none',
+    'placeholder:text-field-placeholder disabled:cursor-not-allowed disabled:text-foreground-tertiary',
+  )
   const segmentCellClass =
     'inline-flex h-5 items-center justify-center rounded px-[1.4px] transition-colors'
   const activeSegmentClass = 'bg-accent/15 text-accent placeholder:!text-accent'
@@ -335,7 +337,7 @@ export const TimeField = forwardRef<HTMLDivElement, TimeFieldProps>(function Tim
       {...props}
     >
       {label != null ? (
-        <label id={`${fieldId}-label`} className={`text-sm font-medium leading-snug ${labelClass}`}>
+        <label id={`${fieldId}-label`} className={cx('text-sm font-medium leading-snug', labelClass)}>
           {label}
           {required ? (
             <span className="ml-1 text-danger" aria-hidden>
@@ -372,9 +374,12 @@ export const TimeField = forwardRef<HTMLDivElement, TimeFieldProps>(function Tim
           onFocus={() => focusSegment('hour')}
           onChange={(event) => updateSegment('hour', event.target.value)}
           onKeyDown={(event) => handleSegmentKeyDown(event, 'hour')}
-          className={`${segmentCellClass} ${
-            activeSegment === 'hour' ? activeSegmentClass : ''
-          } ${segmentClass} w-[3.35ch]`}
+          className={cx(
+            segmentCellClass,
+            activeSegment === 'hour' && activeSegmentClass,
+            segmentClass,
+            'w-[3.35ch]',
+          )}
         />
         <span className="px-0.5 text-foreground-tertiary" aria-hidden>
           :
@@ -390,16 +395,19 @@ export const TimeField = forwardRef<HTMLDivElement, TimeFieldProps>(function Tim
           onFocus={() => focusSegment('minute')}
           onChange={(event) => updateSegment('minute', event.target.value)}
           onKeyDown={(event) => handleSegmentKeyDown(event, 'minute')}
-          className={`${segmentCellClass} ${
-            activeSegment === 'minute' ? activeSegmentClass : ''
-          } ${segmentClass} w-[3.35ch]`}
+          className={cx(
+            segmentCellClass,
+            activeSegment === 'minute' && activeSegmentClass,
+            segmentClass,
+            'w-[3.35ch]',
+          )}
         />
       </div>
       {name != null ? <input type="hidden" name={name} value={timeValue} /> : null}
       {helperText != null ? (
         <p
           id={helperId}
-          className={`text-xs leading-snug ${helperClass}`}
+          className={cx('text-xs leading-snug', helperClass)}
           aria-live={isInvalid ? 'polite' : undefined}
         >
           {helperText}
