@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
+import { secondaryStorySurfaceFit } from '../../docs/story-surfaces'
 import { Avatar } from './Avatar'
 
 const meta = {
@@ -25,7 +26,7 @@ export const Default: Story = {
     icon: false,
   },
   render: (args) => (
-    <div className="flex flex-wrap items-center justify-center gap-4">
+    <div className={`${secondaryStorySurfaceFit} flex flex-wrap items-center justify-center gap-4`}>
       <Avatar {...args} aria-label="With initials" />
       <Avatar size={args.size} className={args.className} icon aria-label="Icon avatar" />
     </div>
@@ -35,7 +36,7 @@ export const Default: Story = {
 export const Sizes: Story = {
   name: 'Sizes',
   render: () => (
-    <div className="flex flex-wrap items-end justify-center gap-4">
+    <div className={`${secondaryStorySurfaceFit} flex flex-wrap items-end justify-center gap-4`}>
       <Avatar size="sm" fallback="S" aria-label="Small" />
       <Avatar size="md" fallback="M" aria-label="Medium" />
     </div>

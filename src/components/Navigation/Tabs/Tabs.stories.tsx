@@ -50,11 +50,16 @@ export const Default: Story = {
     size: 'medium',
     variant: 'default',
   },
+  render: (args) => (
+    <div className={secondaryStorySurfaceFit}>
+      <Tabs {...args} />
+    </div>
+  ),
 }
 
 export const Sizes: Story = {
   render: (args) => (
-    <div className="flex flex-col gap-6">
+    <div className={`${secondaryStorySurfaceFit} flex flex-col gap-6`}>
       <Tabs {...args} items={demoItems} size="small" defaultValue="overview" />
       <Tabs {...args} items={demoItems} size="medium" defaultValue="analytics" />
     </div>

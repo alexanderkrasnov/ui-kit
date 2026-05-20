@@ -118,7 +118,7 @@ function TokenCard({ name, variable }: TokenItem) {
   const computedValue = readComputedTokenValue(variable)
 
   return (
-    <div className="flex flex-col gap-3 rounded-3xl border border-border bg-surface-primary p-4 shadow-sm sm:flex-row sm:items-start">
+    <div className="flex flex-col gap-3 rounded-3xl border border-border bg-surface-primary p-4 shadow-sm sm:flex-row sm:items-center">
       <div className="flex min-w-0 flex-1 items-center gap-4">
         <div
           aria-hidden="true"
@@ -135,7 +135,7 @@ function TokenCard({ name, variable }: TokenItem) {
         </div>
       </div>
       {!!computedValue && (
-        <code className="w-full min-w-0 rounded-md border border-border px-2 py-1 text-left font-mono text-xs leading-relaxed text-foreground-tertiary whitespace-normal [overflow-wrap:anywhere] sm:w-auto sm:max-w-[32rem]">
+        <code className="w-fit max-w-[14rem] truncate self-start rounded-md border border-border px-2 py-1 text-right font-mono text-xs text-foreground-tertiary sm:w-[14rem] sm:max-w-none sm:shrink-0 sm:self-auto">
           {computedValue}
         </code>
       )}
