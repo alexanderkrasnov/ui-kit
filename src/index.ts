@@ -1,4 +1,5 @@
 export { Avatar, type AvatarProps } from './components/Avatar'
+export { ActionStack, type ActionStackProps } from './components/ActionStack'
 export { Button, type ButtonProps } from './components/Button'
 export {
   Calendar,
