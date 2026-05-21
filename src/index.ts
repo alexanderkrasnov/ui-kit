@@ -35,6 +35,11 @@ export { TextArea, type TextAreaProps } from './components/TextArea'
 export { TextField, type TextFieldProps } from './components/TextField'
 export { Radio, type RadioProps } from './components/Radio'
 export { RadioGroup, type RadioGroupProps } from './components/Radio'
+export {
+  RadioButtonGroup,
+  type RadioButtonGroupItem,
+  type RadioButtonGroupProps,
+} from './components/RadioButtonGroup'
 export { SearchField, type SearchFieldProps } from './components/SearchField'
 export { Select, type SelectItem, type SelectProps } from './components/Select'
 export { Slider, type SliderProps, type SliderRangeValue, type SliderValue } from './components/Slider'
