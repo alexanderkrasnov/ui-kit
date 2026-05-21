@@ -109,7 +109,8 @@ const calendarClassNames: Partial<ClassNames> = {
   ),
   range_middle: cx(
     'bg-accent/15 first:rounded-l-[10px] last:rounded-r-[10px]',
-    '[&_button]:rounded-none [&_button]:bg-transparent [&_button]:text-foreground [&_button]:hover:bg-accent/20',
+    '[&_button]:bg-transparent [&_button]:text-foreground [&_button]:hover:bg-accent/20',
+    '[&[data-today=true]_button]:!text-accent',
   ),
   range_end: cx(
     'plexo-range-end overflow-hidden rounded-r-[10px] before:absolute before:inset-y-0 before:left-0 before:right-1/2 before:bg-accent/15 before:content-[""]',
