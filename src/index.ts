@@ -25,6 +25,7 @@ export { Dropdown, type DropdownItem, type DropdownProps } from './components/Dr
 export { Input, type InputProps } from './components/Input'
 export { InputOTP, type InputOTPProps, type InputOTPValue } from './components/InputOTP'
 export { Link, type LinkProps } from './components/Link'
+export { NumberField, type NumberFieldFormat, type NumberFieldProps } from './components/NumberField'
 export {
   Breadcrumbs,
   type BreadcrumbsItem,
