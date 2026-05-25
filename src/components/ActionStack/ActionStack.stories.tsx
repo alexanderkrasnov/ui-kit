@@ -14,19 +14,11 @@ const meta = {
   argTypes: {
     direction: {
       control: 'select',
-      options: ['responsive', 'row', 'column'],
-    },
-    gap: {
-      control: 'select',
-      options: ['xs', 'sm', 'md'],
-    },
-    align: {
-      control: 'select',
-      options: ['start', 'center', 'end', 'stretch'],
+      options: ['row', 'column'],
     },
     justify: {
       control: 'select',
-      options: ['start', 'center', 'end', 'between'],
+      options: ['start', 'end'],
     },
   },
 } satisfies Meta<typeof ActionStack>
@@ -36,8 +28,7 @@ type Story = StoryObj<typeof meta>
 
 export const PopoverFooter: Story = {
   args: {
-    direction: 'responsive',
-    gap: 'sm',
+    direction: 'row',
     justify: 'end',
     fullWidthOnMobile: true,
   },
@@ -89,29 +80,26 @@ export const DestructiveActions: Story = {
 
 export const WithLeadingContent: Story = {
   render: () => (
-    <ActionStack
-      justify="between"
-      className="w-[min(34rem,calc(100vw-2rem))] rounded-[14px] border border-border bg-surface-primary p-4 shadow-sm"
-    >
+    <div className="flex w-[min(34rem,calc(100vw-2rem))] items-center justify-between gap-4 rounded-[14px] border border-border bg-surface-primary p-4 shadow-sm">
       <div className="min-w-0 text-sm text-foreground-secondary">
         <span className="inline-flex items-center gap-2">
           <Clock className="size-4 shrink-0" aria-hidden />
           Last autosaved 2 min ago
         </span>
       </div>
-      <ActionStack direction="row" gap="xs">
+      <ActionStack direction="row" justify="end">
         <Button variant="ghost" size="small">
           Dismiss
         </Button>
         <Button size="small">Apply</Button>
       </ActionStack>
-    </ActionStack>
+    </div>
   ),
 }
 
 export const CompactRow: Story = {
   render: () => (
-    <ActionStack direction="row" gap="xs">
+    <ActionStack direction="row" justify="start">
       <Button variant="secondary" size="small" startIcon={<RotateCcw />}>
         Reset
       </Button>
