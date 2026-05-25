@@ -26,6 +26,9 @@ export { Input, type InputProps } from './components/Input'
 export { InputOTP, type InputOTPProps, type InputOTPValue } from './components/InputOTP'
 export { Link, type LinkProps } from './components/Link'
 export {
+  Breadcrumbs,
+  type BreadcrumbsItem,
+  type BreadcrumbsProps,
   Pagination,
   type PaginationProps,
   Tabs,
