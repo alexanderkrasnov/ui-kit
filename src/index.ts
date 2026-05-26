@@ -24,6 +24,11 @@ export { CloseButton, type CloseButtonProps } from './components/CloseButton'
 export { Dropdown, type DropdownItem, type DropdownProps } from './components/Dropdown'
 export { Input, type InputProps } from './components/Input'
 export { InputOTP, type InputOTPProps, type InputOTPValue } from './components/InputOTP'
+export {
+  AccountDropdown,
+  type AccountDropdownItem,
+  type AccountDropdownProps,
+} from './components/Layout'
 export { Link, type LinkProps } from './components/Link'
 export { NumberField, type NumberFieldFormat, type NumberFieldProps } from './components/NumberField'
 export {

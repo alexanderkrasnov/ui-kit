@@ -395,6 +395,22 @@
     animation: dropdown-menu-enter 50ms ease-out;
   }
 
+  @keyframes dropdown-menu-enter-top {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .dropdown-menu-enter-top {
+    animation: dropdown-menu-enter-top 50ms ease-out;
+  }
+
   @keyframes tooltip-enter {
     from {
       opacity: 0;

@@ -16,6 +16,8 @@ export type DropdownItem = {
   icon?: ReactNode
   onSelect?: () => void
   disabled?: boolean
+  tone?: 'default' | 'danger'
+  separatorBefore?: boolean
 }
 
 export type DropdownProps = {
@@ -30,10 +32,14 @@ export type DropdownProps = {
   prefixIcon?: ReactNode
   /** Custom menu body rendered instead of plain items */
   menuContent?: ReactNode
+  /** Custom trigger body rendered instead of prefixIcon + label + icon */
+  triggerContent?: ReactNode
   /** Extra classes for the floating menu panel */
   menuClassName?: string
   /** Floating menu width. Defaults to trigger width for chevron dropdowns. */
   menuWidth?: number | string
+  /** Floating menu placement relative to the trigger */
+  placement?: 'bottom' | 'top'
   /** aria-label for icon-only trigger */
   'aria-label'?: string
   /** Как у `Checkbox` / `Input`: `default` — field, `secondary` — surface-secondary */
@@ -43,7 +49,7 @@ export type DropdownProps = {
 }
 
 const triggerShell = cx(
-  'inline-flex h-9 items-center justify-center gap-2 rounded-lg border text-sm font-medium font-sans',
+  'inline-flex items-center gap-2 rounded-lg border text-sm font-medium font-sans',
   'transition-[border-color,colors,box-shadow] ease-in-out duration-150',
   'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent',
   'disabled:pointer-events-none disabled:opacity-50',
@@ -62,28 +68,35 @@ const triggerVariant: Record<NonNullable<DropdownProps['variant']>, string> = {
 
 const menuPanel = cx(
   'fixed z-[9999] max-h-[min(18rem,calc(100vh-1rem))] overflow-auto rounded-lg border border-border',
-  'bg-surface-primary text-foreground shadow-md dropdown-menu-enter',
+  'bg-surface-primary text-foreground shadow-md',
 )
 
-const menuItem = cx(
-  'inline-flex w-full cursor-pointer items-center whitespace-nowrap px-3 py-2 text-left text-sm text-foreground',
+const menuItem = (tone: NonNullable<DropdownItem['tone']>) => cx(
+  'inline-flex w-full cursor-pointer items-center whitespace-nowrap px-3 py-2 text-left text-sm',
+  tone === 'danger' ? 'text-danger' : 'text-foreground',
   'hover:bg-surface-secondary-hover focus:bg-surface-secondary-hover focus:outline-none',
   'disabled:cursor-not-allowed disabled:opacity-50',
 )
 
-const itemIconClass =
-  'inline-flex h-3 shrink-0 items-center justify-center text-foreground-secondary [&_img]:h-3 [&_img]:w-auto [&_svg]:size-4'
+const itemIconClass = (tone: NonNullable<DropdownItem['tone']> = 'default') =>
+  cx(
+    'inline-flex h-3 shrink-0 items-center justify-center [&_img]:h-3 [&_img]:w-auto [&_svg]:size-4',
+    tone === 'danger' ? 'text-danger' : 'text-foreground-secondary',
+  )
 
 function getMenuPosition(
   rect: DOMRect,
   mode: NonNullable<DropdownProps['mode']>,
   menuWidth: DropdownProps['menuWidth'],
+  placement: NonNullable<DropdownProps['placement']>,
 ): CSSProperties {
   const resolvedMenuWidth = mode === 'icon' ? undefined : menuWidth ?? rect.width
 
   return {
     left: rect.left,
-    top: rect.bottom + 6,
+    ...(placement === 'top'
+      ? { bottom: window.innerHeight - rect.top + 6 }
+      : { top: rect.bottom + 6 }),
     minWidth: mode === 'icon' ? 192 : rect.width,
     width: resolvedMenuWidth,
   }
@@ -96,8 +109,10 @@ export function Dropdown({
   icon,
   prefixIcon,
   menuContent,
+  triggerContent,
   menuClassName = '',
   menuWidth,
+  placement = 'bottom',
   'aria-label': ariaLabel,
   variant = 'default',
   className = '',
@@ -112,7 +127,7 @@ export function Dropdown({
 
   function getCurrentMenuPosition() {
     const rect = triggerRef.current?.getBoundingClientRect()
-    return rect == null ? undefined : getMenuPosition(rect, mode, menuWidth)
+    return rect == null ? undefined : getMenuPosition(rect, mode, menuWidth, placement)
   }
 
   const updateMenuPosition = useEffectEvent(() => {
@@ -148,9 +163,15 @@ export function Dropdown({
   }, [open])
 
   const isIcon = mode === 'icon'
-  const triggerPadding = isIcon ? 'px-2.5' : 'px-3'
+  const hasCustomTrigger = triggerContent != null
+  const triggerPadding = isIcon ? 'h-9 px-2.5' : hasCustomTrigger ? 'min-h-9' : 'h-9 px-3'
   const triggerClass = cx(triggerShell, triggerPadding, triggerVariant[variant], triggerClassName)
-  const menuClass = cx(menuPanel, isIcon && 'min-w-48', menuClassName)
+  const menuClass = cx(
+    menuPanel,
+    placement === 'top' ? 'dropdown-menu-enter-top' : 'dropdown-menu-enter',
+    isIcon && 'min-w-48',
+    menuClassName,
+  )
   const menu =
     open && typeof document !== 'undefined'
       ? createPortal(
@@ -163,19 +184,23 @@ export function Dropdown({
             {menuContent ?? (
               <ul role="menu">
                 {(items ?? []).map((item, index) => (
-                  <li key={`${item.label}-${index}`} role="none">
+                  <li
+                    key={`${item.label}-${index}`}
+                    role="none"
+                    className={item.separatorBefore ? 'border-t border-border' : undefined}
+                  >
                     <button
                       type="button"
                       role="menuitem"
                       disabled={item.disabled}
-                      className={menuItem}
+                      className={menuItem(item.tone ?? 'default')}
                       onClick={() => {
                         item.onSelect?.()
                         setOpen(false)
                       }}
                     >
                       {item.icon != null ? (
-                        <span className={cx(itemIconClass, 'mr-2')} aria-hidden>
+                        <span className={cx(itemIconClass(item.tone), 'mr-2')} aria-hidden>
                           {item.icon}
                         </span>
                       ) : null}
@@ -212,12 +237,14 @@ export function Dropdown({
           setOpen((v) => !v)
         }}
       >
-        {isIcon ? (
+        {triggerContent != null ? (
+          triggerContent
+        ) : isIcon ? (
           <span className="inline-flex shrink-0 [&_svg]:size-4">{icon}</span>
         ) : (
           <>
             {prefixIcon != null ? (
-              <span className={itemIconClass} aria-hidden>
+              <span className={itemIconClass()} aria-hidden>
                 {prefixIcon}
               </span>
             ) : null}
