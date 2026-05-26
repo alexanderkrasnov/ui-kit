@@ -205,7 +205,7 @@ export function Sidebar({
         <footer
           className={cx(
             'mt-auto flex h-16 w-full shrink-0 items-center justify-start transition-[height,padding] duration-150 ease-in-out',
-            isCollapsed ? 'px-[10px] py-[14px]' : 'px-4 py-[14px]',
+            isCollapsed ? 'px-[10px] py-[14px]' : 'px-4 py-2',
           )}
         >
           <AccountDropdown
@@ -217,11 +217,11 @@ export function Sidebar({
               accountClassName,
             )}
             triggerClassName={cx(
-              '[&&]:!h-9 [&&]:!min-h-9 [&&]:!justify-start [&&]:!gap-3 [&&]:!p-0 [&&]:!shadow-none',
+              '[&&]:!justify-start [&&]:!gap-3 [&&]:!shadow-none',
               '[&&]:transition-[width,height,min-height,padding,background-color] [&&]:duration-150 [&&]:ease-in-out',
               isCollapsed
-                ? '[&&]:!w-8 [&&]:!bg-transparent hover:!bg-transparent'
-                : '[&&]:!w-full hover:!bg-transparent',
+                ? '[&&]:!h-9 [&&]:!min-h-9 [&&]:!w-8 [&&]:!bg-transparent [&&]:!p-0 hover:!bg-transparent'
+                : '[&&]:!w-full hover:bg-surface-primary-hover',
               accountTriggerClassName,
             )}
           />
