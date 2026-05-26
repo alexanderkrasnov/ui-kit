@@ -31,3 +31,9 @@ export const LongContent: Story = {
     company: 'Very Long Company Name Ltd.',
   },
 }
+
+export const Compact: Story = {
+  args: {
+    compact: true,
+  },
+}

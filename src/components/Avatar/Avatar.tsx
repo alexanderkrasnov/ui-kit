@@ -22,7 +22,7 @@ function UserPlaceholder({ className }: { className?: string }) {
 
 const shellStyle = cx(
   'inline-flex items-center justify-center rounded-full font-medium',
-  'bg-surface-secondary text-foreground',
+  'bg-surface-secondary text-foreground transition-colors duration-150 ease-in-out hover:bg-accent/15',
 )
 
 export type AvatarProps = Omit<HTMLAttributes<HTMLSpanElement>, 'size'> & {

@@ -26,8 +26,11 @@ export { Input, type InputProps } from './components/Input'
 export { InputOTP, type InputOTPProps, type InputOTPValue } from './components/InputOTP'
 export {
   AccountDropdown,
+  Sidebar,
   type AccountDropdownItem,
   type AccountDropdownProps,
+  type SidebarNavItem,
+  type SidebarProps,
 } from './components/Layout'
 export { Link, type LinkProps } from './components/Link'
 export { NumberField, type NumberFieldFormat, type NumberFieldProps } from './components/NumberField'
