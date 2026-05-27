@@ -15,7 +15,7 @@ export type ChipProps = Omit<HTMLAttributes<HTMLSpanElement>, 'color'> & {
   children: ReactNode
   color?: 'accent' | 'default' | 'success' | 'warning' | 'danger'
   tone?: 'primary' | 'soft'
-  size?: 'sm' | 'md' | 'lg'
+  size?: 'sm' | 'md'
   /** By default, icons are expected to come from `lucide-react`. */
   startIcon?: ChipIcon
   /** By default, icons are expected to come from `lucide-react`. */
@@ -29,11 +29,6 @@ const sizeStyles: Record<
   NonNullable<ChipProps['size']>,
   { shell: string; icon: string; label: string }
 > = {
-  lg: {
-    shell: 'min-h-8 gap-0.5 px-3 py-1 text-sm leading-5',
-    icon: 'size-3.5',
-    label: 'px-0.5',
-  },
   md: {
     shell: 'min-h-6 gap-0.5 px-2 py-0.5 text-xs leading-4',
     icon: 'size-3',

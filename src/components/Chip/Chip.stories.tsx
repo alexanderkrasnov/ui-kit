@@ -5,8 +5,18 @@ import { User, X } from 'lucide-react'
 import { Chip } from './Chip'
 
 const colors = ['accent', 'default', 'success', 'warning', 'danger'] as const
-const sizes = ['lg', 'md', 'sm'] as const
+const sizes = ['md', 'sm'] as const
 const tones = ['primary', 'soft'] as const
+const labelColors = [
+  { label: 'KYC', name: 'Olive', variable: '--color-label-olive' },
+  { label: 'AML review', name: 'Orange', variable: '--color-label-orange' },
+  { label: 'VIP client', name: 'Violet', variable: '--color-label-violet' },
+  { label: 'Treasury', name: 'Teal', variable: '--color-label-teal' },
+  { label: 'Invoice', name: 'Red', variable: '--color-label-red' },
+  { label: 'Documents', name: 'Pink', variable: '--color-label-pink' },
+  { label: 'EDD', name: 'Lime', variable: '--color-label-lime' },
+  { label: 'Sanctions', name: 'Blue', variable: '--color-label-blue' },
+] as const
 
 const colorLabels: Record<(typeof colors)[number], string> = {
   accent: 'accent',
@@ -17,7 +27,6 @@ const colorLabels: Record<(typeof colors)[number], string> = {
 }
 
 const sizeLabels: Record<(typeof sizes)[number], string> = {
-  lg: 'lg',
   md: 'md',
   sm: 'sm',
 }
@@ -91,7 +100,7 @@ export const WithIconLeftRight: Story = {
     children: 'Label',
   },
   render: () => (
-    <div className="flex w-full flex-wrap items-center gap-4">
+    <div className="flex w-full flex-wrap items-center gap-4 rounded-3xl bg-white p-6">
       <Chip startIcon={User} color="accent" tone="primary">
         Left icon
       </Chip>
@@ -101,6 +110,37 @@ export const WithIconLeftRight: Story = {
       <Chip startIcon={User} endIcon={X} color="success" tone="soft">
         Both sides
       </Chip>
+    </div>
+  ),
+}
+
+export const ForLabels: Story = {
+  name: 'For labels',
+  args: {
+    children: 'Label',
+  },
+  render: () => (
+    <div className="flex w-full max-w-3xl flex-col gap-5 rounded-3xl bg-surface-primary p-6">
+      <div>
+        <div className="text-sm font-semibold text-foreground">For labels</div>
+      </div>
+
+      <div className="flex flex-wrap items-center gap-x-2 gap-y-3">
+        {labelColors.map((color) => (
+          <Chip
+            key={color.name}
+            size="sm"
+            tone="primary"
+            style={{
+              backgroundColor: `var(${color.variable})`,
+              color: 'oklch(100% 0 0)',
+            }}
+            title={`${color.name} label`}
+          >
+            {color.label}
+          </Chip>
+        ))}
+      </div>
     </div>
   ),
 }
