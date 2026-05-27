@@ -48,6 +48,7 @@ const bridgeGroups: TokenGroup[] = [
     tokens: [
       { name: 'Color Success', variable: '--color-success' },
       { name: 'Color Success Foreground', variable: '--color-success-foreground' },
+      { name: 'Color Success Hover', variable: '--color-success-hover' },
       { name: 'Color Warning', variable: '--color-warning' },
       { name: 'Color Warning Foreground', variable: '--color-warning-foreground' },
       { name: 'Color Danger', variable: '--color-danger' },

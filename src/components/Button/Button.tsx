@@ -4,7 +4,7 @@ import { cx } from '../_internal/cx'
 
 export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   /** Visual style variant */
-  variant?: 'primary' | 'secondary' | 'ghost' | 'danger'
+  variant?: 'primary' | 'secondary' | 'ghost' | 'success' | 'danger'
   /** Visual size scale */
   size?: 'small' | 'medium' | 'large'
   /** Square icon-only layout */
@@ -65,6 +65,10 @@ export function Button({
     ghost: cx(
       'bg-transparent text-foreground shadow-none hover:bg-surface-secondary-hover',
       'focus-visible:outline-surface-primary',
+    ),
+    success: cx(
+      'bg-success text-accent-foreground shadow-sm hover:bg-success-hover',
+      'focus-visible:outline-success',
     ),
     danger: cx(
       'bg-danger text-accent-foreground shadow-sm hover:bg-danger-hover',

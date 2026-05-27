@@ -229,6 +229,13 @@
     var(--color-foreground) 3%
   );
 
+  /* Hover для success (как danger-hover: смесь базового success и белого foreground) */
+  --color-success-hover: color-mix(
+    in oklab,
+    var(--color-success) 95%,
+    var(--color-accent-foreground) 5%
+  );
+
   /* Hover для danger (как accent-hover: смесь базового danger и foreground на нём) */
   --color-danger-hover: color-mix(
     in oklab,

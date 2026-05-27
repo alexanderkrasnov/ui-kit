@@ -25,8 +25,13 @@ export { Dropdown, type DropdownItem, type DropdownProps } from './components/Dr
 export { Input, type InputProps } from './components/Input'
 export { InputOTP, type InputOTPProps, type InputOTPValue } from './components/InputOTP'
 export {
+  AlertArea,
   AccountDropdown,
   Sidebar,
+  type AlertAreaColor,
+  type AlertAreaIcon,
+  type AlertAreaProps,
+  type AlertAreaVariant,
   type AccountDropdownItem,
   type AccountDropdownProps,
   type SidebarNavItem,
