@@ -2,69 +2,25 @@ import { Calendar as CalendarIcon } from 'lucide-react'
 import {
   forwardRef,
   useEffect,
-  useId,
   useMemo,
   useRef,
   useState,
   type CSSProperties,
-  type HTMLAttributes,
-  type FocusEvent,
   type MouseEvent,
   type KeyboardEvent,
-  type ReactNode,
 } from 'react'
 import { createPortal } from 'react-dom'
 
 import { cx } from '../_internal/cx'
-import {
-  getFieldBorderClass,
-  getFieldContainerClass,
-  getFieldDescribedBy,
-  getFieldHelperClass,
-  getFieldLabelClass,
-  getFieldSurfaceClass,
-  type FieldVariant,
-} from '../_internal/fieldStyles'
 import { Calendar } from './Calendar'
+import { DateField, type DateFieldProps, type DateFieldValue } from './DateField'
 
-export type DatePickerValue = string
-
-type DateSegments = {
-  day: string
-  month: string
-  year: string
-}
-
-type DateSegment = keyof DateSegments
-
-const emptySegments: DateSegments = {
-  day: '',
-  month: '',
-  year: '',
-}
+export type DatePickerValue = DateFieldValue
 
 export type DatePickerProps = Omit<
-  HTMLAttributes<HTMLDivElement>,
-  'defaultValue' | 'onChange'
-> & {
-  label?: ReactNode
-  description?: ReactNode
-  errorMessage?: ReactNode
-  variant?: FieldVariant
-  value?: DatePickerValue
-  defaultValue?: DatePickerValue
-  onChange?: (value: DatePickerValue) => void
-  name?: string
-  min?: DatePickerValue
-  max?: DatePickerValue
-  required?: boolean
-  disabled?: boolean
-  invalid?: boolean
-  error?: boolean
-  placeholder?: string
-  inputClassName?: string
-  'aria-describedby'?: string
-}
+  DateFieldProps,
+  'children'
+>
 
 function parseDateValue(value?: DatePickerValue) {
   const match = value?.match(/^(\d{4})-(\d{2})-(\d{2})$/)
@@ -97,73 +53,27 @@ function formatDateValue(date: Date) {
   return `${year}-${month}-${day}`
 }
 
-function getSegmentsFromValue(value?: DatePickerValue): DateSegments {
-  const match = value?.match(/^(\d{4})-(\d{2})-(\d{2})$/)
-
-  if (!match) {
-    return emptySegments
-  }
-
-  return {
-    year: match[1],
-    day: match[3],
-    month: match[2],
-  }
-}
-
-function getValueFromSegments(segments: DateSegments) {
-  if (segments.year.length !== 4 || segments.month.length !== 2 || segments.day.length !== 2) {
-    return ''
-  }
-
-  return `${segments.year}-${segments.month}-${segments.day}`
-}
-
-function normalizeSegmentValue(value: string, maxLength: number) {
-  return value.replace(/\D/g, '').slice(0, maxLength)
-}
-
 export const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(function DatePicker(
   {
-    className = '',
-    inputClassName = '',
-    label,
-    description,
-    errorMessage,
     id,
     value,
     defaultValue,
     onChange,
-    name,
     min,
     max,
-    required,
     disabled,
-    invalid = false,
-    error = false,
-    variant = 'default',
     placeholder = 'dd.mm.yyyy',
-    'aria-describedby': ariaDescribedByProp,
+    onKeyDown,
+    onMouseDown,
     ...props
   },
   ref,
 ) {
-  const autoId = useId()
-  const fieldId = id ?? `datepicker-${autoId}`
-  const descriptionId = description != null ? `${fieldId}-description` : undefined
-  const errorId = errorMessage != null ? `${fieldId}-error` : undefined
   const rootRef = useRef<HTMLDivElement>(null)
-  const fieldRef = useRef<HTMLDivElement>(null)
   const popoverRef = useRef<HTMLDivElement>(null)
-  const dayRef = useRef<HTMLInputElement>(null)
-  const monthRef = useRef<HTMLInputElement>(null)
-  const yearRef = useRef<HTMLInputElement>(null)
+  const draftYearDigitsRef = useRef('')
   const [internalValue, setInternalValue] = useState(defaultValue ?? '')
-  const [uncontrolledSegments, setUncontrolledSegments] = useState(() =>
-    getSegmentsFromValue(value ?? defaultValue),
-  )
-  const [activeSegment, setActiveSegment] = useState<DateSegment | null>(null)
-  const [shouldReplaceSegment, setShouldReplaceSegment] = useState(true)
+  const [draftMonth, setDraftMonth] = useState<Date | undefined>()
   const [isOpen, setIsOpen] = useState(false)
   const [popoverStyle, setPopoverStyle] = useState<CSSProperties>({
     left: 0,
@@ -173,7 +83,8 @@ export const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(function D
   const selectedDate = useMemo(() => parseDateValue(dateValue), [dateValue])
   const minDate = useMemo(() => parseDateValue(min), [min])
   const maxDate = useMemo(() => parseDateValue(max), [max])
-  const segments = value !== undefined ? getSegmentsFromValue(value) : uncontrolledSegments
+  const calendarStartMonth = minDate ?? new Date(1926, 0)
+  const calendarEndMonth = maxDate ?? new Date(2026, 11)
   const disabledMatchers: Array<{ before: Date } | { after: Date }> = []
 
   if (minDate) {
@@ -184,32 +95,24 @@ export const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(function D
     disabledMatchers.push({ after: maxDate })
   }
 
-  const isOutOfRange =
-    dateValue !== '' && ((min != null && dateValue < min) || (max != null && dateValue > max))
-  const isInvalid =
-    invalid || error || (dateValue !== '' && (!parseDateValue(dateValue) || isOutOfRange))
-  const helperId = isInvalid ? errorId : descriptionId
-  const describedBy = getFieldDescribedBy(ariaDescribedByProp, helperId)
-  const helperText = isInvalid ? errorMessage : description
-  const labelClass = getFieldLabelClass(disabled)
-  const helperClass = getFieldHelperClass(isInvalid)
-  const [dayPlaceholder = 'dd', monthPlaceholder = 'mm', yearPlaceholder = 'yyyy'] =
-    placeholder.split('.')
-
   useEffect(() => {
     function updatePopoverPosition() {
-      const rect = fieldRef.current?.getBoundingClientRect()
+      const rect = rootRef.current
+        ?.querySelector('[data-date-field-control]')
+        ?.getBoundingClientRect()
 
       if (!rect) {
         return
       }
 
-      const calendarHeight = 340
       const gap = 8
+      const popoverRect = popoverRef.current?.getBoundingClientRect()
+      const calendarHeight = popoverRect?.height ?? 340
+      const spaceBelow = window.innerHeight - rect.bottom
       const opensAbove =
-        window.innerHeight - rect.bottom < calendarHeight && rect.top > calendarHeight
+        spaceBelow < calendarHeight + gap && rect.top >= calendarHeight + gap
       const top = opensAbove
-        ? Math.max(gap, rect.top - calendarHeight - gap)
+        ? rect.top - calendarHeight - gap
         : rect.bottom + gap
 
       setPopoverStyle({
@@ -221,8 +124,15 @@ export const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(function D
 
     if (isOpen) {
       updatePopoverPosition()
+      const animationFrame = window.requestAnimationFrame(updatePopoverPosition)
       window.addEventListener('resize', updatePopoverPosition)
       window.addEventListener('scroll', updatePopoverPosition, true)
+
+      return () => {
+        window.cancelAnimationFrame(animationFrame)
+        window.removeEventListener('resize', updatePopoverPosition)
+        window.removeEventListener('scroll', updatePopoverPosition, true)
+      }
     }
 
     return () => {
@@ -250,17 +160,12 @@ export const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(function D
     return () => document.removeEventListener('pointerdown', handlePointerDown)
   }, [isOpen])
 
-  const groupBase =
-    'inline-flex w-full min-w-0 items-center rounded-lg border py-2 pl-3 pr-2 text-sm ' +
-    'font-sans transition-[border-color,box-shadow] focus-within:outline-none'
-  const segmentClass =
-    'min-w-0 shrink-0 select-none p-0 text-center font-sans text-sm tabular-nums caret-transparent outline-none ' +
-    'placeholder:text-field-placeholder disabled:cursor-not-allowed disabled:text-foreground-tertiary'
-  const segmentCellClass =
-    'inline-flex h-5 items-center justify-center rounded px-[0.7px] transition-colors'
-  const activeSegmentClass = 'bg-accent/15 text-accent placeholder:!text-accent'
-
   function commitValue(nextValue: DatePickerValue) {
+    if (nextValue !== '') {
+      draftYearDigitsRef.current = ''
+      setDraftMonth(undefined)
+    }
+
     if (value === undefined) {
       setInternalValue(nextValue)
     }
@@ -268,116 +173,70 @@ export const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(function D
     onChange?.(nextValue)
   }
 
-  function commitSegments(nextSegments: DateSegments) {
-    const nextValue = getValueFromSegments(nextSegments)
-
-    if (value === undefined) {
-      setUncontrolledSegments(nextSegments)
+  function getDraftMonthFromYear(year: number) {
+    if (year < 1000) {
+      return undefined
     }
 
-    commitValue(nextValue)
+    if (year < calendarStartMonth.getFullYear()) {
+      return undefined
+    }
+
+    if (year > calendarEndMonth.getFullYear()) {
+      return undefined
+    }
+
+    if (minDate && year === minDate.getFullYear()) {
+      return new Date(year, minDate.getMonth())
+    }
+
+    if (maxDate && year === maxDate.getFullYear()) {
+      return new Date(year, maxDate.getMonth())
+    }
+
+    return new Date(year, 0)
+  }
+
+  function rememberDraftYear(event: KeyboardEvent<HTMLInputElement>) {
+    if (event.key === 'Backspace' || event.key === 'Delete') {
+      draftYearDigitsRef.current = ''
+      setDraftMonth(undefined)
+      return
+    }
+
+    if (!/^\d$/.test(event.key)) {
+      return
+    }
+
+    const nextDigits = `${draftYearDigitsRef.current}${event.key}`.slice(-4)
+    const nextMonth = getDraftMonthFromYear(Number(nextDigits))
+
+    draftYearDigitsRef.current = nextDigits
+
+    if (nextMonth) {
+      setDraftMonth(nextMonth)
+    }
   }
 
   function commitDate(nextDate: Date | undefined) {
     const nextValue = nextDate ? formatDateValue(nextDate) : ''
 
-    if (value === undefined) {
-      setUncontrolledSegments(getSegmentsFromValue(nextValue))
-    }
-
     commitValue(nextValue)
   }
 
-  function getSegmentRef(segment: DateSegment) {
-    if (segment === 'day') {
-      return dayRef
-    }
-
-    if (segment === 'month') {
-      return monthRef
-    }
-
-    return yearRef
+  function focusInput() {
+    rootRef.current?.querySelector<HTMLInputElement>('input[type="date"]')?.focus()
   }
 
-  function getNextSegment(segment: DateSegment) {
-    if (segment === 'day') {
-      return 'month'
-    }
+  function handleFieldKeyDown(event: KeyboardEvent<HTMLDivElement>) {
+    onKeyDown?.(event)
 
-    if (segment === 'month') {
-      return 'year'
-    }
-
-    return undefined
-  }
-
-  function getPreviousSegment(segment: DateSegment) {
-    if (segment === 'year') {
-      return 'month'
-    }
-
-    if (segment === 'month') {
-      return 'day'
-    }
-
-    return undefined
-  }
-
-  function focusSegment(segment: DateSegment) {
-    setActiveSegment(segment)
-    setShouldReplaceSegment(true)
-    getSegmentRef(segment).current?.focus()
-  }
-
-  function updateSegment(segment: DateSegment, nextValue: string) {
-    const maxLength = segment === 'year' ? 4 : 2
-    const digits = nextValue.replace(/\D/g, '')
-
-    if (digits.length > maxLength) {
-      const nextSegments = { ...segments }
-
-      if (segment === 'day') {
-        nextSegments.day = digits.slice(0, 2)
-        nextSegments.month = digits.slice(2, 4)
-        nextSegments.year = digits.slice(4, 8)
-      } else if (segment === 'month') {
-        nextSegments.month = digits.slice(0, 2)
-        nextSegments.year = digits.slice(2, 6)
-      } else {
-        nextSegments.year = digits.slice(0, 4)
-      }
-
-      commitSegments(nextSegments)
-
-      if (nextSegments.year.length === 4) {
-        focusSegment('year')
-      } else if (nextSegments.month.length === 2) {
-        focusSegment('year')
-      } else {
-        focusSegment('month')
-      }
-
+    if (event.defaultPrevented || !(event.target instanceof HTMLInputElement)) {
       return
     }
 
-    const nextSegmentValue = normalizeSegmentValue(nextValue, maxLength)
-    const nextSegments = { ...segments, [segment]: nextSegmentValue }
-    commitSegments(nextSegments)
+    rememberDraftYear(event as KeyboardEvent<HTMLInputElement>)
 
-    if (nextSegmentValue.length === maxLength) {
-      const nextSegment = getNextSegment(segment)
-
-      if (nextSegment) {
-        focusSegment(nextSegment)
-      }
-    }
-  }
-
-  function handleSegmentKeyDown(
-    event: KeyboardEvent<HTMLInputElement>,
-    segment: DateSegment,
-  ) {
     if (event.key === 'Escape') {
       setIsOpen(false)
     }
@@ -386,68 +245,13 @@ export const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(function D
       event.preventDefault()
       setIsOpen(true)
     }
-
-    if (/^\d$/.test(event.key)) {
-      event.preventDefault()
-
-      const maxLength = segment === 'year' ? 4 : 2
-      const currentValue = shouldReplaceSegment ? '' : segments[segment]
-      const nextValue = `${currentValue}${event.key}`.slice(0, maxLength)
-      const nextSegments = { ...segments, [segment]: nextValue }
-      commitSegments(nextSegments)
-      setShouldReplaceSegment(false)
-
-      if (nextValue.length === maxLength) {
-        const nextSegment = getNextSegment(segment)
-
-        if (nextSegment) {
-          focusSegment(nextSegment)
-        }
-      }
-
-      return
-    }
-
-    if (event.key === 'Backspace') {
-      event.preventDefault()
-
-      if (shouldReplaceSegment || segments[segment] === '') {
-        const previousSegment = getPreviousSegment(segment)
-
-        commitSegments({ ...segments, [segment]: '' })
-
-        if (previousSegment && segments[segment] === '') {
-          focusSegment(previousSegment)
-        }
-      } else {
-        commitSegments({ ...segments, [segment]: segments[segment].slice(0, -1) })
-        setShouldReplaceSegment(false)
-      }
-
-      return
-    }
-
-    if (event.key === 'ArrowLeft') {
-      const previousSegment = getPreviousSegment(segment)
-
-      if (previousSegment) {
-        event.preventDefault()
-        focusSegment(previousSegment)
-      }
-    }
-
-    if (event.key === 'ArrowRight') {
-      const nextSegment = getNextSegment(segment)
-
-      if (nextSegment) {
-        event.preventDefault()
-        focusSegment(nextSegment)
-      }
-    }
   }
 
   function handleFieldMouseDown(event: MouseEvent<HTMLDivElement>) {
+    onMouseDown?.(event)
+
     if (
+      event.defaultPrevented ||
       disabled ||
       event.target instanceof HTMLInputElement ||
       event.target instanceof HTMLButtonElement
@@ -456,23 +260,11 @@ export const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(function D
     }
 
     event.preventDefault()
-    focusSegment('day')
+    focusInput()
   }
 
   function handleCalendarButtonMouseDown(event: MouseEvent<HTMLButtonElement>) {
     event.preventDefault()
-  }
-
-  function handleFieldBlur(event: FocusEvent<HTMLDivElement>) {
-    if (
-      event.currentTarget.contains(event.relatedTarget as Node | null) ||
-      popoverRef.current?.contains(event.relatedTarget as Node | null)
-    ) {
-      return
-    }
-
-    setActiveSegment(null)
-    setShouldReplaceSegment(true)
   }
 
   function setRootNode(node: HTMLDivElement | null) {
@@ -484,6 +276,21 @@ export const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(function D
       ref.current = node
     }
   }
+
+  const calendarButton = (
+    <button
+      type="button"
+      disabled={disabled}
+      aria-label="Open calendar"
+      aria-haspopup="dialog"
+      aria-expanded={isOpen}
+      onMouseDown={handleCalendarButtonMouseDown}
+      onClick={() => setIsOpen((current) => !current)}
+      className="ml-2 inline-flex size-5 shrink-0 items-center justify-center rounded text-foreground-tertiary transition-colors hover:text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed"
+    >
+      <CalendarIcon className="size-4 shrink-0" aria-hidden />
+    </button>
+  )
 
   const calendarPopover =
     isOpen && !disabled && typeof document !== 'undefined'
@@ -499,12 +306,12 @@ export const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(function D
               onSelect={(date) => {
                 commitDate(date)
                 setIsOpen(false)
-                focusSegment('day')
+                focusInput()
               }}
-              defaultMonth={selectedDate ?? new Date(2026, 3)}
+              defaultMonth={selectedDate ?? draftMonth ?? new Date(2026, 3)}
               captionLayout="dropdown"
-              startMonth={minDate ?? new Date(1926, 0)}
-              endMonth={maxDate ?? new Date(2026, 11)}
+              startMonth={calendarStartMonth}
+              endMonth={calendarEndMonth}
               disabled={disabledMatchers}
               classNames={{
                 root:
@@ -514,10 +321,11 @@ export const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(function D
                 weekday:
                   'flex h-8 min-w-0 items-center justify-center pb-1 text-center text-xs font-normal text-foreground-tertiary',
                 day: 'relative h-8 min-w-0 p-0 text-center text-sm',
-                day_button:
-                  'inline-flex size-8 items-center justify-center rounded-[10px] text-sm font-normal leading-none transition-colors ' +
-                  'hover:bg-surface-secondary-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ' +
+                day_button: cx(
+                  'inline-flex size-8 items-center justify-center rounded-[10px] text-sm font-normal leading-none transition-colors',
+                  'hover:bg-surface-secondary-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
                   'focus-visible:outline-accent disabled:pointer-events-none',
+                ),
               }}
             />
           </div>,
@@ -526,118 +334,25 @@ export const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(function D
       : null
 
   return (
-    <div
-      ref={setRootNode}
-      className={getFieldContainerClass(className)}
-      {...props}
-    >
-      <div>
-        {label != null ? (
-          <label htmlFor={fieldId} id={`${fieldId}-label`} className={`text-sm font-medium leading-snug ${labelClass}`}>
-            {label}
-            {required ? (
-              <span className="ml-1 text-danger" aria-hidden>
-                *
-              </span>
-            ) : null}
-          </label>
-        ) : null}
-      </div>
-      <div
-        ref={fieldRef}
-        role="group"
-        aria-labelledby={label != null ? `${fieldId}-label` : undefined}
-        aria-describedby={describedBy}
-        aria-invalid={isInvalid ? true : undefined}
-        aria-disabled={disabled ? true : undefined}
+    <>
+      <DateField
+        {...props}
+        ref={setRootNode}
+        id={id}
+        value={dateValue}
+        defaultValue={defaultValue}
+        onChange={commitValue}
+        min={min}
+        max={max}
+        disabled={disabled}
+        placeholder={placeholder}
+        onKeyDown={handleFieldKeyDown}
         onMouseDown={handleFieldMouseDown}
-        onBlur={handleFieldBlur}
-        className={cx(
-          groupBase,
-          getFieldSurfaceClass(variant),
-          getFieldBorderClass(isInvalid),
-          disabled ? 'cursor-not-allowed opacity-50' : 'cursor-text',
-          inputClassName,
-        )}
       >
-        <input
-          ref={dayRef}
-          id={fieldId}
-          aria-label="Day"
-          inputMode="numeric"
-          autoComplete="bday-day"
-          disabled={disabled}
-          placeholder={dayPlaceholder}
-          value={segments.day}
-          onFocus={() => focusSegment('day')}
-          onChange={(event) => updateSegment('day', event.target.value)}
-          onKeyDown={(event) => handleSegmentKeyDown(event, 'day')}
-          className={`${segmentCellClass} ${
-            activeSegment === 'day' ? activeSegmentClass : ''
-          } ${segmentClass} w-[3.35ch]`}
-        />
-        <span className="px-[0.7px] text-foreground-tertiary" aria-hidden>
-          .
-        </span>
-        <input
-          ref={monthRef}
-          aria-label="Month"
-          inputMode="numeric"
-          autoComplete="bday-month"
-          disabled={disabled}
-          placeholder={monthPlaceholder}
-          value={segments.month}
-          onFocus={() => focusSegment('month')}
-          onChange={(event) => updateSegment('month', event.target.value)}
-          onKeyDown={(event) => handleSegmentKeyDown(event, 'month')}
-          className={`${segmentCellClass} ${
-            activeSegment === 'month' ? activeSegmentClass : ''
-          } ${segmentClass} w-[3.35ch]`}
-        />
-        <span className="px-[0.7px] text-foreground-tertiary" aria-hidden>
-          .
-        </span>
-        <input
-          ref={yearRef}
-          aria-label="Year"
-          inputMode="numeric"
-          autoComplete="bday-year"
-          disabled={disabled}
-          placeholder={yearPlaceholder}
-          value={segments.year}
-          onFocus={() => focusSegment('year')}
-          onChange={(event) => updateSegment('year', event.target.value)}
-          onKeyDown={(event) => handleSegmentKeyDown(event, 'year')}
-          className={`${segmentCellClass} ${
-            activeSegment === 'year' ? activeSegmentClass : ''
-          } ${segmentClass} w-[5ch]`}
-        />
-        <span className="min-w-0 flex-1" aria-hidden />
-        <button
-          type="button"
-          disabled={disabled}
-          aria-label="Open calendar"
-          aria-haspopup="dialog"
-          aria-expanded={isOpen}
-          onMouseDown={handleCalendarButtonMouseDown}
-          onClick={() => setIsOpen((current) => !current)}
-          className="ml-2 inline-flex size-5 shrink-0 items-center justify-center rounded text-foreground-tertiary transition-colors hover:text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed"
-        >
-          <CalendarIcon className="size-4 shrink-0" aria-hidden />
-        </button>
-      </div>
-      {name != null ? <input type="hidden" name={name} value={dateValue} /> : null}
-      {helperText != null ? (
-        <p
-          id={helperId}
-          className={`text-xs leading-snug ${helperClass}`}
-          aria-live={isInvalid ? 'polite' : undefined}
-        >
-          {helperText}
-        </p>
-      ) : null}
+        {calendarButton}
+      </DateField>
       {calendarPopover}
-    </div>
+    </>
   )
 })
 

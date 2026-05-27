@@ -1,5 +1,7 @@
 import { forwardRef, type ButtonHTMLAttributes } from 'react'
 
+import { cx } from '../_internal/cx'
+
 export type CloseButtonProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> & {
   /** Visual size scale */
   size?: 'sm' | 'md'
@@ -66,22 +68,22 @@ export const CloseButton = forwardRef<HTMLButtonElement, CloseButtonProps>(funct
       ref={ref}
       type={type}
       aria-label={ariaLabel}
-      className={(
-        'group inline-flex shrink-0 items-center justify-center border border-transparent bg-transparent ' +
-        'font-sans transition-colors duration-150 ease-in-out ' +
-        'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ' +
-        'disabled:pointer-events-none disabled:opacity-50 ' +
-        `${selectedSize.root} ${className}`
-      ).trim()}
+      className={cx(
+        'group inline-flex shrink-0 items-center justify-center border border-transparent bg-transparent',
+        'font-sans transition-colors duration-150 ease-in-out',
+        'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent',
+        'disabled:pointer-events-none disabled:opacity-50',
+        selectedSize.root,
+        className,
+      )}
       {...props}
     >
       <span
-        className={(
-          'inline-flex shrink-0 items-center justify-center transition-colors duration-150 ease-in-out ' +
-          variants[variant] +
-          ' ' +
-          selectedSize.circle
-        ).trim()}
+        className={cx(
+          'inline-flex shrink-0 items-center justify-center transition-colors duration-150 ease-in-out',
+          variants[variant],
+          selectedSize.circle,
+        )}
       >
         <CloseIcon className={selectedSize.icon} />
       </span>

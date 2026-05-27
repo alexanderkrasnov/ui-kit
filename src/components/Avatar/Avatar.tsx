@@ -1,5 +1,7 @@
 import type { HTMLAttributes } from 'react'
 
+import { cx } from '../_internal/cx'
+
 function UserPlaceholder({ className }: { className?: string }) {
   return (
     <svg
@@ -18,9 +20,10 @@ function UserPlaceholder({ className }: { className?: string }) {
   )
 }
 
-const shellStyle =
-  'inline-flex items-center justify-center rounded-full font-medium ' +
-  'bg-surface-secondary text-foreground'
+const shellStyle = cx(
+  'inline-flex items-center justify-center rounded-full font-medium',
+  'bg-surface-secondary text-foreground',
+)
 
 export type AvatarProps = Omit<HTMLAttributes<HTMLSpanElement>, 'size'> & {
   /** Two letters or short initials */
@@ -47,7 +50,7 @@ export function Avatar({
   const initials = fallback?.trim().slice(0, 2).toUpperCase()
   const a11yName = ariaLabel ?? (initials ? `Avatar ${initials}` : 'Avatar icon')
 
-  const shell = `${shellStyle} ${sizes[size]} ${className}`.trim()
+  const shell = cx(shellStyle, sizes[size], className)
 
   if (initials && !icon) {
     return (

@@ -229,6 +229,13 @@
     var(--color-foreground) 3%
   );
 
+  /* Hover для success (как danger-hover: смесь базового success и белого foreground) */
+  --color-success-hover: color-mix(
+    in oklab,
+    var(--color-success) 95%,
+    var(--color-accent-foreground) 5%
+  );
+
   /* Hover для danger (как accent-hover: смесь базового danger и foreground на нём) */
   --color-danger-hover: color-mix(
     in oklab,
@@ -254,6 +261,18 @@
     transition:
       background-color 160ms ease,
       color 160ms ease;
+  }
+
+  :where(
+    button:not(:disabled):not([aria-disabled='true']),
+    a[href],
+    [role='button']:not([aria-disabled='true']),
+    select:not(:disabled),
+    input[type='checkbox']:not(:disabled),
+    input[type='radio']:not(:disabled),
+    summary
+  ) {
+    cursor: pointer;
   }
 
   #storybook-root,
@@ -282,10 +301,41 @@
   }
 }
 
+@utility type-h1 {
+  @apply text-4xl font-bold;
+}
+
+@utility type-h2 {
+  @apply text-3xl font-bold;
+}
+
+@utility type-h3 {
+  @apply text-2xl font-semibold;
+}
+
+@utility type-body-lg {
+  @apply text-lg font-normal;
+}
+
+@utility type-body {
+  @apply text-base font-normal;
+}
+
+@utility type-body-sm {
+  @apply text-sm font-normal;
+}
+
+@utility type-body-xs {
+  @apply text-xs font-normal;
+}
+
+@utility type-caption {
+  @apply font-mono text-xs font-medium tracking-widest;
+}
+
 /* Layer Components
-   Коротко: это семантические typography-классы для заголовков.
-   Смотри сюда, когда нужно быстро назначить размер и жирность одним классом
-   (например heading-1, heading-2, heading-3). */
+   Коротко: это локальные component-классы для сложных состояний и анимаций,
+   которые не должны жить как design tokens в @theme. */
 @layer components {
   @keyframes date-picker-popover-in {
     from {
@@ -352,6 +402,22 @@
     animation: dropdown-menu-enter 50ms ease-out;
   }
 
+  @keyframes dropdown-menu-enter-top {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .dropdown-menu-enter-top {
+    animation: dropdown-menu-enter-top 50ms ease-out;
+  }
+
   @keyframes tooltip-enter {
     from {
       opacity: 0;
@@ -362,17 +428,5 @@
       opacity: 1;
       transform: translateY(0);
     }
-  }
-
-  .heading-1 {
-    @apply text-4xl font-bold;
-  }
-
-  .heading-2 {
-    @apply text-3xl font-bold;
-  }
-
-  .heading-3 {
-    @apply text-2xl font-bold;
   }
 }

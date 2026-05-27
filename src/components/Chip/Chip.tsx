@@ -7,13 +7,15 @@ import {
 } from 'react'
 import { type LucideIcon } from 'lucide-react'
 
+import { cx } from '../_internal/cx'
+
 export type ChipIcon = LucideIcon | ReactNode
 
 export type ChipProps = Omit<HTMLAttributes<HTMLSpanElement>, 'color'> & {
   children: ReactNode
   color?: 'accent' | 'default' | 'success' | 'warning' | 'danger'
   tone?: 'primary' | 'soft'
-  size?: 'sm' | 'md' | 'lg'
+  size?: 'sm' | 'md'
   /** By default, icons are expected to come from `lucide-react`. */
   startIcon?: ChipIcon
   /** By default, icons are expected to come from `lucide-react`. */
@@ -27,11 +29,6 @@ const sizeStyles: Record<
   NonNullable<ChipProps['size']>,
   { shell: string; icon: string; label: string }
 > = {
-  lg: {
-    shell: 'min-h-8 gap-0.5 px-3 py-1 text-sm leading-5',
-    icon: 'size-3.5',
-    label: 'px-0.5',
-  },
   md: {
     shell: 'min-h-6 gap-0.5 px-2 py-0.5 text-xs leading-4',
     icon: 'size-3',
@@ -73,7 +70,7 @@ function renderIcon(icon: ChipIcon, sizeClass: string) {
       : icon
 
   return (
-    <span className={`${sizeClass} shrink-0 [&_svg]:size-full`.trim()} aria-hidden>
+    <span className={cx(sizeClass, 'shrink-0 [&_svg]:size-full')} aria-hidden>
       {content}
     </span>
   )
@@ -94,11 +91,11 @@ export function Chip({
 
   return (
     <span
-      className={`${shell} ${sizeConfig.shell} ${toneClass} ${className}`.trim()}
+      className={cx(shell, sizeConfig.shell, toneClass, className)}
       {...props}
     >
       {startIcon != null ? renderIcon(startIcon, sizeConfig.icon) : null}
-      <span className={`${sizeConfig.label} truncate`.trim()}>{children}</span>
+      <span className={cx(sizeConfig.label, 'truncate')}>{children}</span>
       {endIcon != null ? renderIcon(endIcon, sizeConfig.icon) : null}
     </span>
   )

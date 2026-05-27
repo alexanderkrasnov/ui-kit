@@ -72,11 +72,12 @@ const calendarClassNames: Partial<ClassNames> = {
     'pointer-events-none absolute inset-x-0 top-0 z-10 flex items-center justify-between',
   chevron: 'text-current',
   dropdowns: 'flex items-center justify-center gap-2',
-  dropdown_root:
-    'relative inline-flex h-8 items-center rounded-lg text-sm font-medium text-foreground transition-colors ' +
-    'hover:bg-surface-secondary-hover data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 ' +
-    '[&>span]:pointer-events-none [&>span]:inline-flex [&>span]:items-center [&>span]:gap-1.5 ' +
+  dropdown_root: cx(
+    'relative inline-flex h-8 items-center rounded-lg text-sm font-medium text-foreground transition-colors',
+    'hover:bg-surface-secondary-hover data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50',
+    '[&>span]:pointer-events-none [&>span]:inline-flex [&>span]:items-center [&>span]:gap-1.5',
     '[&>span]:px-3 [&>span_svg]:size-4',
+  ),
   dropdown:
     'absolute inset-0 h-full w-full cursor-pointer appearance-none opacity-0 outline-none disabled:cursor-default',
   months_dropdown: '',
@@ -88,10 +89,11 @@ const calendarClassNames: Partial<ClassNames> = {
   weeks: 'flex flex-col gap-2',
   week: 'grid grid-cols-7',
   day: 'relative size-[38px] p-0 text-center text-sm',
-  day_button:
-    'inline-flex size-[38px] items-center justify-center rounded-[10px] text-sm font-normal leading-none transition-colors ' +
-    'hover:bg-surface-secondary-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ' +
+  day_button: cx(
+    'inline-flex size-[38px] items-center justify-center rounded-[10px] text-sm font-normal leading-none transition-colors',
+    'hover:bg-surface-secondary-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
     'focus-visible:outline-accent disabled:pointer-events-none',
+  ),
   selected:
     '[&_button]:bg-accent [&_button]:text-accent-foreground [&_button]:hover:bg-accent-hover',
   today:
@@ -101,13 +103,19 @@ const calendarClassNames: Partial<ClassNames> = {
   disabled:
     '[&_button]:text-foreground-tertiary [&_button]:opacity-40',
   hidden: 'invisible',
-  range_start:
-    'rounded-l-[10px] bg-accent/15 [&_button]:bg-accent [&_button]:text-accent-foreground [&_button]:hover:bg-accent-hover',
-  range_middle:
-    'bg-accent/15 first:rounded-l-[10px] last:rounded-r-[10px] ' +
-    '[&_button]:rounded-none [&_button]:bg-transparent [&_button]:text-foreground [&_button]:hover:bg-accent/20',
-  range_end:
-    'rounded-r-[10px] bg-accent/15 [&_button]:bg-accent [&_button]:text-accent-foreground [&_button]:hover:bg-accent-hover',
+  range_start: cx(
+    'plexo-range-start overflow-hidden rounded-l-[10px] before:absolute before:inset-y-0 before:left-1/2 before:right-0 before:bg-accent/15 before:content-[""]',
+    '[&.plexo-range-end]:before:hidden [&_button]:relative [&_button]:z-[1] [&_button]:bg-accent [&_button]:text-accent-foreground [&_button]:hover:bg-accent-hover',
+  ),
+  range_middle: cx(
+    'bg-accent/15 first:rounded-l-[10px] last:rounded-r-[10px]',
+    '[&_button]:bg-transparent [&_button]:text-foreground [&_button]:hover:bg-accent/20',
+    '[&[data-today=true]_button]:!text-accent',
+  ),
+  range_end: cx(
+    'plexo-range-end overflow-hidden rounded-r-[10px] before:absolute before:inset-y-0 before:left-0 before:right-1/2 before:bg-accent/15 before:content-[""]',
+    '[&.plexo-range-start]:before:hidden [&_button]:relative [&_button]:z-[1] [&_button]:bg-accent [&_button]:text-accent-foreground [&_button]:hover:bg-accent-hover',
+  ),
 }
 
 export function Calendar({

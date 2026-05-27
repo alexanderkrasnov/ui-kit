@@ -1,5 +1,7 @@
 import type { HTMLAttributes } from 'react'
 
+import { cx } from '../_internal/cx'
+
 export type SpinnerProps = HTMLAttributes<HTMLSpanElement> & {
   size?: 'sm' | 'md' | 'lg' | 'xl'
   'aria-label'?: string
@@ -22,7 +24,7 @@ export function Spinner({
     <span
       role="status"
       aria-label={ariaLabel}
-      className={`inline-flex shrink-0 items-center justify-center text-accent ${sizeStyles[size]} ${className}`.trim()}
+      className={cx('inline-flex shrink-0 items-center justify-center text-accent', sizeStyles[size], className)}
       {...props}
     >
       <svg

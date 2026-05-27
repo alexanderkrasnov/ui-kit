@@ -5,6 +5,8 @@ import { secondaryStorySurface } from '../../docs/story-surfaces'
 import { Button } from '../Button'
 import { DatePicker } from './DatePicker'
 
+const datePickerStoryWidth = 'w-[290px]'
+
 const meta = {
   title: 'Date and Time/Date Picker',
   component: DatePicker,
@@ -14,7 +16,7 @@ const meta = {
   tags: ['autodocs'],
   decorators: [
     (Story) => (
-      <div className="w-[250px]">
+      <div className={datePickerStoryWidth}>
         <Story />
       </div>
     ),
@@ -53,7 +55,7 @@ function FormExampleDemo() {
 
   return (
     <form
-      className="flex w-[250px] flex-col gap-4"
+      className={`flex ${datePickerStoryWidth} flex-col gap-4`}
       onSubmit={(event) => {
         event.preventDefault()
         setSubmittedDate(date || 'missing')
@@ -79,7 +81,7 @@ function FormExampleDemo() {
 
 export const Variants: Story = {
   render: () => (
-    <div className="flex w-[250px] flex-col gap-4">
+    <div className={`flex ${datePickerStoryWidth} flex-col gap-4`}>
       <DatePicker label="Default" defaultValue="2026-04-24" variant="default" />
       <div className={secondaryStorySurface}>
         <DatePicker label="Secondary" defaultValue="2026-04-24" variant="secondary" />
@@ -109,6 +111,17 @@ export const Secondary: Story = {
 export const WithValidation: Story = {
   name: 'With Validation',
   render: () => <ValidationDemo />,
+}
+
+export const WithBounds: Story = {
+  name: 'With Bounds',
+  args: {
+    label: 'Travel date',
+    defaultValue: '2026-05-15',
+    min: '2026-05-01',
+    max: '2026-05-31',
+    description: 'Choose a date in May 2026.',
+  },
 }
 
 export const Disabled: Story = {

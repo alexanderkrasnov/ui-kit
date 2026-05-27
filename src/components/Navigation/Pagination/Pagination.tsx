@@ -88,10 +88,11 @@ export function Pagination({
   }
 
   const selectedSize = sizes[size]
-  const baseButton =
-    'inline-flex shrink-0 items-center justify-center rounded-lg font-sans font-medium ' +
-    'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ' +
-    'disabled:pointer-events-none disabled:opacity-50'
+  const baseButton = cx(
+    'inline-flex shrink-0 items-center justify-center rounded-lg font-sans font-medium',
+    'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent',
+    'disabled:pointer-events-none disabled:opacity-50',
+  )
   const controlButton =
     'gap-2 bg-surface-primary text-foreground shadow-sm hover:text-foreground/80'
   const pageButton =

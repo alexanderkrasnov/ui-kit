@@ -6,6 +6,8 @@ import {
   type ReactNode,
 } from 'react'
 
+import { cx } from '../_internal/cx'
+
 export type SwitchProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'size' | 'type'> & {
   label?: ReactNode
   description?: ReactNode
@@ -13,14 +15,16 @@ export type SwitchProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'size' | '
   onCheckedChange?: (checked: boolean) => void
 }
 
-const shell =
-  'group inline-flex max-w-full items-center gap-3 select-none font-sans ' +
-  'has-[input:disabled]:cursor-not-allowed has-[input:disabled]:opacity-50'
+const shell = cx(
+  'group inline-flex max-w-full items-center gap-3 select-none font-sans',
+  'has-[input:disabled]:cursor-not-allowed has-[input:disabled]:opacity-50',
+)
 
-const trackBase =
-  'relative inline-flex shrink-0 overflow-hidden rounded-full bg-surface-secondary transition-colors duration-150 ease-in-out ' +
-  'group-has-[input:checked]:bg-accent group-has-[input:focus-visible]:outline group-has-[input:focus-visible]:outline-2 ' +
-  'group-has-[input:focus-visible]:outline-offset-2 group-has-[input:focus-visible]:outline-accent'
+const trackBase = cx(
+  'relative inline-flex shrink-0 overflow-hidden rounded-full bg-surface-secondary transition-colors duration-150 ease-in-out',
+  'group-has-[input:checked]:bg-accent group-has-[input:focus-visible]:outline group-has-[input:focus-visible]:outline-2',
+  'group-has-[input:focus-visible]:outline-offset-2 group-has-[input:focus-visible]:outline-accent',
+)
 
 const thumbBase =
   'absolute top-1/2 -translate-y-1/2 inline-flex items-center justify-center rounded-full bg-surface-primary transition-[left,transform] duration-150 ease-in-out'
@@ -103,7 +107,7 @@ export function Switch({
   }
 
   return (
-    <label htmlFor={inputId} className={`${shell} ${className}`.trim()}>
+    <label htmlFor={inputId} className={cx(shell, className)}>
       <span className="relative inline-flex shrink-0">
         <input
           id={inputId}
@@ -120,11 +124,11 @@ export function Switch({
         />
         <span
           aria-hidden
-          className={`${trackBase} ${sizeConfig.control}`.trim()}
+          className={cx(trackBase, sizeConfig.control)}
           style={sizeConfig.style}
         >
           <span
-            className={`${thumbBase} ${sizeConfig.thumb}`.trim()}
+            className={cx(thumbBase, sizeConfig.thumb)}
             style={thumbStyle}
           />
         </span>

@@ -81,7 +81,7 @@ const meta = {
   argTypes: {
     variant: {
       control: 'select',
-      options: ['primary', 'secondary', 'ghost', 'danger'],
+      options: ['primary', 'secondary', 'ghost', 'success', 'danger'],
     },
     size: {
       control: 'select',
@@ -116,6 +116,9 @@ export const Default: Story = {
       </Button>
       <Button variant="ghost" size={args.size}>
         Ghost
+      </Button>
+      <Button variant="success" size={args.size}>
+        Success
       </Button>
       <Button variant="danger" size={args.size}>
         Danger

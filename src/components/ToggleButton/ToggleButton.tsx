@@ -1,5 +1,7 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react'
 
+import { cx } from '../_internal/cx'
+
 export type ToggleButtonProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'aria-pressed'> & {
   /** Visual style variant */
   variant?: 'primary' | 'secondary'
@@ -29,26 +31,29 @@ export function ToggleButton({
     !(typeof children === 'string' && children.trim() === '')
   const hideIconFromA11y = Boolean(hasText)
 
-  const base =
-    'inline-flex h-8 items-center justify-center gap-2 rounded-lg px-3 text-sm font-medium ' +
-    'font-sans transition-colors ease-in-out duration-150 ' +
-    'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ' +
-    'disabled:pointer-events-none disabled:opacity-50'
+  const base = cx(
+    'inline-flex h-8 items-center justify-center gap-2 rounded-lg px-3 text-sm font-medium',
+    'font-sans transition-colors ease-in-out duration-150',
+    'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent',
+    'disabled:pointer-events-none disabled:opacity-50',
+  )
 
   const variants: Record<NonNullable<ToggleButtonProps['variant']>, string> = {
-    primary:
-      'bg-transparent text-foreground shadow-none hover:bg-surface-secondary-hover ' +
+    primary: cx(
+      'bg-transparent text-foreground shadow-none hover:bg-surface-secondary-hover',
       'aria-pressed:bg-accent/15 aria-pressed:hover:bg-accent/20 aria-pressed:text-accent aria-pressed:shadow-none',
-    secondary:
-      'bg-surface-secondary text-foreground shadow-none hover:bg-surface-tertiary ' +
+    ),
+    secondary: cx(
+      'bg-surface-secondary text-foreground shadow-none hover:bg-surface-tertiary',
       'aria-pressed:bg-accent/15 aria-pressed:hover:bg-accent/20 aria-pressed:text-accent',
+    ),
   }
 
   return (
     <button
       type={type}
       aria-pressed={pressed}
-      className={`${base} ${variants[variant]} ${className}`.trim()}
+      className={cx(base, variants[variant], className)}
       {...props}
     >
       {startIcon != null ? (
