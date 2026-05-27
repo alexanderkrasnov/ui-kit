@@ -88,7 +88,8 @@ export function Sidebar({
             <button
               type="button"
               className={cx(
-                'group absolute left-0 top-0 inline-flex h-7 w-fit shrink-0 items-center justify-center overflow-hidden rounded-lg bg-transparent px-[10px] text-foreground transition-[opacity,background-color] duration-150 ease-in-out hover:bg-surface-primary-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent',
+                'group absolute left-0 top-0 inline-flex h-7 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-transparent text-foreground transition-[opacity,background-color] duration-150 ease-in-out hover:bg-surface-primary-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent',
+                hasCollapsedLogo ? 'w-fit px-[10px]' : 'w-10 px-0',
                 isCollapsed || hasCollapsedLogo ? 'opacity-100' : 'opacity-0',
                 !isCollapsed && 'pointer-events-none',
               )}
@@ -97,15 +98,21 @@ export function Sidebar({
               tabIndex={isCollapsed ? undefined : -1}
               onClick={() => handleCollapsedChange(false)}
             >
-              <span className="inline-flex items-center justify-center transition-opacity duration-[80ms] ease-out group-hover:opacity-0 group-focus-visible:opacity-0">
-                {collapsedLogo ?? logo}
-              </span>
-              <span
-                className="absolute inset-0 inline-flex items-center justify-center text-foreground-tertiary opacity-0 transition-opacity duration-[80ms] ease-out group-hover:opacity-100 group-focus-visible:opacity-100"
-                aria-hidden
-              >
-                <PanelLeftOpen className="size-4" />
-              </span>
+              {hasCollapsedLogo ? (
+                <>
+                  <span className="inline-flex items-center justify-center transition-opacity duration-[80ms] ease-out group-hover:opacity-0 group-focus-visible:opacity-0">
+                    {collapsedLogo}
+                  </span>
+                  <span
+                    className="absolute inset-0 inline-flex items-center justify-center text-foreground-tertiary opacity-0 transition-opacity duration-[80ms] ease-out group-hover:opacity-100 group-focus-visible:opacity-100"
+                    aria-hidden
+                  >
+                    <PanelLeftOpen className="size-4" />
+                  </span>
+                </>
+              ) : (
+                <PanelLeftOpen className="size-4 text-foreground-tertiary" aria-hidden />
+              )}
             </button>
 
             <div
@@ -205,7 +212,7 @@ export function Sidebar({
         <footer
           className={cx(
             'mt-auto flex h-16 w-full shrink-0 items-center justify-start transition-[height,padding] duration-150 ease-in-out',
-            isCollapsed ? 'px-[10px] py-[14px]' : 'px-4 py-2',
+            isCollapsed ? 'px-[10px] py-[14px]' : 'px-1.5 py-2',
           )}
         >
           <AccountDropdown

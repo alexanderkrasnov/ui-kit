@@ -32,6 +32,18 @@ function PlexoLogo() {
   )
 }
 
+function PlexoWordmark() {
+  return (
+    <span
+      className="inline-flex h-5 items-center text-[0]"
+      role="img"
+      aria-label="Plexo"
+    >
+      <img src={wordmarkUrl} alt="" className="h-[18px] w-[46px] shrink-0" />
+    </span>
+  )
+}
+
 function StoryShell({ children }: { children: ReactNode }) {
   return (
     <div className="flex h-[600px] bg-background text-foreground">
@@ -105,6 +117,19 @@ export const Default: Story = {
 
 export const Collapsed: Story = {
   args: {
+    defaultCollapsed: true,
+  },
+  render: (args) => (
+    <StoryShell>
+      <StorySidebar {...args} />
+    </StoryShell>
+  ),
+}
+
+export const WordmarkOnly: Story = {
+  args: {
+    logo: <PlexoWordmark />,
+    collapsedLogo: null,
     defaultCollapsed: true,
   },
   render: (args) => (
