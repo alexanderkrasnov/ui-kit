@@ -10,7 +10,7 @@ import {
   type Key,
   type ReactNode,
 } from 'react'
-import { type LucideIcon } from 'lucide-react'
+import { Check, type LucideIcon } from 'lucide-react'
 
 import { cx } from '../../_internal/cx'
 
@@ -85,7 +85,7 @@ type VerticalConnectorStyle = {
 }
 
 const indicatorStatusStyles: Record<StepStatus, string> = {
-  complete: 'border-success bg-success text-white',
+  complete: 'border-accent bg-surface-primary text-accent',
   active: 'border-foreground bg-foreground text-background',
   inactive: 'border-border bg-transparent text-foreground-tertiary',
 }
@@ -272,7 +272,9 @@ export function Stepper({
               indicatorStatusStyles[status],
             )}
           >
-            {item.icon != null ? (
+            {isComplete ? (
+              renderIcon(Check, selectedSize.icon)
+            ) : item.icon != null ? (
               renderIcon(item.icon, selectedSize.icon)
             ) : (
               <span className="w-full text-center tabular-nums">{index + 1}</span>
@@ -367,7 +369,7 @@ export function Stepper({
               >
                 <span
                   className={cx(
-                    'block bg-success',
+                    'block bg-accent',
                     orientation === 'horizontal' ? 'h-full w-full' : 'h-full w-full',
                     isComplete ? 'opacity-100' : 'opacity-0',
                   )}
