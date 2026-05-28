@@ -65,6 +65,6 @@
     "@fontsource/inter": "^5.2.8",
     "flag-icons": "^7.5.0",
     "lucide-react": "^0.562.0",
-    "react-day-picker": "^9.14.0"
+    "react-day-picker": "^10.0.1"
   }
 }
