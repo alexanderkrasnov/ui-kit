@@ -1,1 +1,6 @@
-export { NumberField, type NumberFieldFormat, type NumberFieldProps } from './NumberField'
+export {
+  NumberField,
+  type NumberFieldFormat,
+  type NumberFieldProps,
+  type NumberFieldTextAlign,
+} from './NumberField'

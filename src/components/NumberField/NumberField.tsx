@@ -15,7 +15,6 @@ import { Minus, Plus } from 'lucide-react'
 import { cx } from '../_internal/cx'
 import {
   getFieldBorderClass,
-  getFieldContainerClass,
   getFieldDescribedBy,
   getFieldHelperClass,
   getFieldLabelClass,
@@ -24,6 +23,7 @@ import {
 } from '../_internal/fieldStyles'
 
 export type NumberFieldFormat = 'number' | 'currency' | 'percent'
+export type NumberFieldTextAlign = 'left' | 'center'
 
 export type NumberFieldProps = Omit<
   InputHTMLAttributes<HTMLInputElement>,
@@ -40,6 +40,8 @@ export type NumberFieldProps = Omit<
   error?: boolean
   /** Display format for the accepted value */
   format?: NumberFieldFormat
+  /** Horizontal alignment for the input value */
+  textAlign?: NumberFieldTextAlign
   /** Currency suffix, used when `format="currency"` */
   currencySymbol?: string
   value?: number
@@ -132,6 +134,7 @@ export const NumberField = forwardRef<HTMLInputElement, NumberFieldProps>(functi
     readOnly,
     variant = 'default',
     format = 'number',
+    textAlign = 'left',
     currencySymbol = '$',
     value,
     defaultValue,
@@ -159,6 +162,7 @@ export const NumberField = forwardRef<HTMLInputElement, NumberFieldProps>(functi
   const helperId = isInvalid ? errorId : descriptionId
   const helperText = isInvalid ? errorMessage : description
   const isFormatted = format !== 'number'
+  const isPercent = format === 'percent'
   const isStepDisabled = disabled || readOnly
   const minValue = getNumberProp(min)
   const maxValue = getNumberProp(max)
@@ -176,6 +180,8 @@ export const NumberField = forwardRef<HTMLInputElement, NumberFieldProps>(functi
   const describedBy = getFieldDescribedBy(ariaDescribedByProp, helperId)
   const labelClass = getFieldLabelClass(disabled)
   const helperClass = getFieldHelperClass(isInvalid)
+  const textAlignClass = textAlign === 'center' ? 'text-center' : 'text-left'
+  const containerWidthClass = isPercent ? 'w-[192px] max-w-[192px]' : 'w-[240px] max-w-[240px]'
 
   function normalizeValue(nextValue: number | undefined) {
     return nextValue == null
@@ -232,7 +238,7 @@ export const NumberField = forwardRef<HTMLInputElement, NumberFieldProps>(functi
   }
 
   return (
-    <div className={cx(getFieldContainerClass(), 'w-[240px] max-w-[240px]', className)}>
+    <div className={cx('inline-flex flex-col gap-1.5 font-sans', containerWidthClass, className)}>
       {label != null ? (
         <label htmlFor={inputId} className={cx('text-sm font-medium leading-snug', labelClass)}>
           {label}
@@ -296,9 +302,10 @@ export const NumberField = forwardRef<HTMLInputElement, NumberFieldProps>(functi
             onFocus={handleFocus}
             onKeyDown={handleKeyDown}
             className={cx(
-              'col-start-1 row-start-1 w-full min-w-[1ch] appearance-none bg-transparent p-0 text-left text-sm text-inherit outline-none',
+              'col-start-1 row-start-1 w-full min-w-[1ch] appearance-none bg-transparent p-0 text-sm text-inherit outline-none',
               'placeholder:text-field-placeholder disabled:cursor-not-allowed read-only:cursor-default',
               '[appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none',
+              textAlignClass,
               inputClassName,
             )}
             style={style}

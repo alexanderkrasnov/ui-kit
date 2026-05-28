@@ -38,7 +38,12 @@ export {
   type SidebarProps,
 } from './components/Layout'
 export { Link, type LinkProps } from './components/Link'
-export { NumberField, type NumberFieldFormat, type NumberFieldProps } from './components/NumberField'
+export {
+  NumberField,
+  type NumberFieldFormat,
+  type NumberFieldProps,
+  type NumberFieldTextAlign,
+} from './components/NumberField'
 export {
   Breadcrumbs,
   type BreadcrumbsItem,

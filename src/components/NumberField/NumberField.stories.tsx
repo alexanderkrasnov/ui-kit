@@ -20,6 +20,7 @@ const meta = {
   argTypes: {
     variant: { control: 'select', options: ['default', 'secondary'] },
     format: { control: 'select', options: ['number', 'currency', 'percent'] },
+    textAlign: { control: 'select', options: ['left', 'center'] },
     invalid: { control: 'boolean' },
     required: { control: 'boolean' },
   },
@@ -29,9 +30,10 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Variants: Story = {
-  render: () => (
+  render: (args) => (
     <div className="flex w-[240px] flex-col gap-4">
       <NumberField
+        {...args}
         label="Quantity"
         defaultValue={1000}
         min={0}
@@ -40,6 +42,7 @@ export const Variants: Story = {
       />
       <div className={secondaryStorySurface}>
         <NumberField
+          {...args}
           label="Quantity"
           defaultValue={1000}
           min={0}
@@ -65,12 +68,20 @@ export const WithFormatOptions: Story = {
         description="Amount in USD"
       />
       <NumberField
-        label="Discount"
+        label="Centered quantity"
+        defaultValue={42}
+        min={0}
+        step={1}
+        textAlign="center"
+      />
+      <NumberField
+        label="Company ownership"
         defaultValue={15}
         min={0}
         max={100}
         step={1}
         format="percent"
+        textAlign="center"
         description="Value from 0 to 100"
       />
     </div>
