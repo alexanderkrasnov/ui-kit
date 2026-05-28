@@ -8,6 +8,7 @@ export type SidebarNavItem = {
   key: Key
   label: ReactNode
   icon: ReactNode
+  badge?: number | string | null
   active?: boolean
   disabled?: boolean
   href?: string
@@ -38,6 +39,20 @@ function getItemLabel(item: SidebarNavItem) {
   }
 
   return String(item.key)
+}
+
+function getBadgeLabel(badge: SidebarNavItem['badge']) {
+  if (typeof badge === 'number') {
+    if (badge <= 0 || Number.isNaN(badge)) return null
+
+    return badge > 99 ? '99+' : String(badge)
+  }
+
+  if (typeof badge === 'string') {
+    return badge.length > 0 ? badge : null
+  }
+
+  return null
 }
 
 export function Sidebar({
@@ -145,8 +160,9 @@ export function Sidebar({
           >
             {items.map((item) => {
               const itemLabel = getItemLabel(item)
+              const badgeLabel = getBadgeLabel(item.badge)
               const itemClassName = cx(
-                'group inline-flex h-8 shrink-0 items-center rounded-lg py-1.5 text-sm font-normal leading-5',
+                'group relative inline-flex h-8 shrink-0 items-center rounded-lg py-1.5 text-sm font-normal leading-5',
                 'transition-[width,background-color,color] duration-150 ease-in-out',
                 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent',
                 isCollapsed ? 'w-fit justify-start gap-0 px-[10px]' : 'w-full justify-start gap-[10px] px-[10px]',
@@ -172,6 +188,20 @@ export function Sidebar({
                   >
                     {item.label}
                   </span>
+                  {badgeLabel != null && !isCollapsed ? (
+                    <span
+                      className="ml-auto inline-flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-accent px-1.5 text-center text-[11px] font-medium leading-none text-accent-foreground"
+                      aria-hidden
+                    >
+                      {badgeLabel}
+                    </span>
+                  ) : null}
+                  {badgeLabel != null && isCollapsed ? (
+                    <span
+                      className="absolute right-1 top-1 size-1.5 rounded-full bg-accent"
+                      aria-hidden
+                    />
+                  ) : null}
                 </>
               )
 

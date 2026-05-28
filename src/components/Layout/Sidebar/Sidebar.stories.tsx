@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { Book, ChartBar } from 'lucide-react'
+import { Book, ChartBar, Inbox, MessageSquare } from 'lucide-react'
 
 import { Sidebar, type SidebarNavItem, type SidebarProps } from './Sidebar'
 import symbolUrl from './assets/symbol.svg?url'
@@ -80,6 +80,37 @@ const defaultItems: SidebarNavItem[] = [
   },
 ]
 
+const badgeItems: SidebarNavItem[] = [
+  {
+    key: 'dashboard',
+    label: 'Dashboard',
+    icon: <ChartBar />,
+    active: true,
+    badge: 3,
+    href: '#dashboard',
+  },
+  {
+    key: 'requests',
+    label: 'Requests',
+    icon: <Inbox />,
+    badge: 24,
+    href: '#requests',
+  },
+  {
+    key: 'messages',
+    label: 'Messages',
+    icon: <MessageSquare />,
+    badge: 130,
+    href: '#messages',
+  },
+  {
+    key: 'partners',
+    label: 'Partners',
+    icon: <Book />,
+    href: '#partners',
+  },
+]
+
 const meta = {
   title: 'Layout/Sidebar',
   component: Sidebar,
@@ -118,6 +149,29 @@ export const Default: Story = {
 export const Collapsed: Story = {
   args: {
     defaultCollapsed: true,
+  },
+  render: (args) => (
+    <StoryShell>
+      <StorySidebar {...args} />
+    </StoryShell>
+  ),
+}
+
+export const WithBadges: Story = {
+  args: {
+    items: badgeItems,
+  },
+  render: (args) => (
+    <StoryShell>
+      <StorySidebar {...args} />
+    </StoryShell>
+  ),
+}
+
+export const CollapsedWithBadges: Story = {
+  args: {
+    defaultCollapsed: true,
+    items: badgeItems,
   },
   render: (args) => (
     <StoryShell>
