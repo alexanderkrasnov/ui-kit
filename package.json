@@ -1,10 +1,10 @@
 {
-  "name": "@remide-tech/ui-kit",
+  "name": "@alexanderkrasnov/plexo-ui-kit",
   "version": "0.1.0",
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/RemiDe-Tech/ui-kit.git"
+    "url": "git+https://github.com/alexanderkrasnov/ui-kit.git"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"

@@ -1,17 +1,19 @@
-# @remide-tech/ui-kit
+# Plexo UI Kit
 
-React UI kit for RemiDe, published to GitHub Packages.
+React UI kit for Plexo, configured for publication to GitHub Packages as `@alexanderkrasnov/plexo-ui-kit`.
 
-> **Visibility:** as long as the `RemiDe-Tech/ui-kit` repo stays private, the published package inherits that visibility — only org members with repo access can install it.
+Source: [alexanderkrasnov/ui-kit](https://github.com/alexanderkrasnov/ui-kit).
+
+> **Visibility:** new GitHub Packages packages are private by default. Package visibility and access are configured separately from this public repository. See [GitHub's npm registry documentation](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry).
 
 ## Installing in another project
 
-GitHub Packages requires authentication even for read access. Each consuming project (and each developer machine / CI runner) needs the registry configured for the `@remide-tech` scope.
+GitHub Packages requires authentication even for read access. Each consuming project (and each developer machine / CI runner) needs the registry configured for the `@alexanderkrasnov` scope.
 
 ### 1. Add an `.npmrc` to the consuming repo
 
 ```
-@remide-tech:registry=https://npm.pkg.github.com
+@alexanderkrasnov:registry=https://npm.pkg.github.com
 //npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
 ```
 
@@ -20,13 +22,15 @@ Commit this file. The `${GITHUB_TOKEN}` placeholder is resolved from the environ
 ### 2. Provide a token
 
 - **Local dev:** create a GitHub Personal Access Token (classic) with the `read:packages` scope and export it as `GITHUB_TOKEN` (e.g. in your shell rc file).
-- **CI (GitHub Actions in the same org):** the built-in `secrets.GITHUB_TOKEN` works — pass it through as `env: GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}` on the install step, and grant `permissions: packages: read` on the job.
+- **CI (GitHub Actions):** grant the consuming repository read access in the package's settings, then pass the built-in `secrets.GITHUB_TOKEN` through as `env: GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}` on the install step, and grant `permissions: packages: read` on the job.
 
 ### 3. Install
 
 ```bash
-npm install @remide-tech/ui-kit
+npm install @alexanderkrasnov/plexo-ui-kit
 ```
+
+This package name becomes available after its first release. Existing consuming projects must update their dependency names and imports to `@alexanderkrasnov/plexo-ui-kit` when switching to it.
 
 ## Releasing a new version
 
@@ -86,8 +90,8 @@ Specific to the package-supply-chain class (dependency confusion, lockfile poiso
 
 | Attack | Control | Where |
 |---|---|---|
-| Dependency confusion (public-npm squat of `@remide-tech/*`) | Scope→registry pin in `.npmrc` (committed) | `.npmrc` |
-| Dependency confusion (defense in depth) | **Pre-register the `@remide-tech` scope on public npmjs.org** so no outsider can publish under it | Org-admin task |
+| Dependency confusion (public-npm squat of `@alexanderkrasnov/*`) | Scope→registry pin in `.npmrc` (committed) | `.npmrc` |
+| Dependency confusion (defense in depth) | **Pre-register the `@alexanderkrasnov` scope on public npmjs.org** so no outsider can publish under it | Account-owner task |
 | Lockfile poisoning via PR | `lockfile-lint` job rejects non-allowlisted hosts, non-https URLs, missing integrity hashes | `ci.yml` `lockfile-lint` job |
 | Compromised maintainer / tampered tarball | `npm audit signatures` validates Sigstore attestations on every dep | `ci.yml` `audit` job + `publish.yml` |
 | Malicious transitive postinstall during a security-only install | `npm ci --ignore-scripts` for the signature-verify step | `ci.yml` `audit` job |

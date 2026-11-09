@@ -1,7 +1,7 @@
 # OSV-Scanner config. https://google.github.io/osv-scanner/configuration/
 #
 # Skip dev-only dependencies in the npm tree. Rationale: dev deps are not
-# included in the published @remide-tech/ui-kit artifact, so a vulnerability
+# included in the published @alexanderkrasnov/plexo-ui-kit artifact, so a vulnerability
 # in (e.g.) postcss or storybook does not affect consumers. Production deps
 # are still gated — by `npm audit --audit-level=high --omit=dev`,
 # `npm audit signatures`, and OSV-Scanner itself for non-dev packages.
