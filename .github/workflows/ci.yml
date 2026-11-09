@@ -141,7 +141,9 @@ jobs:
           persist-credentials: false
 
       - name: Install Semgrep
-        run: python3 -m pip install --user semgrep==1.140.0
+        run: |
+          python3 -m pip install --user semgrep==1.184.0
+          SEMGREP_ENABLE_VERSION_CHECK=0 semgrep --version
 
       - name: Run Semgrep
         run: |
